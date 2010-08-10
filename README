@@ -1,0 +1,41 @@
+$Id$
+
+Welcome to biTStream!
+=====================
+
+biTStream is a set of C headers allowing a simpler access to binary
+structures such as specified by MPEG, DVB, IETF, etc.
+
+
+biTStream vs. libdvbpsi
+=======================
+
+libdvbpsi converts binary structures to C structures. Lists are implemented
+with chained lists of C structures.
+
+biTStream is lower level, and more efficient: fewer memory allocations,
+fewer memory copies. It also features a better separation between layers
+and specifications.
+
+
+Extending biTStream
+===================
+
+A lot of MPEG and DVB tables and descriptors are not implemented yet, or
+are incomplete. Patches are very welcome.
+
+Though biTStream is originally targeted at video applications in general
+and MPEG-2 transport stream in particular, the same principle can be
+followed with other binary data types, and patches are welcome here too.
+Just try to follow a coherent directory naming.
+
+My coding style is Linux kernel + Hungarian conventions. Really, I do not
+care about the coding style of new files; do (WTF) you want. However, for
+existing files, please try to follow the original conventions.
+
+biTStream is released under the WTF public license because since it is a
+direct application of standards, there is no added value. The WTF license
+doesn't require you to contribute back your changes, and you can use
+biTStream in proprietary applications. However, if you add new structures,
+or fix bugs in current structures, you'd be very nice to contribute them
+(again, there is no point in concealing this). Thanks.

@@ -1,0 +1,8 @@
+$Id$
+
+Installing biTStream
+====================
+
+No Makefile yet... Just create a /usr/include/bitstream or
+/usr/local/include/bitstream directory, and copy all top-level directories
+there.
