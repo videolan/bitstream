@@ -21,6 +21,7 @@
 #ifndef __BITSTREAM_MPEG_PSI_H__
 #define __BITSTREAM_MPEG_PSI_H__
 
+#include <bitstream/common.h>
 #include <bitstream/mpeg/ts.h>
 
 #ifdef __cplusplus
@@ -58,10 +59,16 @@ static inline uint8_t desc_get_length(const uint8_t *p_desc)
     return p_desc[1];
 }
 
+static inline void desc_print(const uint8_t *p_desc, f_print pf_print,
+                              void *opaque)
+{
+    pf_print(opaque, "    - desc %2.2hhx unknown", desc_get_tag(p_desc));
+}
+
 /*****************************************************************************
  * Descriptor 0x05: Registration descriptor
  *****************************************************************************/
-#define DESC05_HEADER_SIZE      6
+#define DESC05_HEADER_SIZE      (DESC_HEADER_SIZE + 4)
 
 static inline void desc05_init(uint8_t *p_desc)
 {
@@ -77,10 +84,22 @@ static inline void desc05_set_identifier(uint8_t *p_desc, uint8_t p_id[4])
     p_desc[5] = p_id[3];
 }
 
+static inline const uint8_t *desc05_get_identifier(const uint8_t *p_desc)
+{
+    return p_desc + 2;
+}
+
+static inline void desc05_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    pf_print(opaque, "    - desc 05 identifier=%4.4s",
+             desc05_get_identifier(p_desc));
+}
+
 /*****************************************************************************
  * Descriptor 0x09: Conditional access descriptor
  *****************************************************************************/
-#define DESC09_HEADER_SIZE      6
+#define DESC09_HEADER_SIZE      (DESC_HEADER_SIZE + 4)
 
 static inline uint16_t desc09_get_sysid(const uint8_t *p_desc)
 {
@@ -90,6 +109,13 @@ static inline uint16_t desc09_get_sysid(const uint8_t *p_desc)
 static inline uint16_t desc09_get_pid(const uint8_t *p_desc)
 {
     return ((p_desc[4] & 0x1f) << 8) | p_desc[5];
+}
+
+static inline void desc09_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    pf_print(opaque, "    - desc 09 sysid=%hx pid=%hu",
+             desc09_get_sysid(p_desc), desc09_get_pid(p_desc));
 }
 
 /*****************************************************************************
@@ -106,7 +132,8 @@ static inline void desc0a_init(uint8_t *p_desc)
 static inline uint8_t *desc0a_get_language(uint8_t *p_desc, uint8_t n)
 {
     uint8_t *p_desc_n = p_desc + DESC0A_HEADER_SIZE + n * DESC0A_LANGUAGE_SIZE;
-    if (p_desc_n - p_desc > desc_get_length(p_desc) + DESC0A_HEADER_SIZE)
+    if (p_desc_n + DESC0A_LANGUAGE_SIZE - p_desc
+         > desc_get_length(p_desc) + DESC0A_HEADER_SIZE)
         return NULL;
     return p_desc_n;
 }
@@ -118,9 +145,33 @@ static inline void desc0an_set_code(uint8_t *p_desc_n, const uint8_t p_code[3])
     p_desc_n[2] = p_code[2];
 }
 
+static inline const uint8_t *desc0an_get_code(const uint8_t *p_desc_n)
+{
+    return p_desc_n;
+}
+
 static inline void desc0an_set_audiotype(uint8_t *p_desc_n, uint8_t i_type)
 {
     p_desc_n[3] = i_type;
+}
+
+static inline uint8_t desc0an_get_audiotype(const uint8_t *p_desc_n)
+{
+    return p_desc_n[3];
+}
+
+static inline void desc0a_print(uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    uint8_t j = 0;
+    uint8_t *p_desc_n;
+
+    while ((p_desc_n = desc0a_get_language(p_desc, j)) != NULL) {
+        j++;
+        pf_print(opaque, "    - desc 0a language=%3.3s audiotype=%hhu",
+                 (const char *)desc0an_get_code(p_desc_n),
+                 desc0an_get_audiotype(p_desc_n));
+    }
 }
 
 /*****************************************************************************
@@ -344,7 +395,7 @@ static inline void psi_set_version(uint8_t *p_section, uint8_t i_version)
     p_section[5] = i_version << 1;
 }
 
-static inline uint8_t psi_get_version(uint8_t *p_section)
+static inline uint8_t psi_get_version(const uint8_t *p_section)
 {
     return (p_section[5] & 0x1e) >> 1;
 }
@@ -424,10 +475,18 @@ static inline bool psi_validate(const uint8_t *p_section)
                                             - PSI_HEADER_SIZE + PSI_CRC_SIZE))
         return false;
 
-    if (psi_get_syntax(p_section) && !psi_check_crc(p_section))
-        return false;
+    /* only do the CRC check when it is strictly necessary */
 
     return true;
+}
+
+static inline bool psi_compare(const uint8_t *p_section1,
+                               const uint8_t *p_section2)
+{
+    return psi_get_version(p_section1) == psi_get_version(p_section2)
+        && psi_get_length(p_section1) == psi_get_length(p_section2)
+        && !memcmp(p_section1, p_section2,
+                   psi_get_length(p_section1) + PSI_HEADER_SIZE);
 }
 
 /*****************************************************************************
@@ -569,7 +628,7 @@ static inline void psi_table_free(uint8_t **pp_sections)
         free(pp_sections[i]);
 }
 
-static inline bool psi_table_validate(uint8_t **pp_sections)
+static inline bool psi_table_validate(uint8_t * const *pp_sections)
 {
     return pp_sections[0] != NULL;
 }
@@ -579,20 +638,14 @@ static inline void psi_table_copy(uint8_t **pp_dest, uint8_t **pp_src)
     memcpy(pp_dest, pp_src, PSI_TABLE_MAX_SECTIONS * sizeof(uint8_t *));
 }
 
-static inline uint16_t psi_table_get_tableidext(uint8_t **pp_sections)
-{
-    return psi_get_tableidext(pp_sections[0]);
-}
-
-static inline uint8_t psi_table_get_version(uint8_t **pp_sections)
-{
-    return psi_get_version(pp_sections[0]);
-}
-
-static inline uint8_t psi_table_get_lastsection(uint8_t **pp_sections)
-{
-    return psi_get_lastsection(pp_sections[0]);
-}
+#define psi_table_get_tableid(pp_sections)      \
+    psi_get_tableid(pp_sections[0])
+#define psi_table_get_version(pp_sections)      \
+    psi_get_version(pp_sections[0])
+#define psi_table_get_lastsection(pp_sections)  \
+    psi_get_lastsection(pp_sections[0])
+#define psi_table_get_tableidext(pp_sections)   \
+    psi_get_tableidext(pp_sections[0])
 
 static inline bool psi_table_section(uint8_t **pp_sections, uint8_t *p_section)
 {
@@ -626,6 +679,25 @@ static inline bool psi_table_section(uint8_t **pp_sections, uint8_t *p_section)
 static inline uint8_t *psi_table_get_section(uint8_t **pp_sections, uint8_t n)
 {
     return pp_sections[n];
+}
+
+static inline bool psi_table_compare(uint8_t **pp_sections1,
+                                     uint8_t **pp_sections2)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections1);
+    uint8_t i;
+
+    if (i_last_section != psi_table_get_lastsection(pp_sections2))
+        return false;
+
+    for (i = 0; i < i_last_section; i++) {
+        const uint8_t *p_section1 = psi_table_get_section(pp_sections1, i);
+        const uint8_t *p_section2 = psi_table_get_section(pp_sections2, i);
+        if (!psi_compare(p_section1, p_section2))
+            return false;
+    }
+
+    return true;
 }
 
 /*****************************************************************************
@@ -683,7 +755,8 @@ static inline uint16_t patn_get_pid(const uint8_t *p_pat_n)
 static inline uint8_t *pat_get_program(uint8_t *p_pat, uint8_t n)
 {
     uint8_t *p_pat_n = p_pat + PAT_HEADER_SIZE + n * PAT_PROGRAM_SIZE;
-    if (p_pat_n - p_pat > psi_get_length(p_pat) + PSI_HEADER_SIZE - PSI_CRC_SIZE)
+    if (p_pat_n + PAT_PROGRAM_SIZE - p_pat
+         > psi_get_length(p_pat) + PSI_HEADER_SIZE - PSI_CRC_SIZE)
         return NULL;
     return p_pat_n;
 }
@@ -710,15 +783,65 @@ static inline uint8_t *pat_table_find_program(uint8_t **pp_sections,
         uint8_t *p_program;
         int j = 0;
 
-        while ((p_program = pat_get_program(p_section, j)) != NULL)
-        {
+        while ((p_program = pat_get_program(p_section, j)) != NULL) {
+            j++;
             if (patn_get_program(p_program) == i_program)
                 return p_program;
-            j++;
         }
     }
 
     return NULL;
+}
+
+static inline bool pat_table_validate(uint8_t **pp_sections)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
+    uint8_t i;
+
+    for (i = 0; i <= i_last_section; i++) {
+        uint8_t *p_section = psi_table_get_section(pp_sections, i);
+        uint8_t *p_program;
+        int j = 0;
+
+        if (!psi_check_crc(p_section))
+            return false;
+
+        while ((p_program = pat_get_program(p_section, j)) != NULL) {
+            j++;
+            /* check that the program number if not already in the table */
+            if (pat_table_find_program(pp_sections,
+                                patn_get_program(p_program)) != p_program)
+                return false;
+        }
+    }
+
+    return true;
+}
+
+static inline void pat_table_print(uint8_t **pp_sections, f_print pf_print,
+                                   void *opaque)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
+    uint8_t i;
+
+    pf_print(opaque, "new PAT tsid=%hu version=%hhu",
+             psi_table_get_tableidext(pp_sections),
+             psi_table_get_version(pp_sections));
+
+    for (i = 0; i <= i_last_section; i++) {
+        uint8_t *p_section = psi_table_get_section(pp_sections, i);
+        const uint8_t *p_program;
+        int j = 0;
+
+        while ((p_program = pat_get_program(p_section, j)) != NULL) {
+            j++;
+            pf_print(opaque, "  * program number=%hu pid=%hu",
+                     patn_get_program(p_program),
+                     patn_get_pid(p_program));
+        }
+    }
+
+    pf_print(opaque, "end PAT");
 }
 
 /*****************************************************************************
@@ -847,6 +970,9 @@ static inline bool pmt_validate(const uint8_t *p_pmt)
     if (!psi_get_syntax(p_pmt) || psi_get_section(p_pmt)
          || psi_get_lastsection(p_pmt)
          || psi_get_tableid(p_pmt) != PMT_TABLE_ID)
+        return false;
+
+    if (!psi_check_crc(p_pmt))
         return false;
 
     if (i_section_size < PMT_HEADER_SIZE

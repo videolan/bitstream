@@ -22,6 +22,7 @@
 #ifndef __BITSTREAM_DVB_SI_H__
 #define __BITSTREAM_DVB_SI_H__
 
+#include <bitstream/common.h>
 #include <bitstream/mpeg/psi.h>
 
 #ifdef __cplusplus
@@ -55,6 +56,14 @@ static inline void desc40_get_networkname(const uint8_t *p_desc,
     psz_network_name[i_length] = '\0';
 }
 
+static inline void desc40_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    DESC_DECLARE_STRING1(psz_network_name);
+    desc40_get_networkname(p_desc, psz_network_name);
+    pf_print(opaque, "    - desc 40 networkname=%s", psz_network_name);
+}
+
 /*****************************************************************************
  * Descriptor 0x48: Service descriptor
  *****************************************************************************/
@@ -81,6 +90,17 @@ static inline void desc48_get_service(const uint8_t *p_desc,
     psz_service[*p] = '\0';
 }
 
+static inline void desc48_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    DESC_DECLARE_STRING1(psz_provider);
+    DESC_DECLARE_STRING1(psz_service);
+    desc48_get_provider(p_desc, psz_provider);
+    desc48_get_service(p_desc, psz_service);
+    pf_print(opaque, "    - desc 48 provider=%s service=%s", psz_provider,
+             psz_service);
+}
+
 /*****************************************************************************
  * Descriptor 0x56: Teletext descriptor
  *****************************************************************************/
@@ -95,17 +115,24 @@ static inline void desc56_init(uint8_t *p_desc)
 static inline uint8_t *desc56_get_language(uint8_t *p_desc, uint8_t n)
 {
     uint8_t *p_desc_n = p_desc + DESC56_HEADER_SIZE + n * DESC56_LANGUAGE_SIZE;
-    if (p_desc_n - p_desc > desc_get_length(p_desc) + DESC56_HEADER_SIZE)
+    if (p_desc_n + DESC56_LANGUAGE_SIZE - p_desc
+         > desc_get_length(p_desc) + DESC56_HEADER_SIZE)
         return NULL;
     return p_desc_n;
 }
 
 #define desc56n_set_code desc0an_set_code
+#define desc56n_get_code desc0an_get_code
 
 static inline void desc56n_set_teletexttype(uint8_t *p_desc_n, uint8_t i_type)
 {
     p_desc_n[3] &= ~0xfc;
     p_desc_n[3] |= (i_type << 3) & 0xfc;
+}
+
+static inline uint8_t desc56n_get_teletexttype(const uint8_t *p_desc_n)
+{
+    return p_desc_n[3] >> 3;
 }
 
 static inline void desc56n_set_teletextmagazine(uint8_t *p_desc_n,
@@ -115,9 +142,36 @@ static inline void desc56n_set_teletextmagazine(uint8_t *p_desc_n,
     p_desc_n[3] |= (i_magazine & 0x3);
 }
 
+static inline uint8_t desc56n_get_teletextmagazine(const uint8_t *p_desc_n)
+{
+    return p_desc_n[3] & 0x3;
+}
+
 static inline void desc56n_set_teletextpage(uint8_t *p_desc_n, uint8_t i_page)
 {
     p_desc_n[4] = i_page;
+}
+
+static inline uint8_t desc56n_get_teletextpage(const uint8_t *p_desc_n)
+{
+    return p_desc_n[4];
+}
+
+static inline void desc56_print(uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    uint8_t j = 0;
+    uint8_t *p_desc_n;
+
+    while ((p_desc_n = desc56_get_language(p_desc, j)) != NULL) {
+        j++;
+        pf_print(opaque,
+             "    - desc 56 telx language=%3.3s type=%hhu mag=%hhu page=%hhu",
+             (const char *)desc56n_get_code(p_desc_n),
+             desc56n_get_teletexttype(p_desc_n),
+             desc56n_get_teletextmagazine(p_desc_n),
+             desc56n_get_teletextpage(p_desc_n));
+    }
 }
 
 /*****************************************************************************
@@ -134,16 +188,23 @@ static inline void desc59_init(uint8_t *p_desc)
 static inline uint8_t *desc59_get_language(uint8_t *p_desc, uint8_t n)
 {
     uint8_t *p_desc_n = p_desc + DESC59_HEADER_SIZE + n * DESC59_LANGUAGE_SIZE;
-    if (p_desc_n - p_desc > desc_get_length(p_desc) + DESC59_HEADER_SIZE)
+    if (p_desc_n + DESC59_LANGUAGE_SIZE - p_desc
+         > desc_get_length(p_desc) + DESC59_HEADER_SIZE)
         return NULL;
     return p_desc_n;
 }
 
 #define desc59n_set_code desc0an_set_code
+#define desc59n_get_code desc0an_get_code
 
 static inline void desc59n_set_subtitlingtype(uint8_t *p_desc_n, uint8_t i_type)
 {
     p_desc_n[3] = i_type;
+}
+
+static inline uint8_t desc59n_get_subtitlingtype(const uint8_t *p_desc_n)
+{
+    return p_desc_n[3];
 }
 
 static inline void desc59n_set_compositionpage(uint8_t *p_desc_n,
@@ -153,10 +214,37 @@ static inline void desc59n_set_compositionpage(uint8_t *p_desc_n,
     p_desc_n[5] = i_page & 0xff;
 }
 
+static inline uint16_t desc59n_get_compositionpage(const uint8_t *p_desc_n)
+{
+    return (p_desc_n[4] << 8) | p_desc_n[5];
+}
+
 static inline void desc59n_set_ancillarypage(uint8_t *p_desc_n, uint16_t i_page)
 {
     p_desc_n[6] = i_page >> 8;
     p_desc_n[7] = i_page & 0xff;
+}
+
+static inline uint16_t desc59n_get_ancillarypage(const uint8_t *p_desc_n)
+{
+    return (p_desc_n[6] << 8) | p_desc_n[7];
+}
+
+static inline void desc59_print(uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    uint8_t j = 0;
+    uint8_t *p_desc_n;
+
+    while ((p_desc_n = desc59_get_language(p_desc, j)) != NULL) {
+        j++;
+        pf_print(opaque,
+        "    - desc 59 dvbs language=%3.3s type=%hhu composition=%hu ancillary=%hu",
+        (const char *)desc59n_get_code(p_desc_n),
+        desc59n_get_subtitlingtype(p_desc_n),
+        desc59n_get_compositionpage(p_desc_n),
+        desc59n_get_ancillarypage(p_desc_n));
+    }
 }
 
 /*****************************************************************************
@@ -172,6 +260,12 @@ static inline void desc6a_init(uint8_t *p_desc)
 static inline void desc6a_clear_flags(uint8_t *p_desc)
 {
     p_desc[2] = 0;
+}
+
+static inline void desc6a_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    pf_print(opaque, "    - desc 6a ac3");
 }
 
 /*****************************************************************************
@@ -335,6 +429,53 @@ static inline bool nit_validate(const uint8_t *p_nit)
     }
 
     return (p_nit_n - p_nit == i_section_size);
+}
+
+
+static inline uint8_t *nit_table_find_ts(uint8_t **pp_sections,
+                                         uint16_t i_tsid, uint16_t i_onid)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
+    uint8_t i;
+
+    for (i = 0; i <= i_last_section; i++) {
+        uint8_t *p_section = psi_table_get_section(pp_sections, i);
+        uint8_t *p_ts;
+        int j = 0;
+
+        while ((p_ts = nit_get_ts(p_section, j)) != NULL) {
+            j++;
+            if (nitn_get_tsid(p_ts) == i_tsid && nitn_get_onid(p_ts) == i_onid)
+                return p_ts;
+        }
+    }
+
+    return NULL;
+}
+
+static inline bool nit_table_validate(uint8_t **pp_sections)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
+    uint8_t i;
+
+    for (i = 0; i <= i_last_section; i++) {
+        uint8_t *p_section = psi_table_get_section(pp_sections, i);
+        uint8_t *p_ts;
+        int j = 0;
+
+        if (!psi_check_crc(p_section))
+            return false;
+
+        while ((p_ts = nit_get_ts(p_section, j)) != NULL) {
+            j++;
+            /* check that the program number if not already in the table */
+            if (nit_table_find_ts(pp_sections, nitn_get_tsid(p_ts),
+                                  nitn_get_onid(p_ts)) != p_ts)
+                return false;
+        }
+    }
+
+    return true;
 }
 
 /*****************************************************************************
@@ -508,6 +649,23 @@ static inline uint8_t *sdt_table_find_service(uint8_t **pp_sections,
     return NULL;
 }
 
+static inline bool sdt_table_validate(uint8_t **pp_sections)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
+    uint8_t i;
+
+    for (i = 0; i <= i_last_section; i++) {
+        uint8_t *p_section = psi_table_get_section(pp_sections, i);
+        uint8_t *p_ts;
+        int j = 0;
+
+        if (!psi_check_crc(p_section))
+            return false;
+    }
+
+    return true;
+}
+
 /*****************************************************************************
  * Event Information Table
  *****************************************************************************/
@@ -567,6 +725,9 @@ static inline bool eit_validate(const uint8_t *p_eit)
                     && i_tid <= EIT_TABLE_ID_SCHED_ACTUAL_LAST)
               && !(i_tid >= EIT_TABLE_ID_SCHED_OTHER_FIRST
                     && i_tid <= EIT_TABLE_ID_SCHED_OTHER_LAST)))
+        return false;
+
+    if (!psi_check_crc(p_eit))
         return false;
 
     p_eit_n = p_eit + EIT_HEADER_SIZE;
