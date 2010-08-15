@@ -539,6 +539,11 @@ static inline uint8_t *psi_assemble_payload(uint8_t **pp_psi_buffer,
         uint16_t i_section_size = psi_get_length(*pp_psi_buffer)
                                    + PSI_HEADER_SIZE;
 
+        if (i_section_size > PSI_PRIVATE_MAX_SIZE) {
+            /* invalid section */
+            psi_assemble_reset(pp_psi_buffer, pi_psi_buffer_used);
+            return NULL;
+        }
         if (i_section_size <= *pi_psi_buffer_used) {
             p_section = *pp_psi_buffer;
             i_copy_size -= (*pi_psi_buffer_used - i_section_size);
