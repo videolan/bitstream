@@ -166,7 +166,7 @@ static inline void desc56_print(uint8_t *p_desc, f_print pf_print,
     while ((p_desc_n = desc56_get_language(p_desc, j)) != NULL) {
         j++;
         pf_print(opaque,
-             "    - desc 56 telx language=%3.3s type=%hhu mag=%hhu page=%hhu",
+             "    - desc 56 telx language=%3.3s type=0x%hhx mag=%hhu page=%hhu",
              (const char *)desc56n_get_code(p_desc_n),
              desc56n_get_teletexttype(p_desc_n),
              desc56n_get_teletextmagazine(p_desc_n),
@@ -239,7 +239,7 @@ static inline void desc59_print(uint8_t *p_desc, f_print pf_print,
     while ((p_desc_n = desc59_get_language(p_desc, j)) != NULL) {
         j++;
         pf_print(opaque,
-        "    - desc 59 dvbs language=%3.3s type=%hhu composition=%hu ancillary=%hu",
+        "    - desc 59 dvbs language=%3.3s type=0x%hhx composition=%hu ancillary=%hu",
         (const char *)desc59n_get_code(p_desc_n),
         desc59n_get_subtitlingtype(p_desc_n),
         desc59n_get_compositionpage(p_desc_n),

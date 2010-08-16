@@ -73,7 +73,7 @@ static inline void desc_print(const uint8_t *p_desc, f_print pf_print,
 static inline void desc05_init(uint8_t *p_desc)
 {
     desc_set_tag(p_desc, 0x05);
-    desc_set_length(p_desc, DESC05_HEADER_SIZE);
+    desc_set_length(p_desc, DESC05_HEADER_SIZE - DESC_HEADER_SIZE);
 }
 
 static inline void desc05_set_identifier(uint8_t *p_desc, uint8_t p_id[4])
@@ -114,7 +114,7 @@ static inline uint16_t desc09_get_pid(const uint8_t *p_desc)
 static inline void desc09_print(const uint8_t *p_desc, f_print pf_print,
                                 void *opaque)
 {
-    pf_print(opaque, "    - desc 09 sysid=%hx pid=%hu",
+    pf_print(opaque, "    - desc 09 sysid=0x%hx pid=%hu",
              desc09_get_sysid(p_desc), desc09_get_pid(p_desc));
 }
 
@@ -168,7 +168,7 @@ static inline void desc0a_print(uint8_t *p_desc, f_print pf_print,
 
     while ((p_desc_n = desc0a_get_language(p_desc, j)) != NULL) {
         j++;
-        pf_print(opaque, "    - desc 0a language=%3.3s audiotype=%hhu",
+        pf_print(opaque, "    - desc 0a language=%3.3s audiotype=0x%hhx",
                  (const char *)desc0an_get_code(p_desc_n),
                  desc0an_get_audiotype(p_desc_n));
     }
@@ -648,6 +648,8 @@ static inline void psi_table_copy(uint8_t **pp_dest, uint8_t **pp_src)
     psi_get_tableid(pp_sections[0])
 #define psi_table_get_version(pp_sections)      \
     psi_get_version(pp_sections[0])
+#define psi_table_get_current(pp_sections)      \
+    psi_get_current(pp_sections[0])
 #define psi_table_get_lastsection(pp_sections)  \
     psi_get_lastsection(pp_sections[0])
 #define psi_table_get_tableidext(pp_sections)   \
@@ -830,9 +832,10 @@ static inline void pat_table_print(uint8_t **pp_sections, f_print pf_print,
     uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
     uint8_t i;
 
-    pf_print(opaque, "new PAT tsid=%hu version=%hhu",
+    pf_print(opaque, "new PAT tsid=%hu version=%hhu%s",
              psi_table_get_tableidext(pp_sections),
-             psi_table_get_version(pp_sections));
+             psi_table_get_version(pp_sections),
+             !psi_table_get_current(pp_sections) ? " (next)" : "");
 
     for (i = 0; i <= i_last_section; i++) {
         uint8_t *p_section = psi_table_get_section(pp_sections, i);
@@ -840,10 +843,14 @@ static inline void pat_table_print(uint8_t **pp_sections, f_print pf_print,
         int j = 0;
 
         while ((p_program = pat_get_program(p_section, j)) != NULL) {
+            uint16_t i_program = patn_get_program(p_program);
+            uint16_t i_pid = patn_get_pid(p_program);
             j++;
-            pf_print(opaque, "  * program number=%hu pid=%hu",
-                     patn_get_program(p_program),
-                     patn_get_pid(p_program));
+            if (i_program == 0)
+                pf_print(opaque, "  * NIT pid=%hu", i_pid);
+            else
+                pf_print(opaque, "  * program number=%hu pid=%hu",
+                         i_program, i_pid);
         }
     }
 

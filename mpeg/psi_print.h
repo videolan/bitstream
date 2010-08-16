@@ -81,8 +81,9 @@ static inline void pmt_print(uint8_t *p_pmt, f_print pf_print, void *opaque)
     uint8_t *p_es;
     uint8_t j = 0;
 
-    pf_print(opaque, "new PMT program=%hu version=%hhu pcrpid=%hu",
+    pf_print(opaque, "new PMT program=%hu version=%hhu%s pcrpid=%hu",
              pmt_get_program(p_pmt), psi_get_version(p_pmt),
+             !psi_get_current(p_pmt) ? " (next)" : "",
              pmt_get_pcrpid(p_pmt));
     descs_print(pmt_get_descs(p_pmt), pf_print, opaque);
 
@@ -105,17 +106,18 @@ static inline void nit_table_print(uint8_t **pp_sections, f_print pf_print,
     uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
     uint8_t i;
 
-    pf_print(opaque, "new NIT %s networkid=%hu version=%hhu",
+    pf_print(opaque, "new NIT %s networkid=%hu version=%hhu%s",
              psi_table_get_tableid(pp_sections) == NIT_TABLE_ID_ACTUAL ?
              "actual" : "other",
              psi_table_get_tableidext(pp_sections),
-             psi_table_get_version(pp_sections));
+             psi_table_get_version(pp_sections),
+             !psi_table_get_current(pp_sections) ? " (next)" : "");
     descs_print(nit_get_descs(psi_table_get_section(pp_sections, 0)),
                 pf_print, opaque);
 
     for (i = 0; i <= i_last_section; i++) {
         uint8_t *p_section = psi_table_get_section(pp_sections, i);
-        const uint8_t *p_ts;
+        uint8_t *p_ts;
         int j = 0;
 
         while ((p_ts = nit_get_ts(p_section, j)) != NULL) {
@@ -138,16 +140,17 @@ static inline void sdt_table_print(uint8_t **pp_sections, f_print pf_print,
     uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
     uint8_t i;
 
-    pf_print(opaque, "new SDT %s tsid=%hu version=%hhu onid=%hu",
+    pf_print(opaque, "new SDT %s tsid=%hu version=%hhu%s onid=%hu",
              psi_table_get_tableid(pp_sections) == SDT_TABLE_ID_ACTUAL ?
              "actual" : "other",
              psi_table_get_tableidext(pp_sections),
              psi_table_get_version(pp_sections),
+             !psi_table_get_current(pp_sections) ? " (next)" : "",
              sdt_get_onid(psi_table_get_section(pp_sections, 0)));
 
     for (i = 0; i <= i_last_section; i++) {
         uint8_t *p_section = psi_table_get_section(pp_sections, i);
-        const uint8_t *p_service;
+        uint8_t *p_service;
         int j = 0;
 
         while ((p_service = sdt_get_service(p_section, j)) != NULL) {
