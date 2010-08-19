@@ -31,6 +31,164 @@ extern "C"
 #endif
 
 /*****************************************************************************
+ * DVB BCD
+ *****************************************************************************/
+static inline unsigned int dvb_bcd_get(const uint8_t *p_bcd, uint8_t i_width)
+{
+    unsigned int i_result = 0;
+
+    while (i_width >= 8) {
+        i_result *= 10;
+        i_result += (*p_bcd) >> 4;
+        i_result *= 10;
+        i_result += (*p_bcd) & 0xf;
+        i_width -= 8;
+        p_bcd++;
+    }
+
+    if (i_width == 4) {
+        i_result *= 10;
+        i_result += (*p_bcd) >> 4;
+    }
+
+    return i_result;
+}
+
+/*****************************************************************************
+ * DVB string
+ *****************************************************************************/
+static const char *ppsz_dvb_encodings[] = {
+    /* 0x00 - 0x0f */
+    "", "ISO_8859-5", "ISO_8859-6", "ISO_8859-7", "ISO_8859-8",
+    "ISO_8859-9", "ISO_8859-10", "ISO_8859-11", "", "ISO_8859-13",
+    "ISO_8859-14", "ISO_8859-15", "", "", "", "",
+
+    /* 0x10 - 0x1f */
+    "", "UTF-16", "KSC5601-1987", "GB2312", "BIG-5", "UTF-8",
+    "", "", "", "", "", "", "", "", "", "", NULL
+};
+static const char *ppsz_dvb_encodings10[] = {
+    "", "ISO_8859-1", "ISO_8859-2", "ISO_8859-3", "ISO_8859-4",
+    "ISO_8859-5", "ISO_8859-6", "ISO_8859-7", "ISO_8859-8", "ISO_8859-9",
+    "ISO_8859-10", "ISO_8859-11", "", "ISO_8859-13", "ISO_8859-14",
+    "ISO_8859-15", NULL
+};
+
+static inline const char *dvb_string_get_encoding(const uint8_t **pp_string,
+                                                  size_t *pi_length)
+{
+    uint8_t i_first;
+
+    if (!*pi_length) return NULL;
+    i_first = (*pp_string)[0];
+
+    if (!i_first) return NULL;
+    if (i_first >= 0x20) return "ISO_8859-1";
+    (*pp_string)++;
+    (*pi_length)--;
+
+    if (i_first == 0x10 && *pi_length >= 2) {
+        uint8_t i_second = (*pp_string)[0];
+        uint8_t i_third = (*pp_string)[1];
+        (*pp_string) += 2;
+        (*pi_length) -= 2;
+
+        if (i_second != 0x0 || i_third == 0 || i_third >= 0x10)
+            return NULL;
+        return ppsz_dvb_encodings10[i_third];
+    }
+
+    if (i_first == 0x1f && *pi_length >= 1) {
+        /* no info on these encodings, skip */
+        (*pp_string)++;
+        (*pi_length)--;
+        return NULL;
+    }
+
+    return ppsz_dvb_encodings[i_first];
+}
+
+static inline uint8_t *dvb_string_set(const uint8_t *p_string, size_t i_length,
+                                      const char *psz_encoding,
+                                      size_t *pi_out_length)
+{
+    int i;
+
+    if (!strcmp(psz_encoding, "ISO_8859-9")) {
+        *pi_out_length = i_length;
+        return strdup(p_string);
+    }
+
+    for (i = 0; ppsz_dvb_encodings[i] != NULL; i++) {
+        if (!strcasecmp(psz_encoding, ppsz_dvb_encodings[i])) {
+            uint8_t *p_encoded = malloc(i_length + 1);
+            *pi_out_length = i_length + 1;
+            p_encoded[0] = i;
+            memcpy(p_encoded + 1, p_string, i_length);
+            return p_encoded;
+        }
+    }
+
+    for (i = 0; ppsz_dvb_encodings10[i] != NULL; i++) {
+        if (!strcasecmp(psz_encoding, ppsz_dvb_encodings10[i])) {
+            uint8_t *p_encoded = malloc(i_length + 3);
+            *pi_out_length = i_length + 3;
+            p_encoded[0] = 0x10;
+            p_encoded[1] = 0x0;
+            p_encoded[2] = i;
+            memcpy(p_encoded + 3, p_string, i_length);
+            return p_encoded;
+        }
+    }
+
+    *pi_out_length = 0;
+    return NULL;
+}
+
+/* simpler API because this one doesn't output to multibyte charsets */
+static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
+                                   f_iconv pf_iconv, void *iconv_opaque)
+{
+    if (i_length) {
+        const char *psz_encoding = dvb_string_get_encoding(&p_string,
+                                                           &i_length);
+        if (!*psz_encoding || !i_length) {
+            /* try one-byte charset */
+            char *psz_string = malloc(i_length + 1);
+            memcpy(psz_string, p_string, i_length);
+            psz_string[i_length] = '\0';
+            return psz_string;
+        }
+
+        return pf_iconv(iconv_opaque, psz_encoding,
+                        p_string, i_length);
+    }
+
+    return strdup("");
+}
+
+/*****************************************************************************
+ * DVB delivery systems
+ *****************************************************************************/
+static inline const char *dvb_delivery_get_fec(uint8_t i_fec)
+{
+    switch (i_fec) {
+        case 0x0: return "undefined";
+        case 0x1: return "1/2";
+        case 0x2: return "2/3";
+        case 0x3: return "3/4";
+        case 0x4: return "5/6";
+        case 0x5: return "7/8";
+        case 0x6: return "8/9";
+        case 0x7: return "3/5";
+        case 0x8: return "4/5";
+        case 0x9: return "9/10";
+        case 0xf: return "none";
+        default: return "reserved";
+    }
+}
+
+/*****************************************************************************
  * Descriptor 0x40: Network name descriptor
  *****************************************************************************/
 #define DESC40_HEADER_SIZE      DESC_HEADER_SIZE
@@ -41,138 +199,360 @@ static inline void desc40_init(uint8_t *p_desc)
 }
 
 static inline void desc40_set_networkname(uint8_t *p_desc,
-                                          const char *psz_network_name)
+                                          const uint8_t *p_network_name,
+                                          uint8_t i_length)
 {
-    uint8_t i_length = strlen(psz_network_name);
     desc_set_length(p_desc, i_length);
-    memcpy(p_desc + 2, psz_network_name, i_length);
+    memcpy(p_desc + 2, p_network_name, i_length);
 }
 
-static inline void desc40_get_networkname(const uint8_t *p_desc,
-                                          char *psz_network_name)
+static inline const uint8_t *desc40_get_networkname(const uint8_t *p_desc,
+                                                    uint8_t *pi_length)
 {
-    uint8_t i_length = desc_get_length(p_desc);
-    memcpy(psz_network_name, p_desc + 2, i_length);
-    psz_network_name[i_length] = '\0';
+    *pi_length = desc_get_length(p_desc);
+    return p_desc + 2;
 }
 
-static inline void desc40_print(const uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+static inline bool desc40_validate(const uint8_t *p_desc)
 {
-    DESC_DECLARE_STRING1(psz_network_name);
-    desc40_get_networkname(p_desc, psz_network_name);
-    pf_print(opaque, "    - desc 40 networkname=%s", psz_network_name);
+    return true;
 }
 
-/*****************************************************************************
- * Descriptor 0x48: Service descriptor
- *****************************************************************************/
-#define DESC48_HEADER_SIZE      3
-
-static inline uint8_t desc48_get_type(const uint8_t *p_desc)
+static inline void desc40_print(const uint8_t *p_desc,
+                                f_print pf_print, void *print_opaque,
+                                f_iconv pf_iconv, void *iconv_opaque)
 {
-    return p_desc[2];
-}
+    uint8_t i_network_name_length;
+    const uint8_t *p_network_name = desc40_get_networkname(p_desc,
+                                                     &i_network_name_length);
+    char *psz_network_name = dvb_string_get(p_network_name,
+                                            i_network_name_length,
+                                            pf_iconv, iconv_opaque);
 
-static inline void desc48_get_provider(const uint8_t *p_desc,
-                                       char *psz_provider)
-{
-    const uint8_t *p = p_desc + 3;
-    memcpy(psz_provider, p + 1, *p);
-    psz_provider[*p] = '\0';
-}
-
-static inline void desc48_get_service(const uint8_t *p_desc,
-                                      char *psz_service)
-{
-    const uint8_t *p = p_desc + 4 + p_desc[3];
-    memcpy(psz_service, p + 1, *p);
-    psz_service[*p] = '\0';
-}
-
-static inline void desc48_print(const uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
-{
-    DESC_DECLARE_STRING1(psz_provider);
-    DESC_DECLARE_STRING1(psz_service);
-    desc48_get_provider(p_desc, psz_provider);
-    desc48_get_service(p_desc, psz_service);
-    pf_print(opaque, "    - desc 48 provider=%s service=%s", psz_provider,
-             psz_service);
+    pf_print(print_opaque, "    - desc 40 networkname=\"%s\"", psz_network_name);
+    free(psz_network_name);
 }
 
 /*****************************************************************************
- * Descriptor 0x56: Teletext descriptor
+ * Descriptor 0x43: Satellite delivery system descriptor
  *****************************************************************************/
-#define DESC56_HEADER_SIZE      DESC_HEADER_SIZE
-#define DESC56_LANGUAGE_SIZE    5
+#define DESC43_HEADER_SIZE      (DESC_HEADER_SIZE + 11)
 
-static inline void desc56_init(uint8_t *p_desc)
+static inline uint32_t desc43_get_frequency(const uint8_t *p_desc)
 {
-    desc_set_tag(p_desc, 0x56);
+    return dvb_bcd_get(p_desc + 2, 32) * 10; /* kHz */
 }
 
-static inline uint8_t *desc56_get_language(uint8_t *p_desc, uint8_t n)
+static inline unsigned int desc43_get_position(const uint8_t *p_desc)
 {
-    uint8_t *p_desc_n = p_desc + DESC56_HEADER_SIZE + n * DESC56_LANGUAGE_SIZE;
-    if (p_desc_n + DESC56_LANGUAGE_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC56_HEADER_SIZE)
+    return dvb_bcd_get(p_desc + 6, 16); /* 10th degree */
+}
+
+static inline bool desc43_get_east(const uint8_t *p_desc)
+{
+    return !!(p_desc[8] & 0x80);
+}
+
+static inline uint8_t desc43_get_polarization(const uint8_t *p_desc)
+{
+    return (p_desc[8] & 0x60) >> 5;
+}
+
+static inline uint8_t desc43_get_rolloff(const uint8_t *p_desc)
+{
+    return (p_desc[8] & 0x18) >> 3;
+}
+
+static inline bool desc43_get_dvbs2(const uint8_t *p_desc)
+{
+    return !!(p_desc[8] & 0x4);
+}
+
+static inline bool desc43_get_modulation(const uint8_t *p_desc)
+{
+    return p_desc[8] & 0x3;
+}
+
+static inline unsigned int desc43_get_symbolrate(const uint8_t *p_desc)
+{
+    return dvb_bcd_get(p_desc + 9, 28) * 100; /* sy/s */
+}
+
+static inline uint8_t desc43_get_fecinner(const uint8_t *p_desc)
+{
+    return p_desc[12] & 0xf;
+}
+
+static inline bool desc43_validate(const uint8_t *p_desc)
+{
+    return desc_get_length(p_desc) >= DESC43_HEADER_SIZE - DESC_HEADER_SIZE;
+}
+
+static inline void desc43_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    unsigned int i_pos = desc43_get_position(p_desc);
+    uint8_t i_polarization = desc43_get_polarization(p_desc);
+    const char *psz_polarization = "";;
+    uint8_t i_rolloff = desc43_get_rolloff(p_desc);
+    uint8_t i_modulation = desc43_get_modulation(p_desc);
+    const char *psz_modulation = "";
+
+    switch (i_polarization) {
+        case 0x0: psz_polarization = "H"; break;
+        case 0x1: psz_polarization = "V"; break;
+        case 0x2: psz_polarization = "L"; break;
+        case 0x3: psz_polarization = "R"; break;
+    }
+
+    switch (i_rolloff) {
+        case 0x0: i_rolloff = 35; break;
+        case 0x1: i_rolloff = 25; break;
+        case 0x2: i_rolloff = 20; break;
+    }
+
+    switch (i_modulation) {
+        case 0x0: psz_modulation = "auto"; break;
+        case 0x1: psz_modulation = "qpsk"; break;
+        case 0x2: psz_modulation = "8psk"; break;
+        case 0x3: psz_modulation = "16-qam"; break;
+    }
+
+    if (desc43_get_dvbs2(p_desc))
+        pf_print(opaque,
+         "    - desc 43 dvb-s2 frequency=%u kHz %s pos=%u.%u%c rolloff=0.%hhu modulation=%s symbolrate=%u fecinner=%s",
+         desc43_get_frequency(p_desc), psz_polarization, i_pos / 10, i_pos % 10,
+         desc43_get_east(p_desc) ? 'E' : 'W', i_rolloff, psz_modulation,
+         desc43_get_symbolrate(p_desc),
+         dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+    else
+        pf_print(opaque,
+         "    - desc 43 dvb-s frequency=%u%s pos=%u.%u%c modulation=%s symbolrate=%u fecinner=%s",
+         desc43_get_frequency(p_desc), psz_polarization, i_pos / 10, i_pos % 10,
+         desc43_get_east(p_desc) ? 'E' : 'W', psz_modulation,
+         desc43_get_symbolrate(p_desc),
+         dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+}
+
+/*****************************************************************************
+ * Descriptor 0x44: Cable delivery system descriptor
+ *****************************************************************************/
+#define DESC44_HEADER_SIZE      (DESC_HEADER_SIZE + 11)
+
+static inline uint64_t desc44_get_frequency(const uint8_t *p_desc)
+{
+    return (uint64_t)dvb_bcd_get(p_desc + 2, 32) * 100; /* Hz */
+}
+
+static inline uint8_t desc44_get_fecouter(const uint8_t *p_desc)
+{
+    return p_desc[7] & 0xf;
+}
+
+static inline uint8_t desc44_get_modulation(const uint8_t *p_desc)
+{
+    return p_desc[8];
+}
+
+#define desc44_get_symbolrate desc43_get_symbolrate
+#define desc44_get_fecinner desc43_get_fecinner
+
+static inline bool desc44_validate(const uint8_t *p_desc)
+{
+    return desc_get_length(p_desc) >= DESC44_HEADER_SIZE - DESC_HEADER_SIZE;
+}
+
+static inline void desc44_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    uint8_t i_fecouter = desc44_get_fecouter(p_desc);
+    const char *psz_fecouter = "reserved";
+    uint8_t i_modulation = desc44_get_modulation(p_desc);
+    const char *psz_modulation = "reserved";
+
+    switch (i_fecouter) {
+        case 0x0: psz_fecouter = "undefined"; break;
+        case 0x1: psz_fecouter = "none"; break;
+        case 0x2: psz_fecouter = "rs(204/188)"; break;
+    }
+
+    switch (i_modulation) {
+        case 0x0: psz_modulation = "undefined"; break;
+        case 0x1: psz_modulation = "16-qam"; break;
+        case 0x2: psz_modulation = "32-qam"; break;
+        case 0x3: psz_modulation = "64-qam"; break;
+        case 0x4: psz_modulation = "128-qam"; break;
+        case 0x5: psz_modulation = "256-qam"; break;
+    }
+
+    pf_print(opaque,
+         "    - desc 44 dvb-c frequency=%"PRIu64" Hz fecouter=0x%s modulation=0x%s symbolrate=%u fecinner=%s",
+         desc44_get_frequency(p_desc), psz_fecouter, psz_modulation,
+         desc44_get_symbolrate(p_desc),
+         dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+}
+
+/*****************************************************************************
+ * Descriptor 0x46: VBI teletext descriptor
+ *****************************************************************************/
+#define DESC46_HEADER_SIZE      DESC_HEADER_SIZE
+#define DESC46_LANGUAGE_SIZE    5
+
+static inline void desc46_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x46);
+}
+
+static inline uint8_t *desc46_get_language(uint8_t *p_desc, uint8_t n)
+{
+    uint8_t *p_desc_n = p_desc + DESC46_HEADER_SIZE + n * DESC46_LANGUAGE_SIZE;
+    if (p_desc_n + DESC46_LANGUAGE_SIZE - p_desc
+         > desc_get_length(p_desc) + DESC46_HEADER_SIZE)
         return NULL;
     return p_desc_n;
 }
 
-#define desc56n_set_code desc0an_set_code
-#define desc56n_get_code desc0an_get_code
+#define desc46n_set_code desc0an_set_code
+#define desc46n_get_code desc0an_get_code
 
-static inline void desc56n_set_teletexttype(uint8_t *p_desc_n, uint8_t i_type)
+static inline void desc46n_set_teletexttype(uint8_t *p_desc_n, uint8_t i_type)
 {
     p_desc_n[3] &= ~0xfc;
     p_desc_n[3] |= (i_type << 3) & 0xfc;
 }
 
-static inline uint8_t desc56n_get_teletexttype(const uint8_t *p_desc_n)
+static inline uint8_t desc46n_get_teletexttype(const uint8_t *p_desc_n)
 {
     return p_desc_n[3] >> 3;
 }
 
-static inline void desc56n_set_teletextmagazine(uint8_t *p_desc_n,
+static inline void desc46n_set_teletextmagazine(uint8_t *p_desc_n,
                                                 uint8_t i_magazine)
 {
     p_desc_n[3] &= ~0x3;
     p_desc_n[3] |= (i_magazine & 0x3);
 }
 
-static inline uint8_t desc56n_get_teletextmagazine(const uint8_t *p_desc_n)
+static inline uint8_t desc46n_get_teletextmagazine(const uint8_t *p_desc_n)
 {
     return p_desc_n[3] & 0x3;
 }
 
-static inline void desc56n_set_teletextpage(uint8_t *p_desc_n, uint8_t i_page)
+static inline void desc46n_set_teletextpage(uint8_t *p_desc_n, uint8_t i_page)
 {
     p_desc_n[4] = i_page;
 }
 
-static inline uint8_t desc56n_get_teletextpage(const uint8_t *p_desc_n)
+static inline uint8_t desc46n_get_teletextpage(const uint8_t *p_desc_n)
 {
     return p_desc_n[4];
 }
 
-static inline void desc56_print(uint8_t *p_desc, f_print pf_print,
+static inline bool desc46_validate(const uint8_t *p_desc)
+{
+    return !(desc_get_length(p_desc) % DESC46_LANGUAGE_SIZE);
+}
+
+static inline void desc46_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque)
 {
     uint8_t j = 0;
     uint8_t *p_desc_n;
 
-    while ((p_desc_n = desc56_get_language(p_desc, j)) != NULL) {
+    while ((p_desc_n = desc46_get_language(p_desc, j)) != NULL) {
         j++;
         pf_print(opaque,
-             "    - desc 56 telx language=%3.3s type=0x%hhx mag=%hhu page=%hhu",
-             (const char *)desc56n_get_code(p_desc_n),
-             desc56n_get_teletexttype(p_desc_n),
-             desc56n_get_teletextmagazine(p_desc_n),
-             desc56n_get_teletextpage(p_desc_n));
+             "    - desc %x telx language=%3.3s type=0x%hhx mag=%hhu page=%hhu",
+             desc_get_tag(p_desc), (const char *)desc46n_get_code(p_desc_n),
+             desc46n_get_teletexttype(p_desc_n),
+             desc46n_get_teletextmagazine(p_desc_n),
+             desc46n_get_teletextpage(p_desc_n));
     }
 }
+
+/*****************************************************************************
+ * Descriptor 0x48: Service descriptor
+ *****************************************************************************/
+#define DESC48_HEADER_SIZE      (DESC_HEADER_SIZE + 1)
+
+static inline uint8_t desc48_get_type(const uint8_t *p_desc)
+{
+    return p_desc[2];
+}
+
+static inline const uint8_t *desc48_get_provider(const uint8_t *p_desc,
+                                                 uint8_t *pi_length)
+{
+    const uint8_t *p = p_desc + DESC48_HEADER_SIZE;
+    *pi_length = p[0];
+    return p + 1;
+}
+
+static inline uint8_t *desc48_get_service(const uint8_t *p_desc,
+                                          uint8_t *pi_length)
+{
+    const uint8_t *p = p_desc + DESC48_HEADER_SIZE + 1 + p_desc[3];
+    *pi_length = p[0];
+    return p + 1;
+}
+
+static inline bool desc48_validate(const uint8_t *p_desc)
+{
+    uint8_t i_length = desc_get_length(p_desc);
+    const uint8_t *p = p_desc + DESC48_HEADER_SIZE;
+
+    p += *p + 1;
+    if (DESC48_HEADER_SIZE + 2 > i_length + DESC_HEADER_SIZE ||
+        p + 1 - p_desc > i_length + DESC_HEADER_SIZE)
+        return false;
+
+    p += *p + 1;
+    if (p - p_desc > i_length + DESC_HEADER_SIZE)
+        return false;
+
+    return true;
+}
+
+static inline void desc48_print(const uint8_t *p_desc,
+                                f_print pf_print, void *print_opaque,
+                                f_iconv pf_iconv, void *iconv_opaque)
+{
+    uint8_t i_provider_length, i_service_length;
+    const uint8_t *p_provider = desc48_get_provider(p_desc, &i_provider_length);
+    const uint8_t *p_service = desc48_get_service(p_desc, &i_service_length);
+    char *psz_provider = dvb_string_get(p_provider, i_provider_length,
+                                        pf_iconv, iconv_opaque);
+    char *psz_service = dvb_string_get(p_service, i_service_length,
+                                       pf_iconv, iconv_opaque);
+    pf_print(print_opaque,
+             "    - desc 48 type=0x%hhx provider=\"%s\" service=\"%s\"",
+             desc48_get_type(p_desc), psz_provider, psz_service);
+    free(psz_provider);
+    free(psz_service);
+}
+
+/*****************************************************************************
+ * Descriptor 0x56: Teletext descriptor
+ *****************************************************************************/
+#define DESC56_HEADER_SIZE      DESC46_HEADER_SIZE
+#define DESC56_LANGUAGE_SIZE    DESC46_LANGUAGE_SIZE
+
+static inline void desc56_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x56);
+}
+
+#define desc56_get_language desc46_get_language
+#define desc56n_set_code desc46n_set_code
+#define desc56n_get_code desc46n_get_code
+#define desc56n_set_teletexttype desc46n_set_teletexttype
+#define desc56n_get_teletexttype desc46n_get_teletexttype
+#define desc56n_set_teletextmagazine desc46n_set_teletextmagazine
+#define desc56n_get_teletextmagazine desc46n_get_teletextmagazine
+#define desc56n_set_teletextpage desc46n_set_teletextpage
+#define desc56n_get_teletextpage desc46n_get_teletextpage
+#define desc56_validate desc46_validate
+#define desc56_print desc46_print
 
 /*****************************************************************************
  * Descriptor 0x59: Subtitling descriptor
@@ -230,6 +610,11 @@ static inline uint16_t desc59n_get_ancillarypage(const uint8_t *p_desc_n)
     return (p_desc_n[6] << 8) | p_desc_n[7];
 }
 
+static inline bool desc59_validate(const uint8_t *p_desc)
+{
+    return !(desc_get_length(p_desc) % DESC59_LANGUAGE_SIZE);
+}
+
 static inline void desc59_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque)
 {
@@ -248,6 +633,145 @@ static inline void desc59_print(uint8_t *p_desc, f_print pf_print,
 }
 
 /*****************************************************************************
+ * Descriptor 0x5a: Terrestrial delivery system descriptor
+ *****************************************************************************/
+#define DESC5A_HEADER_SIZE      (DESC_HEADER_SIZE + 11)
+
+static inline uint64_t desc5a_get_frequency(const uint8_t *p_desc)
+{
+    return (((uint64_t)p_desc[2] << 24) | (p_desc[3] << 16) | (p_desc[4] << 8)
+             | p_desc[5]) * 10; /* Hz */
+}
+
+static inline uint8_t desc5a_get_bandwidth(const uint8_t *p_desc)
+{
+    return p_desc[6] >> 5;
+}
+
+static inline bool desc5a_get_priority(const uint8_t *p_desc)
+{
+    return !!((p_desc[6] >> 4) & 0x1);
+}
+
+/* ! inverted logic ! */
+static inline bool desc5a_get_timeslicing(const uint8_t *p_desc)
+{
+    return !((p_desc[6] >> 3) & 0x1);
+}
+
+/* ! inverted logic ! */
+static inline bool desc5a_get_mpefec(const uint8_t *p_desc)
+{
+    return !((p_desc[6] >> 2) & 0x1);
+}
+
+static inline uint8_t desc5a_get_constellation(const uint8_t *p_desc)
+{
+    return p_desc[7] >> 6;
+}
+
+static inline uint8_t desc5a_get_hierarchy(const uint8_t *p_desc)
+{
+    return (p_desc[7] >> 3) & 0x7;
+}
+
+static inline uint8_t desc5a_get_coderatehp(const uint8_t *p_desc)
+{
+    return p_desc[7] & 0x7;
+}
+
+static inline uint8_t desc5a_get_coderatelp(const uint8_t *p_desc)
+{
+    return p_desc[8] >> 5;
+}
+
+static inline uint8_t desc5a_get_guard(const uint8_t *p_desc)
+{
+    return (p_desc[8] >> 3) & 0x3;
+}
+
+static inline uint8_t desc5a_get_transmission(const uint8_t *p_desc)
+{
+    return (p_desc[8] >> 1) & 0x3;
+}
+
+static inline bool desc5a_get_otherfrequency(const uint8_t *p_desc)
+{
+    return !!(p_desc[8] & 0x1);
+}
+
+static inline bool desc5a_validate(const uint8_t *p_desc)
+{
+    return desc_get_length(p_desc) >= DESC5A_HEADER_SIZE - DESC_HEADER_SIZE;
+}
+
+static inline void desc5a_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque)
+{
+    uint8_t i_bandwidth = desc5a_get_bandwidth(p_desc);
+    uint8_t i_constellation = desc5a_get_constellation(p_desc);
+    const char *psz_constellation = "reserved";
+    uint8_t i_hierarchy = desc5a_get_hierarchy(p_desc);
+    const char *psz_hierarchy = "";
+    bool b_hierarchy = !!(i_hierarchy & 0x3);
+    uint8_t i_guard = desc5a_get_guard(p_desc);
+    const char *psz_guard = "";
+    uint8_t i_transmission = desc5a_get_transmission(p_desc);
+    const char *psz_transmission = "reserved";
+
+    switch (i_bandwidth) {
+        case 0x0: i_bandwidth = 8; break;
+        case 0x1: i_bandwidth = 7; break;
+        case 0x2: i_bandwidth = 6; break;
+        case 0x3: i_bandwidth = 5; break;
+        default: i_bandwidth = 0; break;
+    }
+
+    switch (i_constellation) {
+        case 0x0: psz_constellation = "QPSK"; break;
+        case 0x1: psz_constellation = "16-qam"; break;
+        case 0x2: psz_constellation = "64-qam"; break;
+    }
+
+    switch (i_hierarchy) {
+        case 0x0: psz_hierarchy = "none"; break;
+        case 0x1: psz_hierarchy = "1"; break;
+        case 0x2: psz_hierarchy = "2"; break;
+        case 0x3: psz_hierarchy = "4"; break;
+        case 0x4: psz_hierarchy = "none+in-depth"; break;
+        case 0x5: psz_hierarchy = "1+in-depth"; break;
+        case 0x6: psz_hierarchy = "2+in-depth"; break;
+        case 0x7: psz_hierarchy = "4+in-depth"; break;
+    }
+
+    switch (i_guard) {
+        case 0x0: psz_guard = "1/32"; break;
+        case 0x1: psz_guard = "1/16"; break;
+        case 0x2: psz_guard = "1/8"; break;
+        case 0x3: psz_guard = "1/4"; break;
+    }
+
+    switch (i_transmission) {
+        case 0x0: psz_transmission = "2k"; break;
+        case 0x1: psz_transmission = "8k"; break;
+        case 0x2: psz_transmission = "4k"; break;
+    }
+
+    pf_print(opaque,
+         "    - desc 5a dvb-t frequency=%"PRIu64" Hz bandwidth=%u MHz priority=%s%s%s constellation=%s hierarchy=%s coderatehp=%s%s%s guard=%s transmission=%s%s",
+         desc5a_get_frequency(p_desc), i_bandwidth,
+         desc5a_get_priority(p_desc) ? "HP" : "LP",
+         desc5a_get_timeslicing(p_desc) ? " timeslicing" : "",
+         desc5a_get_mpefec(p_desc) ? " mpefec" : "", psz_constellation,
+         psz_hierarchy,
+         dvb_delivery_get_fec(desc5a_get_coderatehp(p_desc)),
+         b_hierarchy ? "coderatelp=" : "",
+         b_hierarchy ? dvb_delivery_get_fec(desc5a_get_coderatehp(p_desc)) : "",
+         psz_guard, psz_transmission,
+         desc5a_get_otherfrequency(p_desc) ? " otherfrequency" : "");
+}
+
+/*****************************************************************************
  * Descriptor 0x6a: AC-3 descriptor
  *****************************************************************************/
 #define DESC6A_HEADER_SIZE      3
@@ -260,6 +784,11 @@ static inline void desc6a_init(uint8_t *p_desc)
 static inline void desc6a_clear_flags(uint8_t *p_desc)
 {
     p_desc[2] = 0;
+}
+
+static inline bool desc6a_validate(const uint8_t *p_desc)
+{
+    return desc_get_length(p_desc) >= DESC6A_HEADER_SIZE - DESC_HEADER_SIZE;
 }
 
 static inline void desc6a_print(const uint8_t *p_desc, f_print pf_print,
@@ -537,7 +1066,7 @@ static inline void sdtn_set_eitschedule(uint8_t *p_sdt_n)
 
 static inline bool sdtn_get_eitschedule(const uint8_t *p_sdt_n)
 {
-    return p_sdt_n[2] & 0x2;
+    return !!(p_sdt_n[2] & 0x2);
 }
 
 static inline void sdtn_set_eitpresent(uint8_t *p_sdt_n)
@@ -547,7 +1076,7 @@ static inline void sdtn_set_eitpresent(uint8_t *p_sdt_n)
 
 static inline bool sdtn_get_eitpresent(const uint8_t *p_sdt_n)
 {
-    return p_sdt_n[2] & 0x1;
+    return !!(p_sdt_n[2] & 0x1);
 }
 
 static inline void sdtn_set_running(uint8_t *p_sdt_n, uint8_t i_running)
@@ -568,7 +1097,7 @@ static inline void sdtn_set_ca(uint8_t *p_sdt_n)
 
 static inline bool sdtn_get_ca(const uint8_t *p_sdt_n)
 {
-    return p_sdt_n[3] & 0x10;
+    return !!(p_sdt_n[3] & 0x10);
 }
 
 static inline void sdtn_set_desclength(uint8_t *p_sdt_n, uint16_t i_length)

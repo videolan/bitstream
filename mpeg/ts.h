@@ -52,7 +52,7 @@ static inline void ts_init(uint8_t *p_ts)
 
 static inline bool ts_get_transporterror(const uint8_t *p_ts)
 {
-    return p_ts[1] & 0x80;
+    return !!(p_ts[1] & 0x80);
 }
 
 static inline void ts_set_unitstart(uint8_t *p_ts)
@@ -62,7 +62,7 @@ static inline void ts_set_unitstart(uint8_t *p_ts)
 
 static inline bool ts_get_unitstart(const uint8_t *p_ts)
 {
-    return p_ts[1] & 0x40;
+    return !!(p_ts[1] & 0x40);
 }
 
 static inline void ts_set_transportpriority(uint8_t *p_ts)
@@ -72,7 +72,7 @@ static inline void ts_set_transportpriority(uint8_t *p_ts)
 
 static inline bool ts_get_transportpriority(const uint8_t *p_ts)
 {
-    return p_ts[1] & 0x20;
+    return !!(p_ts[1] & 0x20);
 }
 
 static inline void ts_set_pid(uint8_t *p_ts, uint16_t i_pid)
@@ -105,7 +105,7 @@ static inline void ts_set_payload(uint8_t *p_ts)
 
 static inline bool ts_has_payload(const uint8_t *p_ts)
 {
-    return p_ts[3] & 0x10;
+    return !!(p_ts[3] & 0x10);
 }
 
 static inline void ts_set_adaptation(uint8_t *p_ts, uint8_t i_length)
@@ -120,7 +120,7 @@ static inline void ts_set_adaptation(uint8_t *p_ts, uint8_t i_length)
 
 static inline bool ts_has_adaptation(const uint8_t *p_ts)
 {
-    return (p_ts[3] & 0x20);
+    return !!(p_ts[3] & 0x20);
 }
 
 static inline uint8_t ts_get_adaptation(const uint8_t *p_ts)
@@ -193,7 +193,7 @@ static inline void tsaf_set_randomaccess(uint8_t *p_ts)
 
 static inline bool tsaf_has_randomaccess(const uint8_t *p_ts)
 {
-    return p_ts[5] & 0x40;
+    return !!(p_ts[5] & 0x40);
 }
 
 static inline void tsaf_set_streampriority(uint8_t *p_ts)
@@ -220,7 +220,7 @@ static inline void tsaf_set_pcrext(uint8_t *p_ts, uint16_t i_pcr_ext)
 
 static inline bool tsaf_has_pcr(uint8_t *p_ts)
 {
-    return p_ts[5] & 0x10;
+    return !!(p_ts[5] & 0x10);
 }
 
 static inline uint64_t tsaf_get_pcr(const uint8_t *p_ts)

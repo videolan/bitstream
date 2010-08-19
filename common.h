@@ -22,6 +22,7 @@ extern "C"
 #endif
 
 typedef void (*f_print)(void *, const char *, ...);
+typedef char * (*f_iconv)(void *, const char *, char *, size_t);
 
 #ifdef __cplusplus
 }

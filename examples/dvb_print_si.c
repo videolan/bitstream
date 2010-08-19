@@ -16,9 +16,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <inttypes.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <iconv.h>
 
 #include <bitstream/mpeg/ts.h>
 #include <bitstream/mpeg/psi.h>
@@ -56,10 +58,14 @@ static PSI_TABLE_DECLARE(pp_next_nit_sections);
 static PSI_TABLE_DECLARE(pp_current_sdt_sections);
 static PSI_TABLE_DECLARE(pp_next_sdt_sections);
 
+static const char *psz_native_encoding = "UTF-8";
+static const char *psz_current_encoding = "";
+static iconv_t iconv_handle = (iconv_t)-1;
+
 /*****************************************************************************
- * print
+ * print_wrapper
  *****************************************************************************/
-static void print(void *_unused, const char *psz_format, ...)
+static void print_wrapper(void *_unused, const char *psz_format, ...)
 {
     char psz_fmt[strlen(psz_format) + 2];
     va_list args;
@@ -67,6 +73,57 @@ static void print(void *_unused, const char *psz_format, ...)
     strcpy(psz_fmt, psz_format);
     strcat(psz_fmt, "\n");
     vprintf(psz_fmt, args);
+}
+
+/*****************************************************************************
+ * iconv_wrapper
+ *****************************************************************************/
+static char *iconv_append_null(const char *p_string, size_t i_length)
+{
+    char *psz_string = malloc(i_length + 1);
+    memcpy(psz_string, p_string, i_length);
+    psz_string[i_length] = '\0';
+    return psz_string;
+}
+
+static char *iconv_wrapper(void *_unused, const char *psz_encoding,
+                           char *p_string, size_t i_length)
+{
+    char *psz_string, *p;
+    size_t i_out_length;
+
+    if (!strcmp(psz_encoding, psz_native_encoding))
+        return iconv_append_null(p_string, i_length);
+
+    if (iconv_handle != (iconv_t)-1 &&
+        strcmp(psz_encoding, psz_current_encoding)) {
+        iconv_close(iconv_handle);
+        iconv_handle = (iconv_t)-1;
+    }
+
+    if (iconv_handle == (iconv_t)-1)
+        iconv_handle = iconv_open(psz_native_encoding, psz_encoding);
+    if (iconv_handle == (iconv_t)-1) {
+        fprintf(stderr, "couldn't convert from %s to %s (%m)", psz_encoding,
+                psz_native_encoding);
+        return iconv_append_null(p_string, i_length);
+    }
+
+    /* converted strings can be up to six times larger */
+    i_out_length = i_length * 6;
+    p = psz_string = malloc(i_out_length);
+    if (iconv(iconv_handle, &p_string, &i_length, &p, &i_out_length) == -1) {
+        fprintf(stderr, "couldn't convert from %s to %s (%m)", psz_encoding,
+                psz_native_encoding);
+        free(psz_string);
+        return iconv_append_null(p_string, i_length);
+    }
+    if (i_length)
+        fprintf(stderr, "partial conversion from %s to %s", psz_encoding,
+                psz_native_encoding);
+
+    *p = '\0';
+    return psz_string;
 }
 
 /*****************************************************************************
@@ -179,7 +236,7 @@ static void handle_pat(void)
         psi_table_free(pp_old_pat_sections);
     }
 
-    pat_table_print( pp_current_pat_sections, print, NULL );
+    pat_table_print( pp_current_pat_sections, print_wrapper, NULL );
 }
 
 static void handle_pat_section(uint16_t i_pid, uint8_t *p_section)
@@ -241,7 +298,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
     free(p_sid->p_current_pmt);
     p_sid->p_current_pmt = p_pmt;
 
-    pmt_print(p_pmt, print, NULL);
+    pmt_print(p_pmt, print_wrapper, NULL, iconv_wrapper, NULL);
 }
 
 /*****************************************************************************
@@ -270,7 +327,8 @@ static void handle_nit(void)
     psi_table_copy(pp_current_nit_sections, pp_next_nit_sections);
     psi_table_init(pp_next_nit_sections);
 
-    nit_table_print(pp_current_nit_sections, print, NULL);
+    nit_table_print(pp_current_nit_sections, print_wrapper, NULL,
+                    iconv_wrapper, NULL);
 }
 
 static void handle_nit_section(uint16_t i_pid, uint8_t *p_section)
@@ -313,7 +371,8 @@ static void handle_sdt(void)
     psi_table_copy(pp_current_sdt_sections, pp_next_sdt_sections);
     psi_table_init(pp_next_sdt_sections);
 
-    sdt_table_print(pp_current_sdt_sections, print, NULL);
+    sdt_table_print(pp_current_sdt_sections, print_wrapper, NULL,
+                    iconv_wrapper, NULL);
 }
 
 static void handle_sdt_section(uint16_t i_pid, uint8_t *p_section)
