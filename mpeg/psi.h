@@ -823,7 +823,7 @@ static inline bool pat_table_validate(uint8_t **pp_sections)
 
         while ((p_program = pat_get_program(p_section, j)) != NULL) {
             j++;
-            /* check that the program number if not already in the table */
+            /* check that the program number is not already in the table */
             if (pat_table_find_program(pp_sections,
                                 patn_get_program(p_program)) != p_program)
                 return false;

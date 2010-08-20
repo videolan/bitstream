@@ -997,7 +997,7 @@ static inline bool nit_table_validate(uint8_t **pp_sections)
 
         while ((p_ts = nit_get_ts(p_section, j)) != NULL) {
             j++;
-            /* check that the program number if not already in the table */
+            /* check that the TS is not already in the table */
             if (nit_table_find_ts(pp_sections, nitn_get_tsid(p_ts),
                                   nitn_get_onid(p_ts)) != p_ts)
                 return false;
@@ -1185,11 +1185,19 @@ static inline bool sdt_table_validate(uint8_t **pp_sections)
 
     for (i = 0; i <= i_last_section; i++) {
         uint8_t *p_section = psi_table_get_section(pp_sections, i);
-        uint8_t *p_ts;
+        uint8_t *p_service;
         int j = 0;
 
         if (!psi_check_crc(p_section))
             return false;
+
+        while ((p_service = sdt_get_service(p_section, j)) != NULL) {
+            j++;
+            /* check that the service is not already in the table */
+            if (sdt_table_find_service(pp_sections, sdtn_get_sid(p_service))
+                 != p_service)
+                return false;
+        }
     }
 
     return true;
