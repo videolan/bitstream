@@ -684,8 +684,10 @@ static inline bool psi_table_section(uint8_t **pp_sections, uint8_t *p_section)
     }
 
     /* free spurious, invalid sections */
-    for (; i < PSI_TABLE_MAX_SECTIONS; i++)
+    for (; i < PSI_TABLE_MAX_SECTIONS; i++) {
         free(pp_sections[i]);
+        pp_sections[i] = NULL;
+    }
 
     /* a new, full table is available */
     return true;
@@ -979,6 +981,15 @@ static inline uint8_t *pmt_get_es(uint8_t *p_pmt, uint8_t n)
     }
     if (p_pmt_n - p_pmt >= i_section_size) return NULL;
     return p_pmt_n;
+}
+
+static inline bool pmt_validate_es(const uint8_t *p_pmt, const uint8_t *p_pmt_n,
+                                   uint16_t i_desclength)
+{
+    uint16_t i_section_size = psi_get_length(p_pmt) + PSI_HEADER_SIZE
+                               - PSI_CRC_SIZE;
+    return (p_pmt_n + PMT_ES_SIZE + i_desclength
+             <= p_pmt + i_section_size);
 }
 
 static inline bool pmt_validate(const uint8_t *p_pmt)

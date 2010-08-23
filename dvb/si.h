@@ -31,7 +31,7 @@ extern "C"
 #endif
 
 /*****************************************************************************
- * DVB BCD
+ * DVB numbers
  *****************************************************************************/
 static inline unsigned int dvb_bcd_get(const uint8_t *p_bcd, uint8_t i_width)
 {
@@ -52,6 +52,61 @@ static inline unsigned int dvb_bcd_get(const uint8_t *p_bcd, uint8_t i_width)
     }
 
     return i_result;
+}
+
+static inline void dvb_bcd_set(uint8_t *p_bcd, unsigned int i_int,
+                               uint8_t i_width)
+{
+    /* calculate 10^(i_width/4-1) */
+    unsigned int i_factor = 1, i_exp = i_width / 4 - 1, i_base = 10;
+    while (i_exp)
+    {
+        if (i_exp & 1)
+            i_factor *= i_base;
+        i_exp >>= 1;
+        i_base *= i_base;
+    }
+
+    while (i_factor >= 10) {
+        *p_bcd = (i_int / i_factor) << 4;
+        i_int %= i_factor;
+        i_factor /= 10;
+        *p_bcd |= (i_int / i_factor);
+        i_int %= i_factor;
+        i_factor /= 10;
+        p_bcd++;
+    }
+
+    if (i_factor == 1) {
+        *p_bcd &= 0xf;
+        *p_bcd |= i_int << 4;
+    }
+}
+
+static inline uint8_t dvb_bcd_set8(unsigned int i_int)
+{
+    uint8_t i_result;
+    dvb_bcd_set(&i_result, i_int, 8);
+    return i_result;
+}
+
+/* EN 300 468 Annex C, year is from 1900 */
+static inline uint16_t dvb_mjd_set(int y, int m, int d)
+{
+    int l = (m == 1 || m == 2) ? 1 : 0;
+    int mjd = 14956 + d + (y - l) * 1461 / 4 + (m + 1 + l * 12) * 306001 / 10000;
+    return (uint16_t)mjd;
+}
+
+static inline void dvb_mjd_get(uint16_t mjd, int *y, int *m, int *d)
+{
+    int k;
+    int yp = (mjd * 20 - 301564) / 7305;
+    int mp = (mjd * 10000 - 149561000 - yp * 3652500) / 306001;
+    *d = mjd - 14956 - yp * 1461 / 4 - mp * 306001 / 10000;
+    k = (mp == 14 || mp == 15) ? 1 : 0;
+    *y = yp + k;
+    *m = mp - 1 - k * 12;
 }
 
 /*****************************************************************************
@@ -475,9 +530,28 @@ static inline void desc46_print(uint8_t *p_desc, f_print pf_print,
  *****************************************************************************/
 #define DESC48_HEADER_SIZE      (DESC_HEADER_SIZE + 1)
 
+static inline void desc48_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x48);
+}
+
+static inline void desc48_set_type(uint8_t *p_desc, uint8_t i_type)
+{
+    p_desc[2] = i_type;
+}
+
 static inline uint8_t desc48_get_type(const uint8_t *p_desc)
 {
     return p_desc[2];
+}
+
+static inline void desc48_set_provider(uint8_t *p_desc,
+                                       const uint8_t *p_provider,
+                                       uint8_t i_length)
+{
+    uint8_t *p = p_desc + DESC48_HEADER_SIZE;
+    p[0] = i_length;
+    memcpy(p + 1, p_provider, i_length);
 }
 
 static inline const uint8_t *desc48_get_provider(const uint8_t *p_desc,
@@ -486,6 +560,15 @@ static inline const uint8_t *desc48_get_provider(const uint8_t *p_desc,
     const uint8_t *p = p_desc + DESC48_HEADER_SIZE;
     *pi_length = p[0];
     return p + 1;
+}
+
+static inline void desc48_set_service(uint8_t *p_desc,
+                                      const uint8_t *p_service,
+                                      uint8_t i_length)
+{
+    uint8_t *p = p_desc + DESC48_HEADER_SIZE + 1 + p_desc[3];
+    p[0] = i_length;
+    memcpy(p + 1, p_service, i_length);
 }
 
 static inline uint8_t *desc48_get_service(const uint8_t *p_desc,
@@ -868,7 +951,7 @@ static inline void nitn_set_tsid(uint8_t *p_nit_n, uint16_t i_tsid)
     p_nit_n[1] = i_tsid & 0xff;
 }
 
-static inline uint8_t nitn_get_tsid(const uint8_t *p_nit_n)
+static inline uint16_t nitn_get_tsid(const uint8_t *p_nit_n)
 {
     return (p_nit_n[0] << 8) | p_nit_n[1];
 }
@@ -879,7 +962,7 @@ static inline void nitn_set_onid(uint8_t *p_nit_n, uint16_t i_onid)
     p_nit_n[3] = i_onid & 0xff;
 }
 
-static inline uint8_t nitn_get_onid(const uint8_t *p_nit_n)
+static inline uint16_t nitn_get_onid(const uint8_t *p_nit_n)
 {
     return (p_nit_n[2] << 8) | p_nit_n[3];
 }
@@ -921,6 +1004,15 @@ static inline uint8_t *nit_get_ts(uint8_t *p_nit, uint8_t n)
     }
     if (p_nit_n - p_nit >= i_section_size) return NULL;
     return p_nit_n;
+}
+
+static inline bool nit_validate_ts(const uint8_t *p_nit, const uint8_t *p_nit_n,
+                                   uint16_t i_desclength)
+{
+    uint16_t i_section_size = psi_get_length(p_nit) + PSI_HEADER_SIZE
+                               - PSI_CRC_SIZE;
+    return (p_nit_n + NIT_TS_SIZE + i_desclength
+             <= p_nit + i_section_size);
 }
 
 static inline bool nit_validate(const uint8_t *p_nit)
@@ -1046,6 +1138,7 @@ static inline uint16_t sdt_get_onid(const uint8_t *p_sdt)
 static inline void sdtn_init(uint8_t *p_sdt_n)
 {
     p_sdt_n[2] = 0xfc;
+    p_sdt_n[3] = 0;
 }
 
 static inline void sdtn_set_sid(uint8_t *p_sdt_n, uint16_t i_sid)
@@ -1130,6 +1223,16 @@ static inline uint8_t *sdt_get_service(uint8_t *p_sdt, uint8_t n)
     }
     if (p_sdt_n - p_sdt >= i_section_size) return NULL;
     return p_sdt_n;
+}
+
+static inline bool sdt_validate_service(const uint8_t *p_sdt,
+                                        const uint8_t *p_sdt_n,
+                                        uint16_t i_desclength)
+{
+    uint16_t i_section_size = psi_get_length(p_sdt) + PSI_HEADER_SIZE
+                               - PSI_CRC_SIZE;
+    return (p_sdt_n + SDT_SERVICE_SIZE + i_desclength
+             <= p_sdt + i_section_size);
 }
 
 static inline bool sdt_validate(const uint8_t *p_sdt)
@@ -1246,6 +1349,16 @@ static inline uint16_t eit_get_tsid(const uint8_t *p_eit)
 static inline uint16_t eitn_get_desclength(const uint8_t *p_eit_n)
 {
     return ((p_eit_n[10] & 0xf) << 8) | p_eit_n[11];
+}
+
+static inline bool eit_validate_event(const uint8_t *p_eit,
+                                      const uint8_t *p_eit_n,
+                                      uint16_t i_desclength)
+{
+    uint16_t i_section_size = psi_get_length(p_eit) + PSI_HEADER_SIZE
+                               - PSI_CRC_SIZE;
+    return (p_eit_n + EIT_EVENT_SIZE + i_desclength
+             <= p_eit + i_section_size);
 }
 
 static inline bool eit_validate(const uint8_t *p_eit)
