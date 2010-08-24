@@ -25,6 +25,7 @@
 #include <bitstream/mpeg/ts.h>
 #include <bitstream/mpeg/psi.h>
 #include <bitstream/dvb/si.h>
+#include <bitstream/dvb/si_print.h>
 #include <bitstream/mpeg/psi_print.h>
 
 /*****************************************************************************
@@ -104,7 +105,7 @@ static char *iconv_wrapper(void *_unused, const char *psz_encoding,
     if (iconv_handle == (iconv_t)-1)
         iconv_handle = iconv_open(psz_native_encoding, psz_encoding);
     if (iconv_handle == (iconv_t)-1) {
-        fprintf(stderr, "couldn't convert from %s to %s (%m)", psz_encoding,
+        fprintf(stderr, "couldn't convert from %s to %s (%m)\n", psz_encoding,
                 psz_native_encoding);
         return iconv_append_null(p_string, i_length);
     }
@@ -113,13 +114,13 @@ static char *iconv_wrapper(void *_unused, const char *psz_encoding,
     i_out_length = i_length * 6;
     p = psz_string = malloc(i_out_length);
     if (iconv(iconv_handle, &p_string, &i_length, &p, &i_out_length) == -1) {
-        fprintf(stderr, "couldn't convert from %s to %s (%m)", psz_encoding,
+        fprintf(stderr, "couldn't convert from %s to %s (%m)\n", psz_encoding,
                 psz_native_encoding);
         free(psz_string);
         return iconv_append_null(p_string, i_length);
     }
     if (i_length)
-        fprintf(stderr, "partial conversion from %s to %s", psz_encoding,
+        fprintf(stderr, "partial conversion from %s to %s\n", psz_encoding,
                 psz_native_encoding);
 
     *p = '\0';
@@ -145,7 +146,7 @@ static void handle_pat(void)
     }
 
     if (!pat_table_validate(pp_next_pat_sections)) {
-        printf("invalid PAT received");
+        printf("invalid PAT received\n");
         psi_table_free(pp_next_pat_sections);
         psi_table_init(pp_next_pat_sections);
         return;
@@ -170,7 +171,7 @@ static void handle_pat(void)
             if (i_sid == 0) {
                 if (i_pid != NIT_PID)
                     printf(
-                        "NIT is carried on PID %hu which isn't DVB compliant",
+                        "NIT is carried on PID %hu which isn't DVB compliant\n",
                         i_pid);
                 continue; /* NIT */
             }
@@ -242,7 +243,7 @@ static void handle_pat(void)
 static void handle_pat_section(uint16_t i_pid, uint8_t *p_section)
 {
     if (i_pid != PAT_PID || !pat_validate(p_section)) {
-        printf("invalid PAT section received on PID %hu", i_pid);
+        printf("invalid PAT section received on PID %hu\n", i_pid);
         free(p_section);
         return;
     }
@@ -264,7 +265,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
 
     /* we do this before checking the service ID */
     if (!pmt_validate(p_pmt)) {
-        printf("invalid PMT section received on PID %hu", i_pid);
+        printf("invalid PMT section received on PID %hu\n", i_pid);
         free(p_pmt);
         return;
     }
@@ -274,7 +275,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
             break;
 
     if (i == i_nb_sids) {
-        printf("ghost PMT for service %hu carried on PID %hu", i_sid, i_pid);
+        printf("ghost PMT for service %hu carried on PID %hu\n", i_sid, i_pid);
         p_sid = malloc(sizeof(sid_t));
         pp_sids = realloc(pp_sids, ++i_nb_sids * sizeof(sid_t *));
         pp_sids[i] = p_sid;
@@ -284,7 +285,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
     } else {
         p_sid = pp_sids[i];
         if (i_pid != p_sid->i_pmt_pid)
-            printf("ghost PMT for service %hu carried on PID %hu", i_sid,
+            printf("ghost PMT for service %hu carried on PID %hu\n", i_sid,
                    i_pid);
     }
 
@@ -316,7 +317,7 @@ static void handle_nit(void)
     }
 
     if (!nit_table_validate(pp_next_nit_sections)) {
-        printf("invalid NIT received");
+        printf("invalid NIT received\n");
         psi_table_free( pp_next_nit_sections );
         psi_table_init( pp_next_nit_sections );
         return;
@@ -334,7 +335,7 @@ static void handle_nit(void)
 static void handle_nit_section(uint16_t i_pid, uint8_t *p_section)
 {
     if (i_pid != NIT_PID || !nit_validate(p_section)) {
-        printf("invalid NIT section received on PID %hu", i_pid);
+        printf("invalid NIT section received on PID %hu\n", i_pid);
         free(p_section);
         return;
     }
@@ -360,7 +361,7 @@ static void handle_sdt(void)
     }
 
     if (!sdt_table_validate(pp_next_sdt_sections)) {
-        printf("invalid SDT received");
+        printf("invalid SDT received\n");
         psi_table_free(pp_next_sdt_sections);
         psi_table_init(pp_next_sdt_sections);
         return;
@@ -378,7 +379,7 @@ static void handle_sdt(void)
 static void handle_sdt_section(uint16_t i_pid, uint8_t *p_section)
 {
     if (i_pid != SDT_PID || !sdt_validate(p_section)) {
-        printf("invalid SDT section received on PID %hu", i_pid);
+        printf("invalid SDT section received on PID %hu\n", i_pid);
         free(p_section);
         return;
     }
@@ -397,7 +398,7 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
     uint8_t i_table_id = psi_get_tableid(p_section);
 
     if (!psi_validate(p_section)) {
-        printf("invalid section on PID %hu", i_pid);
+        printf("invalid section on PID %hu\n", i_pid);
         free(p_section);
         return;
     }
@@ -488,7 +489,7 @@ int main(int i_argc, char **ppsz_argv)
         size_t i_ret = fread(p_ts, sizeof(p_ts), 1, stdin);
         if (i_ret != 1) continue;
         if (!ts_validate(p_ts))
-            printf("invalid TS packet");
+            printf("invalid TS packet\n");
         else {
             uint16_t i_pid = ts_get_pid(p_ts);
             ts_pid_t *p_pid = &p_pids[i_pid];
