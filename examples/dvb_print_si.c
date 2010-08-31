@@ -469,7 +469,7 @@ int main(int i_argc, char **ppsz_argv)
         (!strcmp(ppsz_argv[1], "-h") || !strcmp(ppsz_argv[1], "--help"))) {
         fprintf(stderr, "usage: %s < <input file> [> <output>]\n",
                 ppsz_argv[0]);
-        return 1;
+        return EXIT_FAILURE;
     }
 
     memset(p_pids, 0, sizeof(p_pids));
@@ -499,5 +499,5 @@ int main(int i_argc, char **ppsz_argv)
         }
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
