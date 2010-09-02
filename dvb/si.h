@@ -207,7 +207,7 @@ static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
     if (i_length) {
         const char *psz_encoding = dvb_string_get_encoding(&p_string,
                                                            &i_length);
-        if (!*psz_encoding || !i_length) {
+        if (psz_encoding == NULL || !i_length) {
             /* try one-byte charset */
             char *psz_string = malloc(i_length + 1);
             memcpy(psz_string, p_string, i_length);
