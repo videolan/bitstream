@@ -391,6 +391,20 @@ static void handle_sdt_section(uint16_t i_pid, uint8_t *p_section)
 }
 
 /*****************************************************************************
+ * handle_eit
+ *****************************************************************************/
+static void handle_eit_section(uint16_t i_pid, uint8_t *p_eit)
+{
+    if (i_pid != EIT_PID || !eit_validate(p_eit)) {
+        printf("invalid EIT section received on PID %hu\n", i_pid);
+        free(p_eit);
+        return;
+    }
+
+    free(p_eit);
+}
+
+/*****************************************************************************
  * handle_section
  *****************************************************************************/
 static void handle_section(uint16_t i_pid, uint8_t *p_section)
@@ -421,6 +435,13 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
         break;
 
     default:
+        if (i_table_id == EIT_TABLE_ID_PF_ACTUAL ||
+           (i_table_id >= EIT_TABLE_ID_SCHED_ACTUAL_FIRST &&
+            i_table_id <= EIT_TABLE_ID_SCHED_ACTUAL_LAST)) {
+            handle_eit_section(i_pid, p_section);
+            break;
+        }
+
         free( p_section );
         break;
     }
@@ -483,6 +504,7 @@ int main(int i_argc, char **ppsz_argv)
     p_pids[PAT_PID].i_psi_refcount++;
     p_pids[NIT_PID].i_psi_refcount++;
     p_pids[SDT_PID].i_psi_refcount++;
+    p_pids[EIT_PID].i_psi_refcount++;
 
     while (!feof(stdin) && !ferror(stdin)) {
         uint8_t p_ts[TS_SIZE];
