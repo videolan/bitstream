@@ -131,14 +131,15 @@ ssize_t write_wrapper(const void *p_buf, size_t i_count)
  *****************************************************************************/
 static void send_channel_status(void)
 {
-    uint8_t p_tlv[MAX_TLV_SIZE];
+    uint8_t p_tlv_h[MAX_TLV_SIZE];
+    uint8_t *p_tlv = tlvh_get_tlv(p_tlv_h);
     uint8_t *p_tlv_n;
 
+    tlvh_set_version(p_tlv_h, i_version);
     ecmg_init(p_tlv);
-    tlv_set_version(p_tlv, i_version);
     tlv_set_type(p_tlv, ECMG_TYPE_CHANNEL_STATUS);
     /* length will be written at the end */
-    tlv_set_length(p_tlv, MAX_TLV_SIZE);
+    tlv_set_length(p_tlv, MAX_TLV_SIZE - TLV_HEADER_SIZE - TLVH_HEADER_SIZE);
 
     ecmg_append_channelid(p_tlv, i_channelid);
     ecmg_append_sectiontspkt(p_tlv, 0x0); /* sections */
@@ -153,7 +154,7 @@ static void send_channel_status(void)
 
     p_tlv_n = tlv_find_param(p_tlv, TLV_PARAM_EMPTY, 0);
     tlv_set_length(p_tlv, p_tlv_n - p_tlv - TLV_HEADER_SIZE);
-    write_wrapper(p_tlv, p_tlv_n - p_tlv);
+    write_wrapper(p_tlv_h, p_tlv_n - p_tlv_h);
 }
 
 /*****************************************************************************
@@ -161,22 +162,23 @@ static void send_channel_status(void)
  *****************************************************************************/
 static void send_channel_test(void)
 {
-    uint8_t p_tlv[MAX_TLV_SIZE];
+    uint8_t p_tlv_h[MAX_TLV_SIZE];
+    uint8_t *p_tlv = tlvh_get_tlv(p_tlv_h);
     uint8_t *p_tlv_n;
 
     fprintf(stderr, "sending test on channel ID=0x%hx\n", i_channelid);
 
+    tlvh_set_version(p_tlv_h, i_version);
     ecmg_init(p_tlv);
-    tlv_set_version(p_tlv, i_version);
     tlv_set_type(p_tlv, ECMG_TYPE_CHANNEL_TEST);
     /* length will be written at the end */
-    tlv_set_length(p_tlv, MAX_TLV_SIZE);
+    tlv_set_length(p_tlv, MAX_TLV_SIZE - TLV_HEADER_SIZE - TLVH_HEADER_SIZE);
 
     ecmg_append_channelid(p_tlv, i_channelid);
 
     p_tlv_n = tlv_find_param(p_tlv, TLV_PARAM_EMPTY, 0);
     tlv_set_length(p_tlv, p_tlv_n - p_tlv - TLV_HEADER_SIZE);
-    write_wrapper(p_tlv, p_tlv_n - p_tlv);
+    write_wrapper(p_tlv_h, p_tlv_n - p_tlv_h);
 }
 
 /*****************************************************************************
@@ -184,24 +186,25 @@ static void send_channel_test(void)
  *****************************************************************************/
 static void send_channel_error(uint16_t i_wanted_channelid, uint16_t i_error)
 {
-    uint8_t p_tlv[MAX_TLV_SIZE];
+    uint8_t p_tlv_h[MAX_TLV_SIZE];
+    uint8_t *p_tlv = tlvh_get_tlv(p_tlv_h);
     uint8_t *p_tlv_n;
 
     fprintf(stderr, "sending error on channel ID=0x%hx error=0x%hx\n",
             i_wanted_channelid, i_error);
 
+    tlvh_set_version(p_tlv_h, i_version);
     ecmg_init(p_tlv);
-    tlv_set_version(p_tlv, i_version);
     tlv_set_type(p_tlv, ECMG_TYPE_CHANNEL_ERROR);
     /* length will be written at the end */
-    tlv_set_length(p_tlv, MAX_TLV_SIZE);
+    tlv_set_length(p_tlv, MAX_TLV_SIZE - TLV_HEADER_SIZE - TLVH_HEADER_SIZE);
 
     ecmg_append_channelid(p_tlv, i_wanted_channelid);
     ecmg_append_errorstatus(p_tlv, i_error);
 
     p_tlv_n = tlv_find_param(p_tlv, TLV_PARAM_EMPTY, 0);
     tlv_set_length(p_tlv, p_tlv_n - p_tlv - TLV_HEADER_SIZE);
-    write_wrapper(p_tlv, p_tlv_n - p_tlv);
+    write_wrapper(p_tlv_h, p_tlv_n - p_tlv_h);
 }
 
 /*****************************************************************************
@@ -209,14 +212,15 @@ static void send_channel_error(uint16_t i_wanted_channelid, uint16_t i_error)
  *****************************************************************************/
 static void send_stream_status(stream_t *p_stream)
 {
-    uint8_t p_tlv[MAX_TLV_SIZE];
+    uint8_t p_tlv_h[MAX_TLV_SIZE];
+    uint8_t *p_tlv = tlvh_get_tlv(p_tlv_h);
     uint8_t *p_tlv_n;
 
+    tlvh_set_version(p_tlv_h, i_version);
     ecmg_init(p_tlv);
-    tlv_set_version(p_tlv, i_version);
     tlv_set_type(p_tlv, ECMG_TYPE_STREAM_STATUS);
     /* length will be written at the end */
-    tlv_set_length(p_tlv, MAX_TLV_SIZE);
+    tlv_set_length(p_tlv, MAX_TLV_SIZE - TLV_HEADER_SIZE - TLVH_HEADER_SIZE);
 
     ecmg_append_channelid(p_tlv, i_channelid);
     ecmg_append_streamid(p_tlv, p_stream->i_streamid);
@@ -226,7 +230,7 @@ static void send_stream_status(stream_t *p_stream)
 
     p_tlv_n = tlv_find_param(p_tlv, TLV_PARAM_EMPTY, 0);
     tlv_set_length(p_tlv, p_tlv_n - p_tlv - TLV_HEADER_SIZE);
-    write_wrapper(p_tlv, p_tlv_n - p_tlv);
+    write_wrapper(p_tlv_h, p_tlv_n - p_tlv_h);
 }
 
 /*****************************************************************************
@@ -234,21 +238,22 @@ static void send_stream_status(stream_t *p_stream)
  *****************************************************************************/
 static void send_stream_close(stream_t *p_stream)
 {
-    uint8_t p_tlv[MAX_TLV_SIZE];
+    uint8_t p_tlv_h[MAX_TLV_SIZE];
+    uint8_t *p_tlv = tlvh_get_tlv(p_tlv_h);
     uint8_t *p_tlv_n;
 
+    tlvh_set_version(p_tlv_h, i_version);
     ecmg_init(p_tlv);
-    tlv_set_version(p_tlv, i_version);
     tlv_set_type(p_tlv, ECMG_TYPE_STREAM_CLOSERESP);
     /* length will be written at the end */
-    tlv_set_length(p_tlv, MAX_TLV_SIZE);
+    tlv_set_length(p_tlv, MAX_TLV_SIZE - TLV_HEADER_SIZE - TLVH_HEADER_SIZE);
 
     ecmg_append_channelid(p_tlv, i_channelid);
     ecmg_append_streamid(p_tlv, p_stream->i_streamid);
 
     p_tlv_n = tlv_find_param(p_tlv, TLV_PARAM_EMPTY, 0);
     tlv_set_length(p_tlv, p_tlv_n - p_tlv - TLV_HEADER_SIZE);
-    write_wrapper(p_tlv, p_tlv_n - p_tlv);
+    write_wrapper(p_tlv_h, p_tlv_n - p_tlv_h);
 }
 
 /*****************************************************************************
@@ -256,17 +261,18 @@ static void send_stream_close(stream_t *p_stream)
  *****************************************************************************/
 static void send_stream_error(uint16_t i_wanted_streamid, uint16_t i_error)
 {
-    uint8_t p_tlv[MAX_TLV_SIZE];
+    uint8_t p_tlv_h[MAX_TLV_SIZE];
+    uint8_t *p_tlv = tlvh_get_tlv(p_tlv_h);
     uint8_t *p_tlv_n;
 
     fprintf(stderr, "sending error on stream ID=0x%hx error=0x%hx\n",
             i_wanted_streamid, i_error);
 
+    tlvh_set_version(p_tlv_h, i_version);
     ecmg_init(p_tlv);
-    tlv_set_version(p_tlv, i_version);
     tlv_set_type(p_tlv, ECMG_TYPE_STREAM_ERROR);
     /* length will be written at the end */
-    tlv_set_length(p_tlv, MAX_TLV_SIZE);
+    tlv_set_length(p_tlv, MAX_TLV_SIZE - TLV_HEADER_SIZE - TLVH_HEADER_SIZE);
 
     ecmg_append_channelid(p_tlv, i_channelid);
     ecmg_append_streamid(p_tlv, i_wanted_streamid);
@@ -274,7 +280,7 @@ static void send_stream_error(uint16_t i_wanted_streamid, uint16_t i_error)
 
     p_tlv_n = tlv_find_param(p_tlv, TLV_PARAM_EMPTY, 0);
     tlv_set_length(p_tlv, p_tlv_n - p_tlv - TLV_HEADER_SIZE);
-    write_wrapper(p_tlv, p_tlv_n - p_tlv);
+    write_wrapper(p_tlv_h, p_tlv_n - p_tlv_h);
 }
 
 /*****************************************************************************
@@ -283,14 +289,16 @@ static void send_stream_error(uint16_t i_wanted_streamid, uint16_t i_error)
 static void send_ecm(stream_t *p_stream, uint16_t i_cp_number,
                      const uint8_t *p_ecm, uint16_t i_length)
 {
-    uint8_t p_tlv[MAX_TLV_SIZE + i_length]; /* this is oversized */
+    uint8_t p_tlv_h[MAX_TLV_SIZE + i_length]; /* this is oversized */
+    uint8_t *p_tlv = tlvh_get_tlv(p_tlv_h);
     uint8_t *p_tlv_n;
 
+    tlvh_set_version(p_tlv_h, i_version);
     ecmg_init(p_tlv);
-    tlv_set_version(p_tlv, i_version);
     tlv_set_type(p_tlv, ECMG_TYPE_ECM);
     /* length will be written at the end */
-    tlv_set_length(p_tlv, MAX_TLV_SIZE + i_length);
+    tlv_set_length(p_tlv, MAX_TLV_SIZE - TLV_HEADER_SIZE - TLVH_HEADER_SIZE
+                           + i_length);
 
     ecmg_append_channelid(p_tlv, i_channelid);
     ecmg_append_streamid(p_tlv, p_stream->i_streamid);
@@ -299,7 +307,7 @@ static void send_ecm(stream_t *p_stream, uint16_t i_cp_number,
 
     p_tlv_n = tlv_find_param(p_tlv, TLV_PARAM_EMPTY, 0);
     tlv_set_length(p_tlv, p_tlv_n - p_tlv - TLV_HEADER_SIZE);
-    write_wrapper(p_tlv, p_tlv_n - p_tlv);
+    write_wrapper(p_tlv_h, p_tlv_n - p_tlv_h);
 }
 
 /*****************************************************************************
@@ -356,7 +364,6 @@ static void handle_channel_setup(uint8_t *p_tlv)
         return;
     }
 
-    i_version = tlv_get_version(p_tlv);
     i_channelid = i_wanted_channelid;
     i_supercasid = ecmg_find_supercasid(p_tlv, 0);
 
@@ -610,7 +617,8 @@ int main(int i_argc, char **ppsz_argv)
     }
 
     for ( ; ; ) {
-        uint8_t *p_tlv = malloc(TLV_HEADER_SIZE);
+        uint8_t *p_tlv_h = malloc(TLVH_HEADER_SIZE + TLV_HEADER_SIZE);
+        uint8_t *p_tlv = tlvh_get_tlv(p_tlv_h);
         uint16_t i_type;
         fd_set rset;
         struct timeval timeout;
@@ -631,41 +639,46 @@ int main(int i_argc, char **ppsz_argv)
             continue;
         }
 
-        if (read_wrapper(p_tlv, TLV_HEADER_SIZE) <= 0)
+        if (read_wrapper(p_tlv_h, TLVH_HEADER_SIZE + TLV_HEADER_SIZE) <= 0)
             return EXIT_FAILURE;
 
-        p_tlv = realloc(p_tlv, TLV_HEADER_SIZE + tlv_get_length(p_tlv));
+        p_tlv_h = realloc(p_tlv_h, TLVH_HEADER_SIZE + TLV_HEADER_SIZE
+                                    + tlv_get_length(p_tlv));
+        p_tlv = tlvh_get_tlv(p_tlv_h);
         if (read_wrapper(p_tlv + TLV_HEADER_SIZE, tlv_get_length(p_tlv)) <= 0)
             return EXIT_FAILURE;
+
+        if ((b_init && tlvh_get_version(p_tlv_h) > 3) ||
+            (!b_init && tlvh_get_version(p_tlv_h) != i_version)) {
+            send_channel_error(i_channelid, 0x2);
+            free(p_tlv_h);
+            continue;
+        }
 
         i_type = tlv_get_type(p_tlv);
 
         if (!tlv_validate(p_tlv)) {
             send_channel_error(i_channelid, 0x1);
-            free(p_tlv);
+            free(p_tlv_h);
             continue;
         }
 
         if (!ecmg_validate(p_tlv)) {
             send_channel_error(i_channelid, 0xf);
-            free(p_tlv);
+            free(p_tlv_h);
             continue;
         }
 
         if (b_init && i_type != ECMG_TYPE_CHANNEL_SETUP) {
             send_channel_error(i_channelid, 0x6);
-            free(p_tlv);
-            continue;
-        }
-
-        if (tlv_get_version(p_tlv) > 3) {
-            send_channel_error(i_channelid, 0x2);
-            free(p_tlv);
+            free(p_tlv_h);
             continue;
         }
 
         switch (i_type) {
             case ECMG_TYPE_CHANNEL_SETUP:
+                if (b_init)
+                    i_version = tlvh_get_version(p_tlv_h);
                 handle_channel_setup(p_tlv);
                 break;
 
@@ -710,7 +723,7 @@ int main(int i_argc, char **ppsz_argv)
                 break;
         }
 
-        free(p_tlv);
+        free(p_tlv_h);
     }
 
     return EXIT_SUCCESS;

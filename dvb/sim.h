@@ -31,8 +31,8 @@ extern "C"
 /*****************************************************************************
  * Generic "Type, Length, Value" message
  *****************************************************************************/
-#define TLV_HEADER_SIZE         5
-#define TLV_PARAM_SIZE          4
+#define TLVH_HEADER_SIZE        1
+#define TLV_HEADER_SIZE         4
 
 #define TLV_PARAM_EMPTY         0
 #define TLV_PARAM_EMPTY_SIZE    2
@@ -43,72 +43,55 @@ typedef struct tlv_param_count_t {
     uint16_t i_max;
 } tlv_param_count_t;
 
-static inline void tlv_append_empty(uint8_t *p_tlv)
+static inline void tlvh_set_version(uint8_t *p_tlv, uint8_t i_version)
+{
+    p_tlv[0] = i_version;
+}
+
+static inline uint8_t tlvh_get_version(uint8_t *p_tlv)
+{
+    return p_tlv[0];
+}
+
+static inline uint8_t *tlvh_get_tlv(uint8_t *p_tlv)
+{
+    return p_tlv + 1;
+}
+
+static inline void tlv_set_type(uint8_t *p_tlv, uint16_t i_type)
+{
+    p_tlv[0] = i_type >> 8;
+    p_tlv[1] = i_type & 0xff;
+}
+
+static inline uint16_t tlv_get_type(uint8_t *p_tlv)
+{
+    return (p_tlv[0] << 8) | p_tlv[1];
+}
+
+static inline void tlv_set_length(uint8_t *p_tlv, uint16_t i_length)
+{
+    p_tlv[2] = i_length >> 8;
+    p_tlv[3] = i_length & 0xff;
+}
+
+static inline uint16_t tlv_get_length(uint8_t *p_tlv)
+{
+    return (p_tlv[2] << 8) | p_tlv[3];
+}
+
+static inline void tlv_empty(uint8_t *p_tlv)
 {
     /* prepare a dummy parameter for later appending */
     p_tlv[TLV_HEADER_SIZE] = TLV_PARAM_EMPTY >> 8;
     p_tlv[TLV_HEADER_SIZE + 1] = TLV_PARAM_EMPTY & 0xff;
 }
 
-static inline void tlv_set_version(uint8_t *p_tlv, uint8_t i_version)
+static inline void tlv_append_empty(uint8_t *p_tlv)
 {
-    p_tlv[0] = i_version;
-}
-
-static inline uint8_t tlv_get_version(uint8_t *p_tlv)
-{
-    return p_tlv[0];
-}
-
-static inline void tlv_set_type(uint8_t *p_tlv, uint16_t i_type)
-{
-    p_tlv[1] = i_type >> 8;
-    p_tlv[2] = i_type & 0xff;
-}
-
-static inline uint16_t tlv_get_type(uint8_t *p_tlv)
-{
-    return (p_tlv[1] << 8) | p_tlv[2];
-}
-
-static inline void tlv_set_length(uint8_t *p_tlv, uint16_t i_length)
-{
-    p_tlv[3] = i_length >> 8;
-    p_tlv[4] = i_length & 0xff;
-}
-
-static inline uint16_t tlv_get_length(uint8_t *p_tlv)
-{
-    return (p_tlv[3] << 8) | p_tlv[4];
-}
-
-static inline void tlvn_set_type(uint8_t *p_tlv_n, uint16_t i_type)
-{
-    p_tlv_n[0] = i_type >> 8;
-    p_tlv_n[1] = i_type & 0xff;
-}
-
-static inline uint16_t tlvn_get_type(uint8_t *p_tlv_n)
-{
-    return (p_tlv_n[0] << 8) | p_tlv_n[1];
-}
-
-static inline void tlvn_set_length(uint8_t *p_tlv_n, uint16_t i_length)
-{
-    p_tlv_n[2] = i_length >> 8;
-    p_tlv_n[3] = i_length & 0xff;
-}
-
-static inline uint16_t tlvn_get_length(uint8_t *p_tlv_n)
-{
-    return (p_tlv_n[2] << 8) | p_tlv_n[3];
-}
-
-static inline void tlvn_append_empty(uint8_t *p_tlv_n)
-{
-    uint16_t i_length = tlvn_get_length(p_tlv_n);
-    p_tlv_n[TLV_PARAM_SIZE + i_length] = TLV_PARAM_EMPTY >> 8;
-    p_tlv_n[TLV_PARAM_SIZE + i_length + 1] = TLV_PARAM_EMPTY & 0xff;
+    uint16_t i_length = tlv_get_length(p_tlv);
+    p_tlv[TLV_HEADER_SIZE + i_length] = TLV_PARAM_EMPTY >> 8;
+    p_tlv[TLV_HEADER_SIZE + i_length + 1] = TLV_PARAM_EMPTY & 0xff;
 }
 
 static inline uint8_t *tlv_get_param(uint8_t *p_tlv, uint16_t n)
@@ -118,9 +101,9 @@ static inline uint8_t *tlv_get_param(uint8_t *p_tlv, uint16_t n)
     if (p_tlv_n - p_tlv - TLV_HEADER_SIZE > i_tlv_size) return NULL;
 
     while (n) {
-        if (p_tlv_n + TLV_PARAM_SIZE - p_tlv - TLV_HEADER_SIZE > i_tlv_size)
+        if (p_tlv_n - p_tlv > i_tlv_size)
             return NULL;
-        p_tlv_n += TLV_PARAM_SIZE + tlvn_get_length(p_tlv_n);
+        p_tlv_n += TLV_HEADER_SIZE + tlv_get_length(p_tlv_n);
         n--;
     }
     if (p_tlv_n - p_tlv - TLV_HEADER_SIZE >= i_tlv_size) return NULL;
@@ -131,8 +114,7 @@ static inline bool tlv_validate_param(const uint8_t *p_tlv,
                                       const uint8_t *p_tlv_n, uint16_t i_length)
 {
     uint16_t i_tlv_size = tlv_get_length(p_tlv);
-    return (p_tlv_n + TLV_PARAM_SIZE + i_length - p_tlv - TLV_HEADER_SIZE
-             <= i_tlv_size);
+    return (p_tlv_n + i_length - p_tlv <= i_tlv_size);
 }
 
 static inline bool tlv_validate(const uint8_t *p_tlv)
@@ -140,10 +122,9 @@ static inline bool tlv_validate(const uint8_t *p_tlv)
     uint16_t i_tlv_size = tlv_get_length(p_tlv);
     const uint8_t *p_tlv_n = p_tlv + TLV_HEADER_SIZE;
 
-    while (p_tlv_n + TLV_PARAM_SIZE - p_tlv - TLV_HEADER_SIZE <= i_tlv_size
-            && p_tlv_n + TLV_PARAM_SIZE + tlvn_get_length(p_tlv_n)
-                - p_tlv - TLV_HEADER_SIZE <= i_tlv_size)
-        p_tlv_n += TLV_PARAM_SIZE + tlvn_get_length(p_tlv_n);
+    while (p_tlv_n - p_tlv <= i_tlv_size
+            && p_tlv_n + tlv_get_length(p_tlv_n) - p_tlv <= i_tlv_size)
+        p_tlv_n += TLV_HEADER_SIZE + tlv_get_length(p_tlv_n);
 
     return (p_tlv_n - p_tlv - TLV_HEADER_SIZE == i_tlv_size);
 }
@@ -156,7 +137,7 @@ static inline uint8_t *tlv_find_param(uint8_t *p_tlv, uint16_t i_type,
 
     while ((p_param = tlv_get_param(p_tlv, j)) != NULL) {
         j++;
-        if (tlvn_get_type(p_param) == i_type) {
+        if (tlv_get_type(p_param) == i_type) {
             if (!n) return p_param;
             n--;
         }
@@ -173,7 +154,7 @@ static inline uint16_t tlv_count_param(uint8_t *p_tlv, uint16_t i_type)
 
     while ((p_tlv_n = tlv_get_param(p_tlv, j)) != NULL) {
         j++;
-        if (tlvn_get_type(p_tlv_n) == i_type)
+        if (tlv_get_type(p_tlv_n) == i_type)
             i_count++;
     }
     return i_count;
@@ -194,12 +175,12 @@ static inline bool intf##_append_##name(uint8_t *p_tlv, type i_##name)      \
     if (!tlv_validate_param(p_tlv, p_tlv_n,                                 \
                             sizeof(type) + TLV_PARAM_EMPTY_SIZE))           \
         return false;                                                       \
-    tlvn_set_type(p_tlv_n, param);                                          \
-    tlvn_set_length(p_tlv_n, sizeof(type));                                 \
+    tlv_set_type(p_tlv_n, param);                                           \
+    tlv_set_length(p_tlv_n, sizeof(type));                                  \
     for (i = 0; i < sizeof(type); i++)                                      \
         p_tlv_n[4 + i] = ((utype)(i_##name) >> 8 * (sizeof(type) - i - 1))  \
                            & 0xff;                                          \
-    tlvn_append_empty(p_tlv_n);                                             \
+    tlv_append_empty(p_tlv_n);                                              \
     return true;                                                            \
 }                                                                           \
                                                                             \
@@ -221,10 +202,10 @@ static inline bool tlv_append_data(uint8_t *p_tlv, uint16_t i_type,
     if (!tlv_validate_param(p_tlv, p_tlv_n,
                             i_length + TLV_PARAM_EMPTY_SIZE))
         return false;
-    tlvn_set_type(p_tlv_n, i_type);
-    tlvn_set_length(p_tlv_n, i_length);
+    tlv_set_type(p_tlv_n, i_type);
+    tlv_set_length(p_tlv_n, i_length);
     memcpy(p_tlv_n + 4, p_data, i_length);
-    tlvn_append_empty(p_tlv_n);
+    tlv_append_empty(p_tlv_n);
     return true;
 }
 
@@ -232,7 +213,7 @@ static inline uint8_t *tlv_find_data(uint8_t *p_tlv, uint16_t i_type,
                                      uint16_t n, uint16_t *pi_length)
 {
     const uint8_t *p_tlv_n = tlv_find_param(p_tlv, i_type, n);
-    *pi_length = tlvn_get_length(p_tlv_n);
+    *pi_length = tlv_get_length(p_tlv_n);
     return p_tlv_n + 4;
 }
 
@@ -285,7 +266,7 @@ static inline uint8_t *tlv_find_data(uint8_t *p_tlv, uint16_t i_type,
 
 static inline void ecmg_init(uint8_t *p_tlv)
 {
-    tlv_append_empty(p_tlv);
+    tlv_empty(p_tlv);
 }
 
 TLV_DECLARE_PARAM(ecmg, supercasid, ECMG_PARAM_SUPERCASID, uint32_t, uint32_t)
@@ -339,8 +320,8 @@ static inline bool ecmg_validate_param(const uint8_t *p_tlv_n)
         /* 0x10 */ 2, 1, 2, 2, 0, 0, 2, 2,
         /* 0x18 */ 0, 2
     };
-    uint16_t i_type = tlvn_get_type(p_tlv_n);
-    uint16_t i_length = tlvn_get_length(p_tlv_n);
+    uint16_t i_type = tlv_get_type(p_tlv_n);
+    uint16_t i_length = tlv_get_length(p_tlv_n);
 
     if (i_type <= ECMG_PARAM_ECMID) {
         if (i_length < pi_ecmg_params_minlength[i_type]) return false;
