@@ -707,7 +707,7 @@ static inline bool psi_table_compare(uint8_t **pp_sections1,
     if (i_last_section != psi_table_get_lastsection(pp_sections2))
         return false;
 
-    for (i = 0; i < i_last_section; i++) {
+    for (i = 0; i <= i_last_section; i++) {
         const uint8_t *p_section1 = psi_table_get_section(pp_sections1, i);
         const uint8_t *p_section2 = psi_table_get_section(pp_sections2, i);
         if (!psi_compare(p_section1, p_section2))
