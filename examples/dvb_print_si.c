@@ -455,7 +455,7 @@ static void handle_psi_packet(uint8_t *p_ts)
     uint16_t i_pid = ts_get_pid(p_ts);
     ts_pid_t *p_pid = &p_pids[i_pid];
     uint8_t i_cc = ts_get_cc(p_ts);
-    const uint8_t *p_payload = ts_payload(p_ts);
+    const uint8_t *p_payload;
     uint8_t i_length;
 
     if (ts_check_duplicate(i_cc, p_pid->i_last_cc) || !ts_has_payload(p_ts))
@@ -465,9 +465,18 @@ static void handle_psi_packet(uint8_t *p_ts)
           && ts_check_discontinuity(i_cc, p_pid->i_last_cc))
         psi_assemble_reset(&p_pid->p_psi_buffer, &p_pid->i_psi_buffer_used);
 
-    if (psi_assemble_empty(&p_pid->p_psi_buffer, &p_pid->i_psi_buffer_used))
-        p_payload = ts_section(p_ts);
+    p_payload = ts_section(p_ts);
+    i_length = p_ts + TS_SIZE - p_payload;
 
+    if (!psi_assemble_empty(&p_pid->p_psi_buffer, &p_pid->i_psi_buffer_used)) {
+        uint8_t *p_section = psi_assemble_payload(&p_pid->p_psi_buffer,
+                                                  &p_pid->i_psi_buffer_used,
+                                                  &p_payload, &i_length);
+        if (p_section != NULL)
+            handle_section(i_pid, p_section);
+    }
+
+    p_payload = ts_next_section( p_ts );
     i_length = p_ts + TS_SIZE - p_payload;
 
     while (i_length) {
