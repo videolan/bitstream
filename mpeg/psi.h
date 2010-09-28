@@ -539,7 +539,7 @@ static inline uint8_t *psi_assemble_payload(uint8_t **pp_psi_buffer,
         *pp_psi_buffer = psi_private_allocate();
     }
 
-    memcpy( *pp_psi_buffer + *pi_psi_buffer_used, *pp_payload, i_copy_size );
+    memcpy(*pp_psi_buffer + *pi_psi_buffer_used, *pp_payload, i_copy_size);
     *pi_psi_buffer_used += i_copy_size;
 
     if (*pi_psi_buffer_used >= PSI_HEADER_SIZE) {

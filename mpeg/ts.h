@@ -167,6 +167,14 @@ static inline uint8_t *ts_payload(uint8_t *p_ts)
 
 static inline uint8_t *ts_section(uint8_t *p_ts)
 {
+    if (!ts_get_unitstart(p_ts))
+        return ts_payload(p_ts);
+
+    return ts_payload(p_ts) + 1; /* pointer_field */
+}
+
+static inline uint8_t *ts_next_section(uint8_t *p_ts)
+{
     uint8_t *p_payload;
 
     if (!ts_get_unitstart(p_ts))
