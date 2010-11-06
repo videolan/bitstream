@@ -62,6 +62,7 @@ static PSI_TABLE_DECLARE(pp_next_sdt_sections);
 static const char *psz_native_encoding = "UTF-8";
 static const char *psz_current_encoding = "";
 static iconv_t iconv_handle = (iconv_t)-1;
+static print_type_t i_print_type = PRINT_TEXT;
 
 /*****************************************************************************
  * print_wrapper
@@ -146,7 +147,13 @@ static void handle_pat(void)
     }
 
     if (!pat_table_validate(pp_next_pat_sections)) {
-        printf("invalid PAT received\n");
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_pat\"/>\n");
+            break;
+        default:
+            printf("invalid PAT received\n");
+        }
         psi_table_free(pp_next_pat_sections);
         psi_table_init(pp_next_pat_sections);
         return;
@@ -170,7 +177,7 @@ static void handle_pat(void)
 
             if (i_sid == 0) {
                 if (i_pid != NIT_PID)
-                    printf(
+                    fprintf(stderr,
                         "NIT is carried on PID %hu which isn't DVB compliant\n",
                         i_pid);
                 continue; /* NIT */
@@ -237,13 +244,19 @@ static void handle_pat(void)
         psi_table_free(pp_old_pat_sections);
     }
 
-    pat_table_print( pp_current_pat_sections, print_wrapper, NULL );
+    pat_table_print(pp_current_pat_sections, print_wrapper, NULL, i_print_type);
 }
 
 static void handle_pat_section(uint16_t i_pid, uint8_t *p_section)
 {
     if (i_pid != PAT_PID || !pat_validate(p_section)) {
-        printf("invalid PAT section received on PID %hu\n", i_pid);
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_pat_section\"/>\n");
+            break;
+        default:
+            printf("invalid PAT section received on PID %hu\n", i_pid);
+        }
         free(p_section);
         return;
     }
@@ -265,7 +278,14 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
 
     /* we do this before checking the service ID */
     if (!pmt_validate(p_pmt)) {
-        printf("invalid PMT section received on PID %hu\n", i_pid);
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_pmt_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid PMT section received on PID %hu\n", i_pid);
+        }
         free(p_pmt);
         return;
     }
@@ -275,7 +295,15 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
             break;
 
     if (i == i_nb_sids) {
-        printf("ghost PMT for service %hu carried on PID %hu\n", i_sid, i_pid);
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"ghost_pmt\" program=\"%hu\n pid=\"%hu\"/>\n",
+                   i_sid, i_pid);
+            break;
+        default:
+            printf("ghost PMT for service %hu carried on PID %hu\n", i_sid,
+                   i_pid);
+        }
         p_sid = malloc(sizeof(sid_t));
         pp_sids = realloc(pp_sids, ++i_nb_sids * sizeof(sid_t *));
         pp_sids[i] = p_sid;
@@ -284,9 +312,17 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
         p_sid->p_current_pmt = NULL;
     } else {
         p_sid = pp_sids[i];
-        if (i_pid != p_sid->i_pmt_pid)
-            printf("ghost PMT for service %hu carried on PID %hu\n", i_sid,
-                   i_pid);
+        if (i_pid != p_sid->i_pmt_pid) {
+            switch (i_print_type) {
+            case PRINT_XML:
+                printf("<ERROR type=\"ghost_pmt\" program=\"%hu\n pid=\"%hu\"/>\n",
+                       i_sid, i_pid);
+                break;
+            default:
+                printf("ghost PMT for service %hu carried on PID %hu\n", i_sid,
+                       i_pid);
+            }
+        }
     }
 
     if (p_sid->p_current_pmt != NULL &&
@@ -299,7 +335,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
     free(p_sid->p_current_pmt);
     p_sid->p_current_pmt = p_pmt;
 
-    pmt_print(p_pmt, print_wrapper, NULL, iconv_wrapper, NULL);
+    pmt_print(p_pmt, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
 }
 
 /*****************************************************************************
@@ -317,7 +353,13 @@ static void handle_nit(void)
     }
 
     if (!nit_table_validate(pp_next_nit_sections)) {
-        printf("invalid NIT received\n");
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_nit\"/>\n");
+            break;
+        default:
+            printf("invalid NIT received\n");
+        }
         psi_table_free( pp_next_nit_sections );
         psi_table_init( pp_next_nit_sections );
         return;
@@ -329,13 +371,20 @@ static void handle_nit(void)
     psi_table_init(pp_next_nit_sections);
 
     nit_table_print(pp_current_nit_sections, print_wrapper, NULL,
-                    iconv_wrapper, NULL);
+                    iconv_wrapper, NULL, i_print_type);
 }
 
 static void handle_nit_section(uint16_t i_pid, uint8_t *p_section)
 {
     if (i_pid != NIT_PID || !nit_validate(p_section)) {
-        printf("invalid NIT section received on PID %hu\n", i_pid);
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_nit_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid NIT section received on PID %hu\n", i_pid);
+        }
         free(p_section);
         return;
     }
@@ -361,7 +410,13 @@ static void handle_sdt(void)
     }
 
     if (!sdt_table_validate(pp_next_sdt_sections)) {
-        printf("invalid SDT received\n");
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_sdt\"/>\n");
+            break;
+        default:
+            printf("invalid SDT received\n");
+        }
         psi_table_free(pp_next_sdt_sections);
         psi_table_init(pp_next_sdt_sections);
         return;
@@ -373,13 +428,20 @@ static void handle_sdt(void)
     psi_table_init(pp_next_sdt_sections);
 
     sdt_table_print(pp_current_sdt_sections, print_wrapper, NULL,
-                    iconv_wrapper, NULL);
+                    iconv_wrapper, NULL, i_print_type);
 }
 
 static void handle_sdt_section(uint16_t i_pid, uint8_t *p_section)
 {
     if (i_pid != SDT_PID || !sdt_validate(p_section)) {
-        printf("invalid SDT section received on PID %hu\n", i_pid);
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_sdt_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid SDT section received on PID %hu\n", i_pid);
+        }
         free(p_section);
         return;
     }
@@ -396,7 +458,14 @@ static void handle_sdt_section(uint16_t i_pid, uint8_t *p_section)
 static void handle_eit_section(uint16_t i_pid, uint8_t *p_eit)
 {
     if (i_pid != EIT_PID || !eit_validate(p_eit)) {
-        printf("invalid EIT section received on PID %hu\n", i_pid);
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_eit_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid EIT section received on PID %hu\n", i_pid);
+        }
         free(p_eit);
         return;
     }
@@ -412,7 +481,13 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
     uint8_t i_table_id = psi_get_tableid(p_section);
 
     if (!psi_validate(p_section)) {
-        printf("invalid section on PID %hu\n", i_pid);
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_section\" pid=\"%hu\"/>\n", i_pid);
+            break;
+        default:
+            printf("invalid section on PID %hu\n", i_pid);
+        }
         free(p_section);
         return;
     }
@@ -491,15 +566,30 @@ static void handle_psi_packet(uint8_t *p_ts)
 /*****************************************************************************
  * Main loop
  *****************************************************************************/
+static void usage(const char *psz)
+{
+    fprintf(stderr, "usage: %s [-x xml] < <input file> [> <output>]\n", psz);
+    exit(EXIT_FAILURE);
+}
+
 int main(int i_argc, char **ppsz_argv)
 {
     int i;
 
     if (ppsz_argv[1] != NULL &&
-        (!strcmp(ppsz_argv[1], "-h") || !strcmp(ppsz_argv[1], "--help"))) {
-        fprintf(stderr, "usage: %s < <input file> [> <output>]\n",
-                ppsz_argv[0]);
-        return EXIT_FAILURE;
+        (!strcmp(ppsz_argv[1], "-h") || !strcmp(ppsz_argv[1], "--help")))
+        usage(ppsz_argv[0]);
+
+    if (ppsz_argv[1] != NULL &&
+        (!strcmp(ppsz_argv[1], "-x") || !strcmp(ppsz_argv[1], "--print"))) {
+        if (ppsz_argv[2] == NULL)
+            usage(ppsz_argv[0]);
+        if (!strcmp(ppsz_argv[2], "text"))
+            i_print_type = PRINT_TEXT;
+        else if (!strcmp(ppsz_argv[2], "xml"))
+            i_print_type = PRINT_XML;
+        else
+            usage(ppsz_argv[0]);
     }
 
     memset(p_pids, 0, sizeof(p_pids));
@@ -515,19 +605,42 @@ int main(int i_argc, char **ppsz_argv)
     p_pids[SDT_PID].i_psi_refcount++;
     p_pids[EIT_PID].i_psi_refcount++;
 
+    switch (i_print_type) {
+    case PRINT_XML:
+        printf("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        printf("<TS>\n");
+        break;
+    default:
+        break;
+    }
+
     while (!feof(stdin) && !ferror(stdin)) {
         uint8_t p_ts[TS_SIZE];
         size_t i_ret = fread(p_ts, sizeof(p_ts), 1, stdin);
         if (i_ret != 1) continue;
-        if (!ts_validate(p_ts))
-            printf("invalid TS packet\n");
-        else {
+        if (!ts_validate(p_ts)) {
+            switch (i_print_type) {
+            case PRINT_XML:
+                printf("<ERROR type=\"invalid_ts\"/>\n");
+                break;
+            default:
+                printf("invalid TS packet\n");
+            }
+        } else {
             uint16_t i_pid = ts_get_pid(p_ts);
             ts_pid_t *p_pid = &p_pids[i_pid];
             if (p_pid->i_psi_refcount)
                 handle_psi_packet(p_ts);
             p_pid->i_last_cc = ts_get_cc(p_ts);
         }
+    }
+
+    switch (i_print_type) {
+    case PRINT_XML:
+        printf("</TS>\n");
+        break;
+    default:
+        break;
     }
 
     return EXIT_SUCCESS;

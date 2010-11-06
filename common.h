@@ -21,6 +21,11 @@ extern "C"
 {
 #endif
 
+typedef enum print_type_t {
+    PRINT_TEXT,
+    PRINT_XML
+} print_type_t;
+
 typedef void (*f_print)(void *, const char *, ...);
 typedef char * (*f_iconv)(void *, const char *, char *, size_t);
 

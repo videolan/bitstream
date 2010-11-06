@@ -275,7 +275,8 @@ static inline bool desc40_validate(const uint8_t *p_desc)
 
 static inline void desc40_print(const uint8_t *p_desc,
                                 f_print pf_print, void *print_opaque,
-                                f_iconv pf_iconv, void *iconv_opaque)
+                                f_iconv pf_iconv, void *iconv_opaque,
+                                print_type_t i_print_type)
 {
     uint8_t i_network_name_length;
     const uint8_t *p_network_name = desc40_get_networkname(p_desc,
@@ -284,7 +285,15 @@ static inline void desc40_print(const uint8_t *p_desc,
                                             i_network_name_length,
                                             pf_iconv, iconv_opaque);
 
-    pf_print(print_opaque, "    - desc 40 networkname=\"%s\"", psz_network_name);
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(print_opaque, "<NETWORK_NAME_DESC networkname=\"%s\"/>",
+                 psz_network_name);
+        break;
+    default:
+        pf_print(print_opaque, "    - desc 40 networkname=\"%s\"",
+                 psz_network_name);
+    }
     free(psz_network_name);
 }
 
@@ -344,7 +353,7 @@ static inline bool desc43_validate(const uint8_t *p_desc)
 }
 
 static inline void desc43_print(const uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
     unsigned int i_pos = desc43_get_position(p_desc);
     uint8_t i_polarization = desc43_get_polarization(p_desc);
@@ -373,20 +382,39 @@ static inline void desc43_print(const uint8_t *p_desc, f_print pf_print,
         case 0x3: psz_modulation = "16-qam"; break;
     }
 
-    if (desc43_get_dvbs2(p_desc))
-        pf_print(opaque,
-         "    - desc 43 dvb-s2 frequency=%u kHz %s pos=%u.%u%c rolloff=0.%hhu modulation=%s symbolrate=%u fecinner=%s",
-         desc43_get_frequency(p_desc), psz_polarization, i_pos / 10, i_pos % 10,
-         desc43_get_east(p_desc) ? 'E' : 'W', i_rolloff, psz_modulation,
-         desc43_get_symbolrate(p_desc),
-         dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
-    else
-        pf_print(opaque,
-         "    - desc 43 dvb-s frequency=%u%s pos=%u.%u%c modulation=%s symbolrate=%u fecinner=%s",
-         desc43_get_frequency(p_desc), psz_polarization, i_pos / 10, i_pos % 10,
-         desc43_get_east(p_desc) ? 'E' : 'W', psz_modulation,
-         desc43_get_symbolrate(p_desc),
-         dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+    switch (i_print_type) {
+    case PRINT_XML:
+        if (desc43_get_dvbs2(p_desc))
+            pf_print(opaque,
+             "<SATELLITE_DESC s2=\"1\" frequency=\"%u%s\" pos=\"%u.%u%c\" rolloff=\"0.%hhu\" modulation=\"%s\" symbolrate=\"%u\" fecinner=\"%s\"/>",
+             desc43_get_frequency(p_desc), psz_polarization,
+             i_pos / 10, i_pos % 10, desc43_get_east(p_desc) ? 'E' : 'W',
+             i_rolloff, psz_modulation, desc43_get_symbolrate(p_desc),
+             dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+        else
+            pf_print(opaque,
+             "<SATELLITE_DESC s2=\"0\" frequency=\"%u%s\" pos=\"%u.%u%c\" modulation=\"%s\" symbolrate=\"%u\" fecinner=\"%s\"/>",
+             desc43_get_frequency(p_desc), psz_polarization,
+             i_pos / 10, i_pos % 10, desc43_get_east(p_desc) ? 'E' : 'W',
+             psz_modulation, desc43_get_symbolrate(p_desc),
+             dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+        break;
+    default:
+        if (desc43_get_dvbs2(p_desc))
+            pf_print(opaque,
+             "    - desc 43 dvb-s2 frequency=%u%s pos=%u.%u%c rolloff=0.%hhu modulation=%s symbolrate=%u fecinner=%s",
+             desc43_get_frequency(p_desc), psz_polarization,
+             i_pos / 10, i_pos % 10, desc43_get_east(p_desc) ? 'E' : 'W',
+             i_rolloff, psz_modulation, desc43_get_symbolrate(p_desc),
+             dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+        else
+            pf_print(opaque,
+             "    - desc 43 dvb-s frequency=%u%s pos=%u.%u%c modulation=%s symbolrate=%u fecinner=%s",
+             desc43_get_frequency(p_desc), psz_polarization,
+             i_pos / 10, i_pos % 10, desc43_get_east(p_desc) ? 'E' : 'W',
+             psz_modulation, desc43_get_symbolrate(p_desc),
+             dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+    }
 }
 
 /*****************************************************************************
@@ -418,7 +446,7 @@ static inline bool desc44_validate(const uint8_t *p_desc)
 }
 
 static inline void desc44_print(const uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
     uint8_t i_fecouter = desc44_get_fecouter(p_desc);
     const char *psz_fecouter = "reserved";
@@ -440,11 +468,21 @@ static inline void desc44_print(const uint8_t *p_desc, f_print pf_print,
         case 0x5: psz_modulation = "256-qam"; break;
     }
 
-    pf_print(opaque,
-         "    - desc 44 dvb-c frequency=%"PRIu64" Hz fecouter=0x%s modulation=0x%s symbolrate=%u fecinner=%s",
-         desc44_get_frequency(p_desc), psz_fecouter, psz_modulation,
-         desc44_get_symbolrate(p_desc),
-         dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque,
+             "<CABLE_DESC frequency=\"%"PRIu64"\" fecouter=\"0x%s\" modulation=\"0x%s\" symbolrate=\"%u\" fecinner=\"%s\"/>",
+             desc44_get_frequency(p_desc), psz_fecouter, psz_modulation,
+             desc44_get_symbolrate(p_desc),
+             dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+        break;
+    default:
+        pf_print(opaque,
+             "    - desc 44 dvb-c frequency=%"PRIu64" Hz fecouter=0x%s modulation=0x%s symbolrate=%u fecinner=%s",
+             desc44_get_frequency(p_desc), psz_fecouter, psz_modulation,
+             desc44_get_symbolrate(p_desc),
+             dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
+    }
 }
 
 /*****************************************************************************
@@ -509,19 +547,31 @@ static inline bool desc46_validate(const uint8_t *p_desc)
 }
 
 static inline void desc46_print(uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
     uint8_t j = 0;
     uint8_t *p_desc_n;
 
     while ((p_desc_n = desc46_get_language(p_desc, j)) != NULL) {
         j++;
-        pf_print(opaque,
-             "    - desc %x telx language=%3.3s type=0x%hhx mag=%hhu page=%hhu",
-             desc_get_tag(p_desc), (const char *)desc46n_get_code(p_desc_n),
-             desc46n_get_teletexttype(p_desc_n),
-             desc46n_get_teletextmagazine(p_desc_n),
-             desc46n_get_teletextpage(p_desc_n));
+        switch (i_print_type) {
+        case PRINT_XML:
+            pf_print(opaque,
+                 "<%s language=%3.3s type=\"0x%hhx\" mag=\"%hhu\" page=\"%hhu\"/>",
+                 desc_get_tag(p_desc) == 0x46 ? "VBI_TELX_DESC" : "TELX_DESC",
+                 (const char *)desc46n_get_code(p_desc_n),
+                 desc46n_get_teletexttype(p_desc_n),
+                 desc46n_get_teletextmagazine(p_desc_n),
+                 desc46n_get_teletextpage(p_desc_n));
+            break;
+        default:
+            pf_print(opaque,
+                 "    - desc %x telx language=%3.3s type=0x%hhx mag=%hhu page=%hhu",
+                 desc_get_tag(p_desc), (const char *)desc46n_get_code(p_desc_n),
+                 desc46n_get_teletexttype(p_desc_n),
+                 desc46n_get_teletextmagazine(p_desc_n),
+                 desc46n_get_teletextpage(p_desc_n));
+        }
     }
 }
 
@@ -598,7 +648,8 @@ static inline bool desc48_validate(const uint8_t *p_desc)
 
 static inline void desc48_print(const uint8_t *p_desc,
                                 f_print pf_print, void *print_opaque,
-                                f_iconv pf_iconv, void *iconv_opaque)
+                                f_iconv pf_iconv, void *iconv_opaque,
+                                print_type_t i_print_type)
 {
     uint8_t i_provider_length, i_service_length;
     const uint8_t *p_provider = desc48_get_provider(p_desc, &i_provider_length);
@@ -607,9 +658,17 @@ static inline void desc48_print(const uint8_t *p_desc,
                                         pf_iconv, iconv_opaque);
     char *psz_service = dvb_string_get(p_service, i_service_length,
                                        pf_iconv, iconv_opaque);
-    pf_print(print_opaque,
-             "    - desc 48 type=0x%hhx provider=\"%s\" service=\"%s\"",
-             desc48_get_type(p_desc), psz_provider, psz_service);
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(print_opaque,
+                 "<SERVICE_DESC type=\"0x%hhx\" provider=\"%s\" service=\"%s\"/>",
+                 desc48_get_type(p_desc), psz_provider, psz_service);
+        break;
+    default:
+        pf_print(print_opaque,
+                 "    - desc 48 type=0x%hhx provider=\"%s\" service=\"%s\"",
+                 desc48_get_type(p_desc), psz_provider, psz_service);
+    }
     free(psz_provider);
     free(psz_service);
 }
@@ -699,19 +758,30 @@ static inline bool desc59_validate(const uint8_t *p_desc)
 }
 
 static inline void desc59_print(uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
     uint8_t j = 0;
     uint8_t *p_desc_n;
 
     while ((p_desc_n = desc59_get_language(p_desc, j)) != NULL) {
         j++;
-        pf_print(opaque,
-        "    - desc 59 dvbs language=%3.3s type=0x%hhx composition=%hu ancillary=%hu",
-        (const char *)desc59n_get_code(p_desc_n),
-        desc59n_get_subtitlingtype(p_desc_n),
-        desc59n_get_compositionpage(p_desc_n),
-        desc59n_get_ancillarypage(p_desc_n));
+        switch (i_print_type) {
+        case PRINT_XML:
+            pf_print(opaque,
+            "<SUBTITLING_DESC language=\"%3.3s\" type=\"0x%hhx\" composition=\"%hu\" ancillary=\"%hu\"",
+            (const char *)desc59n_get_code(p_desc_n),
+            desc59n_get_subtitlingtype(p_desc_n),
+            desc59n_get_compositionpage(p_desc_n),
+            desc59n_get_ancillarypage(p_desc_n));
+            break;
+        default:
+            pf_print(opaque,
+            "    - desc 59 dvbs language=%3.3s type=0x%hhx composition=%hu ancillary=%hu",
+            (const char *)desc59n_get_code(p_desc_n),
+            desc59n_get_subtitlingtype(p_desc_n),
+            desc59n_get_compositionpage(p_desc_n),
+            desc59n_get_ancillarypage(p_desc_n));
+        }
     }
 }
 
@@ -789,7 +859,7 @@ static inline bool desc5a_validate(const uint8_t *p_desc)
 }
 
 static inline void desc5a_print(const uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
     uint8_t i_bandwidth = desc5a_get_bandwidth(p_desc);
     uint8_t i_constellation = desc5a_get_constellation(p_desc);
@@ -840,18 +910,34 @@ static inline void desc5a_print(const uint8_t *p_desc, f_print pf_print,
         case 0x2: psz_transmission = "4k"; break;
     }
 
-    pf_print(opaque,
-         "    - desc 5a dvb-t frequency=%"PRIu64" Hz bandwidth=%u MHz priority=%s%s%s constellation=%s hierarchy=%s coderatehp=%s%s%s guard=%s transmission=%s%s",
-         desc5a_get_frequency(p_desc), i_bandwidth,
-         desc5a_get_priority(p_desc) ? "HP" : "LP",
-         desc5a_get_timeslicing(p_desc) ? " timeslicing" : "",
-         desc5a_get_mpefec(p_desc) ? " mpefec" : "", psz_constellation,
-         psz_hierarchy,
-         dvb_delivery_get_fec(desc5a_get_coderatehp(p_desc)),
-         b_hierarchy ? "coderatelp=" : "",
-         b_hierarchy ? dvb_delivery_get_fec(desc5a_get_coderatehp(p_desc)) : "",
-         psz_guard, psz_transmission,
-         desc5a_get_otherfrequency(p_desc) ? " otherfrequency" : "");
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque,
+             "<TERRESTRIAL_DESC frequency=\"%"PRIu64"\" bandwidth=\"%u\" priority=\"%s\" timeslicing=\"%d\" mpefec=\"%d\" constellation=\"%s\" hierarchy=\"%s\" coderatehp=\"%s\" coderatelp=\"%s\" guard=\"%s\" transmission=\"%s\" otherfrequency=\"%d\"/>",
+             desc5a_get_frequency(p_desc), i_bandwidth,
+             desc5a_get_priority(p_desc) ? "HP" : "LP",
+             desc5a_get_timeslicing(p_desc) ? 1 : 0,
+             desc5a_get_mpefec(p_desc) ? 1 : 0, psz_constellation,
+             psz_hierarchy,
+             dvb_delivery_get_fec(desc5a_get_coderatehp(p_desc)),
+             b_hierarchy ? dvb_delivery_get_fec(desc5a_get_coderatehp(p_desc)) : "not_applicable",
+             psz_guard, psz_transmission,
+             desc5a_get_otherfrequency(p_desc) ? 1 : 0);
+        break;
+    default:
+        pf_print(opaque,
+             "    - desc 5a dvb-t frequency=%"PRIu64" Hz bandwidth=%u MHz priority=%s%s%s constellation=%s hierarchy=%s coderatehp=%s%s%s guard=%s transmission=%s%s",
+             desc5a_get_frequency(p_desc), i_bandwidth,
+             desc5a_get_priority(p_desc) ? "HP" : "LP",
+             desc5a_get_timeslicing(p_desc) ? " timeslicing" : "",
+             desc5a_get_mpefec(p_desc) ? " mpefec" : "", psz_constellation,
+             psz_hierarchy,
+             dvb_delivery_get_fec(desc5a_get_coderatehp(p_desc)),
+             b_hierarchy ? "coderatelp=" : "",
+             b_hierarchy ? dvb_delivery_get_fec(desc5a_get_coderatehp(p_desc)) : "",
+             psz_guard, psz_transmission,
+             desc5a_get_otherfrequency(p_desc) ? " otherfrequency" : "");
+    }
 }
 
 /*****************************************************************************
@@ -875,9 +961,15 @@ static inline bool desc6a_validate(const uint8_t *p_desc)
 }
 
 static inline void desc6a_print(const uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
-    pf_print(opaque, "    - desc 6a ac3");
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<AC3_DESC />");
+        break;
+    default:
+        pf_print(opaque, "    - desc 6a ac3");
+    }
 }
 
 /*****************************************************************************

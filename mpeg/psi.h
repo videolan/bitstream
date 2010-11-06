@@ -54,10 +54,63 @@ static inline uint8_t desc_get_length(const uint8_t *p_desc)
     return p_desc[1];
 }
 
-static inline void desc_print(const uint8_t *p_desc, f_print pf_print,
-                              void *opaque)
+static inline void desc_print_begin(const uint8_t *p_desc, f_print pf_print,
+                                    void *opaque, print_type_t i_print_type)
 {
-    pf_print(opaque, "    - desc %2.2hhx unknown", desc_get_tag(p_desc));
+
+    switch (i_print_type) {
+    case PRINT_XML:
+    {
+        uint8_t i, i_length = desc_get_length(p_desc);
+        char psz_value[2 * i_length + 1];
+
+        for (i = 0; i < i_length; i++)
+            sprintf(psz_value + 2 * i, "%2.2hhx", p_desc[2 + i]);
+        psz_value[2 * i] = '\0';
+
+        pf_print(opaque, "<DESC id=\"%hhu\" value=\"%s\">",
+                 desc_get_tag(p_desc), psz_value);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+static inline void desc_print_end(const uint8_t *p_desc, f_print pf_print,
+                                  void *opaque, print_type_t i_print_type)
+{
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "</DESC>");
+        break;
+    default:
+        break;
+    }
+}
+
+static inline void desc_print_error(const uint8_t *p_desc, f_print pf_print,
+                                    void *opaque, print_type_t i_print_type)
+{
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<INVALID_DESC />");
+        break;
+    default:
+         pf_print(opaque, "desc %2.2hhx invalid", desc_get_tag(p_desc));
+    }
+}
+
+static inline void desc_print(const uint8_t *p_desc, f_print pf_print,
+                              void *opaque, print_type_t i_print_type)
+{
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<UNKNOWN_DESC />");
+        break;
+    default:
+        pf_print(opaque, "    - desc %2.2hhx unknown", desc_get_tag(p_desc));
+    }
 }
 
 /*****************************************************************************
@@ -90,10 +143,17 @@ static inline bool desc05_validate(const uint8_t *p_desc)
 }
 
 static inline void desc05_print(const uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
-    pf_print(opaque, "    - desc 05 identifier=%4.4s",
-             desc05_get_identifier(p_desc));
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<REGISTRATION_DESC identifier=\"%4.4s\"/>",
+                 desc05_get_identifier(p_desc));
+        break;
+    default:
+        pf_print(opaque, "    - desc 05 identifier=%4.4s",
+                 desc05_get_identifier(p_desc));
+    }
 }
 
 /*****************************************************************************
@@ -117,10 +177,17 @@ static inline bool desc09_validate(const uint8_t *p_desc)
 }
 
 static inline void desc09_print(const uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
-    pf_print(opaque, "    - desc 09 sysid=0x%hx pid=%hu",
-             desc09_get_sysid(p_desc), desc09_get_pid(p_desc));
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<CA_DESC sysid=\"0x%hx\" pid=\"%hu\"/>",
+                 desc09_get_sysid(p_desc), desc09_get_pid(p_desc));
+        break;
+    default:
+        pf_print(opaque, "    - desc 09 sysid=0x%hx pid=%hu",
+                 desc09_get_sysid(p_desc), desc09_get_pid(p_desc));
+    }
 }
 
 /*****************************************************************************
@@ -171,16 +238,24 @@ static inline bool desc0a_validate(const uint8_t *p_desc)
 }
 
 static inline void desc0a_print(uint8_t *p_desc, f_print pf_print,
-                                void *opaque)
+                                void *opaque, print_type_t i_print_type)
 {
     uint8_t j = 0;
     uint8_t *p_desc_n;
 
     while ((p_desc_n = desc0a_get_language(p_desc, j)) != NULL) {
         j++;
-        pf_print(opaque, "    - desc 0a language=%3.3s audiotype=0x%hhx",
-                 (const char *)desc0an_get_code(p_desc_n),
-                 desc0an_get_audiotype(p_desc_n));
+        switch (i_print_type) {
+        case PRINT_XML:
+            pf_print(opaque, "<AUDIO_LANGUAGE_DESC language=\"%3.3s\" audiotype=\"0x%hhx\"/>",
+                     (const char *)desc0an_get_code(p_desc_n),
+                     desc0an_get_audiotype(p_desc_n));
+            break;
+        default:
+            pf_print(opaque, "    - desc 0a language=%3.3s audiotype=0x%hhx",
+                     (const char *)desc0an_get_code(p_desc_n),
+                     desc0an_get_audiotype(p_desc_n));
+        }
     }
 }
 
@@ -836,15 +911,24 @@ static inline bool pat_table_validate(uint8_t **pp_sections)
 }
 
 static inline void pat_table_print(uint8_t **pp_sections, f_print pf_print,
-                                   void *opaque)
+                                   void *opaque, print_type_t i_print_type)
 {
     uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
     uint8_t i;
 
-    pf_print(opaque, "new PAT tsid=%hu version=%hhu%s",
-             psi_table_get_tableidext(pp_sections),
-             psi_table_get_version(pp_sections),
-             !psi_table_get_current(pp_sections) ? " (next)" : "");
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<PAT tsid=\"%hu\" version=\"%hhu\" current_next=\"%d\">",
+                 psi_table_get_tableidext(pp_sections),
+                 psi_table_get_version(pp_sections),
+                 !psi_table_get_current(pp_sections) ? 0 : 1);
+        break;
+    default:
+        pf_print(opaque, "new PAT tsid=%hu version=%hhu%s",
+                 psi_table_get_tableidext(pp_sections),
+                 psi_table_get_version(pp_sections),
+                 !psi_table_get_current(pp_sections) ? " (next)" : "");
+    }
 
     for (i = 0; i <= i_last_section; i++) {
         uint8_t *p_section = psi_table_get_section(pp_sections, i);
@@ -855,15 +939,29 @@ static inline void pat_table_print(uint8_t **pp_sections, f_print pf_print,
             uint16_t i_program = patn_get_program(p_program);
             uint16_t i_pid = patn_get_pid(p_program);
             j++;
-            if (i_program == 0)
-                pf_print(opaque, "  * NIT pid=%hu", i_pid);
-            else
-                pf_print(opaque, "  * program number=%hu pid=%hu",
+            switch (i_print_type) {
+            case PRINT_XML:
+                pf_print(opaque, "<PROGRAM number=\"%hu\" pid=\"%hu\"/>",
                          i_program, i_pid);
+                break;
+            default:
+                if (i_program == 0)
+                    pf_print(opaque, "  * NIT pid=%hu", i_pid);
+                else
+                    pf_print(opaque, "  * program number=%hu pid=%hu",
+                             i_program, i_pid);
+            }
         }
     }
 
-    pf_print(opaque, "end PAT");
+
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "</PAT>");
+        break;
+    default:
+        pf_print(opaque, "end PAT");
+    }
 }
 
 /*****************************************************************************
