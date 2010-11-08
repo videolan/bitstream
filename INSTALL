@@ -3,6 +3,14 @@ $Id$
 Installing biTStream
 ====================
 
-No Makefile yet... Just create a /usr/include/bitstream or
-/usr/local/include/bitstream directory, and copy all top-level directories
-there.
+Make install copies all top-level directories (except dvb-examples) in 
+/usr/local/include/bitstream directory.
+
+Install bitstream in its default location /usr/local/include/bitstream:
+
+$> make install
+
+Install bitstream in another location, eg: /usr/include/bitstream
+
+$> make PREFIX=/usr install
+
