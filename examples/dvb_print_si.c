@@ -592,6 +592,8 @@ int main(int i_argc, char **ppsz_argv)
             usage(ppsz_argv[0]);
     }
 
+    setvbuf(stdout, NULL, _IOLBF, 0);
+
     memset(p_pids, 0, sizeof(p_pids));
 
     for (i = 0; i < 8192; i++) {
