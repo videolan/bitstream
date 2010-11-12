@@ -1,6 +1,9 @@
 PREFIX ?= /usr/local
 INCLUDE = $(PREFIX)/include/bitstream
 
+all:
+	@echo "nothing to do"
+
 install:
 	@install -d $(INCLUDE)
 	@install -m 644 common.h $(INCLUDE)/

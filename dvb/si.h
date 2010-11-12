@@ -222,6 +222,66 @@ static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
     return strdup("");
 }
 
+static inline char *dvb_string_xml_escape(char *psz_input)
+{
+    char *psz_output, *psz2;
+    char *psz1 = psz_input;
+    size_t i_output_size = 0;
+
+    while (*psz1) {
+        switch (*psz1) {
+            case '<':
+            case '>':
+                i_output_size += strlen("&lt;");
+                break;
+            case '&':
+                i_output_size += strlen("&amp;");
+                break;
+            case '"':
+            case '\'':
+                i_output_size += strlen("&quot;");
+                break;
+            default:
+                i_output_size++;
+        }
+        psz1++;
+    }
+
+    psz2 = psz_output = malloc(i_output_size + 1);
+    psz1 = psz_input;
+    while (*psz1) {
+        switch (*psz1) {
+            case '<':
+                memcpy(psz2, "&lt;", strlen("&lt;"));
+                psz2 += strlen("&lt;");
+                break;
+            case '>':
+                memcpy(psz2, "&gt;", strlen("&gt;"));
+                psz2 += strlen("&gt;");
+                break;
+            case '&':
+                memcpy(psz2, "&amp;", strlen("&amp;"));
+                psz2 += strlen("&amp;");
+                break;
+            case '"':
+                memcpy(psz2, "&quot;", strlen("&quot;"));
+                psz2 += strlen("&quot;");
+                break;
+            case '\'':
+                memcpy(psz2, "&apos;", strlen("&apos;"));
+                psz2 += strlen("&apos;");
+                break;
+            default:
+                *psz2++ = *psz1;
+        }
+        psz1++;
+    }
+    *psz2 = '\0';
+
+    free(psz_input);
+    return psz_output;
+}
+
 /*****************************************************************************
  * DVB delivery systems
  *****************************************************************************/
@@ -287,6 +347,7 @@ static inline void desc40_print(const uint8_t *p_desc,
 
     switch (i_print_type) {
     case PRINT_XML:
+        psz_network_name = dvb_string_xml_escape(psz_network_name);
         pf_print(print_opaque, "<NETWORK_NAME_DESC networkname=\"%s\"/>",
                  psz_network_name);
         break;
@@ -660,6 +721,8 @@ static inline void desc48_print(const uint8_t *p_desc,
                                        pf_iconv, iconv_opaque);
     switch (i_print_type) {
     case PRINT_XML:
+        psz_provider = dvb_string_xml_escape(psz_provider);
+        psz_service = dvb_string_xml_escape(psz_service);
         pf_print(print_opaque,
                  "<SERVICE_DESC type=\"0x%hhx\" provider=\"%s\" service=\"%s\"/>",
                  desc48_get_type(p_desc), psz_provider, psz_service);
