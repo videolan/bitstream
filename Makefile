@@ -1,5 +1,5 @@
 PREFIX ?= /usr/local
-INCLUDE = $(PREFIX)/include/bitstream
+INCLUDE = $(DESTDIR)/$(PREFIX)/include/bitstream
 
 all:
 	@echo "nothing to do"
