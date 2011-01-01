@@ -618,7 +618,7 @@ static inline void desc46_print(uint8_t *p_desc, f_print pf_print,
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,
-                 "<%s language=%3.3s type=\"0x%hhx\" mag=\"%hhu\" page=\"%hhu\"/>",
+                 "<%s language=\"%3.3s\" type=\"0x%hhx\" mag=\"%hhu\" page=\"%hhu\"/>",
                  desc_get_tag(p_desc) == 0x46 ? "VBI_TELX_DESC" : "TELX_DESC",
                  (const char *)desc46n_get_code(p_desc_n),
                  desc46n_get_teletexttype(p_desc_n),
