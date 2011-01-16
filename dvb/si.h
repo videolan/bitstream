@@ -831,7 +831,7 @@ static inline void desc59_print(uint8_t *p_desc, f_print pf_print,
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,
-            "<SUBTITLING_DESC language=\"%3.3s\" type=\"0x%hhx\" composition=\"%hu\" ancillary=\"%hu\"",
+            "<SUBTITLING_DESC language=\"%3.3s\" type=\"0x%hhx\" composition=\"%hu\" ancillary=\"%hu\"/>",
             (const char *)desc59n_get_code(p_desc_n),
             desc59n_get_subtitlingtype(p_desc_n),
             desc59n_get_compositionpage(p_desc_n),
