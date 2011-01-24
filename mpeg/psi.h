@@ -899,10 +899,12 @@ static inline bool pat_table_validate(uint8_t **pp_sections)
             return false;
 
         while ((p_program = pat_get_program(p_section, j)) != NULL) {
+            uint8_t *p_program2 = pat_table_find_program(pp_sections,
+                                      patn_get_program(p_program));
             j++;
-            /* check that the program number is not already in the table */
-            if (pat_table_find_program(pp_sections,
-                                patn_get_program(p_program)) != p_program)
+            /* check that the program number is not already in the table
+             * with another PID */
+            if (patn_get_pid(p_program) != patn_get_pid(p_program2))
                 return false;
         }
     }
