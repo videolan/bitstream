@@ -359,6 +359,58 @@ static inline void desc40_print(const uint8_t *p_desc,
 }
 
 /*****************************************************************************
+ * Descriptor 0x41: Service list descriptor
+ *****************************************************************************/
+#define DESC41_HEADER_SIZE      DESC_HEADER_SIZE
+#define DESC41_SERVICE_SIZE     3
+
+static inline uint8_t *desc41_get_service(uint8_t *p_desc, uint8_t n)
+{
+    uint8_t *p_desc_n = p_desc + DESC41_HEADER_SIZE + n * DESC41_SERVICE_SIZE;
+    if (p_desc_n + DESC41_SERVICE_SIZE - p_desc
+         > desc_get_length(p_desc) + DESC41_HEADER_SIZE)
+        return NULL;
+    return p_desc_n;
+}
+
+static inline uint16_t desc41n_get_sid(const uint8_t *p_desc_n)
+{
+    return (p_desc_n[0] << 8) | p_desc_n[1];
+}
+
+static inline uint8_t desc41n_get_type(const uint8_t *p_desc_n)
+{
+    return p_desc_n[2];
+}
+
+static inline bool desc41_validate(const uint8_t *p_desc)
+{
+    return !(desc_get_length(p_desc) % DESC41_SERVICE_SIZE);
+}
+
+static inline void desc41_print(uint8_t *p_desc, f_print pf_print,
+                                void *opaque, print_type_t i_print_type)
+{
+    uint8_t j = 0;
+    uint8_t *p_desc_n;
+
+    while ((p_desc_n = desc41_get_service(p_desc, j)) != NULL) {
+        j++;
+        switch (i_print_type) {
+        case PRINT_XML:
+            pf_print(opaque,
+            "<SERVICE_LIST_DESC sid=\"%hu\" type=\"%hhu\" />",
+            desc41n_get_sid(p_desc_n), desc41n_get_type(p_desc_n));
+            break;
+        default:
+            pf_print(opaque,
+            "    - desc 41 service_list sid=%hu type=%hhu",
+            desc41n_get_sid(p_desc_n), desc41n_get_type(p_desc_n));
+        }
+    }
+}
+
+/*****************************************************************************
  * Descriptor 0x43: Satellite delivery system descriptor
  *****************************************************************************/
 #define DESC43_HEADER_SIZE      (DESC_HEADER_SIZE + 11)
@@ -737,6 +789,54 @@ static inline void desc48_print(const uint8_t *p_desc,
 }
 
 /*****************************************************************************
+ * Descriptor 0x4a: Linkage descriptor (partially implemented)
+ *****************************************************************************/
+#define DESC4A_HEADER_SIZE      (DESC_HEADER_SIZE + 7)
+
+static inline uint16_t desc4a_get_tsid(const uint8_t *p_desc)
+{
+    return (p_desc[2] << 8) | p_desc[3];
+}
+
+static inline uint16_t desc4a_get_onid(const uint8_t *p_desc)
+{
+    return (p_desc[4] << 8) | p_desc[5];
+}
+
+static inline uint16_t desc4a_get_sid(const uint8_t *p_desc)
+{
+    return (p_desc[6] << 8) | p_desc[7];
+}
+
+static inline uint8_t desc4a_get_linkage(const uint8_t *p_desc)
+{
+    return p_desc[8];
+}
+
+static inline bool desc4a_validate(const uint8_t *p_desc)
+{
+    return desc_get_length(p_desc) >= DESC4A_HEADER_SIZE - DESC_HEADER_SIZE;
+}
+
+static inline void desc4a_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque, print_type_t i_print_type)
+{
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque,
+             "<LINKAGE_DESC tsid=\"%hu\" onid=\"%hu\" sid=\"%hu\" linkage=\"%hhu\" />",
+             desc4a_get_tsid(p_desc), desc4a_get_onid(p_desc),
+             desc4a_get_sid(p_desc), desc4a_get_linkage(p_desc));
+        break;
+    default:
+        pf_print(opaque,
+             "    - desc 4a linkage tsid=%hu onid=%hu sid=%hu linkage=%hhu",
+             desc4a_get_tsid(p_desc), desc4a_get_onid(p_desc),
+             desc4a_get_sid(p_desc), desc4a_get_linkage(p_desc));
+    }
+}
+
+/*****************************************************************************
  * Descriptor 0x56: Teletext descriptor
  *****************************************************************************/
 #define DESC56_HEADER_SIZE      DESC46_HEADER_SIZE
@@ -1004,9 +1104,44 @@ static inline void desc5a_print(const uint8_t *p_desc, f_print pf_print,
 }
 
 /*****************************************************************************
+ * Descriptor 0x5f: Private data specifier descriptor
+ *****************************************************************************/
+#define DESC5F_HEADER_SIZE      (DESC_HEADER_SIZE + 4)
+
+static inline void desc5f_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x5f);
+}
+
+static inline uint32_t desc5f_get_specifier(const uint8_t *p_desc)
+{
+    return (p_desc[2] << 24) | (p_desc[3] << 16) |
+           (p_desc[4] << 8) | p_desc[5];
+}
+
+static inline bool desc5f_validate(const uint8_t *p_desc)
+{
+    return desc_get_length(p_desc) >= DESC5F_HEADER_SIZE - DESC_HEADER_SIZE;
+}
+
+static inline void desc5f_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque, print_type_t i_print_type)
+{
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<PRIVATE_DATA_SPECIFIER_DESC specifier=\"%u\" />",
+                 desc5f_get_specifier(p_desc));
+        break;
+    default:
+        pf_print(opaque, "    - desc 5f private data specifier=%u",
+                 desc5f_get_specifier(p_desc));
+    }
+}
+
+/*****************************************************************************
  * Descriptor 0x6a: AC-3 descriptor
  *****************************************************************************/
-#define DESC6A_HEADER_SIZE      3
+#define DESC6A_HEADER_SIZE      (DESC_HEADER_SIZE + 1)
 
 static inline void desc6a_init(uint8_t *p_desc)
 {
@@ -1034,6 +1169,94 @@ static inline void desc6a_print(const uint8_t *p_desc, f_print pf_print,
         pf_print(opaque, "    - desc 6a ac3");
     }
 }
+
+/*****************************************************************************
+ * Descriptor 0x83: Logical channel descriptor (IEC/CENELEC 62 216)
+ * Only valid if a private data specifier descriptor 28 is present before.
+ *****************************************************************************/
+#define DESC83P28_HEADER_SIZE      DESC_HEADER_SIZE
+#define DESC83P28_SERVICE_SIZE     4
+
+static inline void desc83p28_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x83);
+}
+
+static inline uint8_t *desc83p28_get_service(uint8_t *p_desc, uint8_t n)
+{
+    uint8_t *p_desc_n = p_desc + DESC83P28_HEADER_SIZE
+                         + n * DESC83P28_SERVICE_SIZE;
+    if (p_desc_n + DESC83P28_SERVICE_SIZE - p_desc
+         > desc_get_length(p_desc) + DESC83P28_HEADER_SIZE)
+        return NULL;
+    return p_desc_n;
+}
+
+static inline uint16_t desc83p28n_get_sid(const uint8_t *p_desc_n)
+{
+    return (p_desc_n[0] << 8) | p_desc_n[1];
+}
+
+static inline bool desc83p28n_get_visible(const uint8_t *p_desc_n)
+{
+    return !!(p_desc_n[2] & 0x80);
+}
+
+static inline uint16_t desc83p28n_get_lcn(const uint8_t *p_desc_n)
+{
+    return ((p_desc_n[2] & 0x3) << 8) | p_desc_n[3];
+}
+
+static inline bool desc83p28_validate(const uint8_t *p_desc)
+{
+    return !(desc_get_length(p_desc) % DESC83P28_SERVICE_SIZE);
+}
+
+static inline void desc83p28_print(uint8_t *p_desc, f_print pf_print,
+                                   void *opaque, print_type_t i_print_type)
+{
+    uint8_t j = 0;
+    uint8_t *p_desc_n;
+
+    while ((p_desc_n = desc83p28_get_service(p_desc, j)) != NULL) {
+        j++;
+        switch (i_print_type) {
+        case PRINT_XML:
+            pf_print(opaque,
+            "<%s sid=\"%hu\" visible=\"%d\" lcn=\"%hu\" />",
+            desc_get_tag(p_desc) == 0x88 ? "HD_SIMULCAST_LCN_DESC" : "LCN_DESC",
+            desc83p28n_get_sid(p_desc_n),
+            desc83p28n_get_visible(p_desc_n) ? 1 : 0,
+            desc83p28n_get_lcn(p_desc_n));
+            break;
+        default:
+            pf_print(opaque,
+            "    - desc %hhu lcn sid=%hu%s lcn=%hu", desc_get_tag(p_desc),
+            desc83p28n_get_sid(p_desc_n),
+            desc83p28n_get_visible(p_desc_n) ? " visible" : "",
+            desc83p28n_get_lcn(p_desc_n));
+        }
+    }
+}
+
+/*****************************************************************************
+ * Descriptor 0x88: HD simulcast logical channel descriptor (IEC/CENELEC 62 216)
+ * Only valid if a private data specifier descriptor 28 is present before.
+ *****************************************************************************/
+#define DESC88P28_HEADER_SIZE      DESC83P28_HEADER_SIZE
+#define DESC88P28_SERVICE_SIZE     DESC83P28_SERVICE_SIZE
+
+static inline void desc88p28_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x88);
+}
+
+#define desc88p28_get_service desc83p28_get_service
+#define desc88p28_get_sid desc83p28_get_sid
+#define desc88p28_get_visible desc83p28_get_visible
+#define desc88p28_get_lcn desc83p28_get_lcn
+#define desc88p28_validate desc83p28_validate
+#define desc88p28_print desc83p28_print
 
 /*****************************************************************************
  * Network Information Table
