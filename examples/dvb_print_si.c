@@ -138,9 +138,8 @@ static void handle_pat(void)
     uint8_t i;
 
     if (psi_table_validate(pp_current_pat_sections) &&
-        psi_table_get_version(pp_current_pat_sections)
-         == psi_table_get_version(pp_next_pat_sections)) {
-        /* Same version PAT. Shortcut. */
+        psi_table_compare(pp_current_pat_sections, pp_next_pat_sections)) {
+        /* Identical PAT. Shortcut. */
         psi_table_free(pp_next_pat_sections);
         psi_table_init(pp_next_pat_sections);
         return;
@@ -235,6 +234,7 @@ static void handle_pat(void)
                         if (pp_sids[i_pmt]->i_sid == i_sid) {
                             pp_sids[i_pmt]->i_sid = 0;
                             free(pp_sids[i_pmt]->p_current_pmt);
+                            pp_sids[i_pmt]->p_current_pmt = NULL;
                             break;
                         }
                 }
@@ -326,8 +326,8 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
     }
 
     if (p_sid->p_current_pmt != NULL &&
-        psi_get_version(p_sid->p_current_pmt) == psi_get_version(p_pmt)) {
-        /* Same version PMT. Shortcut. */
+        psi_compare(p_sid->p_current_pmt, p_pmt)) {
+        /* Identical PMT. Shortcut. */
         free(p_pmt);
         return;
     }
@@ -344,8 +344,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
 static void handle_nit(void)
 {
     if (psi_table_validate(pp_current_nit_sections) &&
-        psi_table_get_version(pp_current_nit_sections)
-         == psi_table_get_version(pp_next_nit_sections)) {
+        psi_table_compare(pp_current_nit_sections, pp_next_nit_sections)) {
         /* Same version NIT. Shortcut. */
         psi_table_free(pp_next_nit_sections);
         psi_table_init(pp_next_nit_sections);
@@ -401,9 +400,8 @@ static void handle_nit_section(uint16_t i_pid, uint8_t *p_section)
 static void handle_sdt(void)
 {
     if (psi_table_validate(pp_current_sdt_sections) &&
-        psi_table_get_version(pp_current_sdt_sections)
-         == psi_table_get_version(pp_next_sdt_sections)) {
-        /* Same version SDT. Shortcut. */
+        psi_table_compare(pp_current_sdt_sections, pp_next_sdt_sections)) {
+        /* Identical SDT. Shortcut. */
         psi_table_free(pp_next_sdt_sections);
         psi_table_init(pp_next_sdt_sections);
         return;
