@@ -48,7 +48,7 @@ static inline void tlvh_set_version(uint8_t *p_tlv, uint8_t i_version)
     p_tlv[0] = i_version;
 }
 
-static inline uint8_t tlvh_get_version(uint8_t *p_tlv)
+static inline uint8_t tlvh_get_version(const uint8_t *p_tlv)
 {
     return p_tlv[0];
 }
@@ -64,7 +64,7 @@ static inline void tlv_set_type(uint8_t *p_tlv, uint16_t i_type)
     p_tlv[1] = i_type & 0xff;
 }
 
-static inline uint16_t tlv_get_type(uint8_t *p_tlv)
+static inline uint16_t tlv_get_type(const uint8_t *p_tlv)
 {
     return (p_tlv[0] << 8) | p_tlv[1];
 }
@@ -75,7 +75,7 @@ static inline void tlv_set_length(uint8_t *p_tlv, uint16_t i_length)
     p_tlv[3] = i_length & 0xff;
 }
 
-static inline uint16_t tlv_get_length(uint8_t *p_tlv)
+static inline uint16_t tlv_get_length(const uint8_t *p_tlv)
 {
     return (p_tlv[2] << 8) | p_tlv[3];
 }
@@ -161,7 +161,7 @@ static inline uint16_t tlv_count_param(uint8_t *p_tlv, uint16_t i_type)
 }
 
 static inline bool tlv_validate_count_param(uint8_t *p_tlv,
-                                            tlv_param_count_t *p_count)
+                                            const tlv_param_count_t *p_count)
 {
     uint16_t i_count = tlv_count_param(p_tlv, p_count->i_type);
     return (i_count >= p_count->i_min) && (i_count <= p_count->i_max);

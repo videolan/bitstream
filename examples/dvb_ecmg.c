@@ -450,14 +450,16 @@ static void handle_stream_setup(uint8_t *p_tlv)
         return;
     }
 
+    p_stream = malloc(sizeof(stream_t));
+
     for (i = 0; i < i_nb_streams; i++) {
-        p_stream = pp_streams[i];
-        if (p_stream == NULL)
+        if (pp_streams[i] == NULL) {
+            pp_streams[i] = p_stream;
             break;
+        }
     }
 
     if (i == i_nb_streams) {
-        p_stream = malloc(sizeof(stream_t));
         pp_streams = realloc(pp_streams, ++i_nb_streams * sizeof(stream_t *));
         pp_streams[i_nb_streams - 1] = p_stream;
     }
