@@ -967,6 +967,88 @@ static inline void pat_table_print(uint8_t **pp_sections, f_print pf_print,
 }
 
 /*****************************************************************************
+ * Conditional Access Table
+ *****************************************************************************/
+#define CAT_PID                 0x01
+#define CAT_TABLE_ID            0x01
+#define CAT_HEADER_SIZE         PSI_HEADER_SIZE_SYNTAX1
+
+static inline void cat_init(uint8_t *p_cat)
+{
+    psi_init(p_cat, true);
+    psi_set_tableid(p_cat, CAT_TABLE_ID);
+    p_cat[1] &= ~0x40;
+    psi_set_section(p_cat, 0);
+    psi_set_lastsection(p_cat, 0);
+}
+
+static inline void cat_set_length(uint8_t *p_cat, uint16_t i_cat_length)
+{
+    psi_set_length(p_cat, CAT_HEADER_SIZE + PSI_CRC_SIZE - PSI_HEADER_SIZE
+                    + i_cat_length);
+}
+
+static inline uint16_t cat_get_desclength(const uint8_t *p_cat)
+{
+    return psi_get_length(p_cat) - (CAT_HEADER_SIZE + PSI_CRC_SIZE - PSI_HEADER_SIZE);
+}
+
+static inline uint8_t *cat_alloc_descs(uint8_t *p_cat)
+{
+    uint16_t i_desc_len = cat_get_desclength(p_cat);
+    uint8_t *p_buf = malloc(i_desc_len + 2);
+    if (!p_buf)
+        return NULL;
+
+    memcpy(p_buf + 2, p_cat + 8, i_desc_len);
+    descs_set_length(p_buf, i_desc_len);
+
+    return p_buf;
+}
+
+static inline void cat_free_descs(uint8_t *p_cat_descs)
+{
+    free(p_cat_descs);
+}
+
+static inline bool cat_validate(const uint8_t *p_cat)
+{
+    uint16_t i_section_size = psi_get_length(p_cat) + PSI_HEADER_SIZE
+                               - PSI_CRC_SIZE;
+    const uint8_t *p_cat_n;
+
+    if (!psi_get_syntax(p_cat) || psi_get_section(p_cat)
+         || psi_get_lastsection(p_cat)
+         || psi_get_tableid(p_cat) != CAT_TABLE_ID)
+        return false;
+
+    if (!psi_check_crc(p_cat))
+        return false;
+
+    if (i_section_size < CAT_HEADER_SIZE
+         || i_section_size < CAT_HEADER_SIZE + cat_get_desclength(p_cat))
+        return false;
+
+    return true;
+}
+
+static inline bool cat_table_validate(uint8_t **pp_sections)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
+    uint8_t i;
+
+    for (i = 0; i <= i_last_section; i++) {
+        uint8_t *p_section = psi_table_get_section(pp_sections, i);
+        int j = 0;
+
+        if (!psi_check_crc(p_section))
+            return false;
+    }
+
+    return true;
+}
+
+/*****************************************************************************
  * Program Map Table
  *****************************************************************************/
 #define PMT_TABLE_ID            0x2

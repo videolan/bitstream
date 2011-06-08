@@ -32,6 +32,45 @@ extern "C"
 #endif
 
 /*****************************************************************************
+ * Conditional Access Table
+ *****************************************************************************/
+static inline void cat_table_print(uint8_t **pp_sections, f_print pf_print,
+                                   void *opaque, print_type_t i_print_type)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
+    uint8_t i;
+
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<CAT version=\"%hhu\" current_next=\"%d\">",
+                 psi_table_get_version(pp_sections),
+                 !psi_table_get_current(pp_sections) ? 0 : 1);
+        break;
+    default:
+        pf_print(opaque, "new CAT version=%hhu%s",
+                 psi_table_get_version(pp_sections),
+                 !psi_table_get_current(pp_sections) ? " (next)" : "");
+    }
+
+    for (i = 0; i <= i_last_section; i++) {
+        uint8_t *p_section = psi_table_get_section(pp_sections, i);
+        uint8_t *p_descs = cat_alloc_descs(p_section);
+
+        descs_print(p_descs, pf_print, opaque, NULL, NULL, i_print_type);
+
+        cat_free_descs(p_descs);
+    }
+
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "</CAT>");
+        break;
+    default:
+        pf_print(opaque, "end CAT");
+    }
+}
+
+/*****************************************************************************
  * Program Map Table
  *****************************************************************************/
 static inline void pmt_print(uint8_t *p_pmt,
