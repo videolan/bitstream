@@ -109,7 +109,7 @@ static inline uint8_t *rtp_payload(uint8_t *p_rtp)
     unsigned int i_size = RTP_HEADER_SIZE;
     i_size += 4 * (p_rtp[0] & 0xf);
     if (p_rtp[0] & 0x10) /* header extension */
-        i_size += 4 + (p_rtp[i_size + 2] << 8) + p_rtp[i_size + 3];
+        i_size += 4 * (1 + (p_rtp[i_size + 2] << 8) + p_rtp[i_size + 3]);
     return p_rtp + i_size;
 }
 
