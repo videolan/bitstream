@@ -2,7 +2,7 @@
 
 CFLAGS = -Wall -O2 -g
 LDFLAGS = 
-OBJ = dvb_print_si dvb_ecmg dvb_ecmg_test mpeg_print_pcr
+OBJ = dvb_print_si dvb_ecmg dvb_ecmg_test mpeg_print_pcr rtp_check_cc
 
 all: $(OBJ)
 
