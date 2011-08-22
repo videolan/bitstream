@@ -297,7 +297,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
     if (i == i_nb_sids) {
         switch (i_print_type) {
         case PRINT_XML:
-            printf("<ERROR type=\"ghost_pmt\" program=\"%hu\n pid=\"%hu\"/>\n",
+            printf("<ERROR type=\"ghost_pmt\" program=\"%hu\" pid=\"%hu\"/>\n",
                    i_sid, i_pid);
             break;
         default:
@@ -315,7 +315,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
         if (i_pid != p_sid->i_pmt_pid) {
             switch (i_print_type) {
             case PRINT_XML:
-                printf("<ERROR type=\"ghost_pmt\" program=\"%hu\n pid=\"%hu\"/>\n",
+                printf("<ERROR type=\"ghost_pmt\" program=\"%hu\" pid=\"%hu\"/>\n",
                        i_sid, i_pid);
                 break;
             default:
