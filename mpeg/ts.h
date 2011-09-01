@@ -226,7 +226,7 @@ static inline void tsaf_set_pcrext(uint8_t *p_ts, uint16_t i_pcr_ext)
     p_ts[11] = i_pcr_ext & 0xff;
 }
 
-static inline bool tsaf_has_pcr(uint8_t *p_ts)
+static inline bool tsaf_has_pcr(const uint8_t *p_ts)
 {
     return !!(p_ts[5] & 0x10);
 }

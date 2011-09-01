@@ -1,5 +1,5 @@
 /*****************************************************************************
- * rtp_check_cc.c: Prints RTP discontinuities
+ * rtp_check_seqnum.c: Prints RTP discontinuities
  *****************************************************************************
  * Copyright (C) 2011 VideoLAN
  * $Id: dvb_print_si.c 27 2011-04-10 16:57:59Z massiot $
@@ -50,7 +50,7 @@ int main(int i_argc, char **ppsz_argv)
         usage(ppsz_argv[0]);
 
     uint8_t p_buffer[i_packet_size];
-    uint16_t i_cc = 0;
+    uint16_t i_seqnum = 0;
 
     for ( ; ; ) {
         ssize_t toto;
@@ -64,10 +64,10 @@ int main(int i_argc, char **ppsz_argv)
             continue;
         }
 
-        uint16_t i_new_cc = rtp_get_cc(p_buffer);
-        if (i_new_cc != i_cc)
+        uint16_t i_new_seqnum = rtp_get_seqnum(p_buffer);
+        if (i_new_seqnum != i_seqnum)
             fprintf(stderr, "received packet %hu while expecting %hu\n",
-                    i_new_cc, i_cc);
-        i_cc = (i_new_cc + 1) % 65536;
+                    i_new_seqnum, i_seqnum);
+        i_seqnum = (i_new_seqnum + 1) % 65536;
     }
 }
