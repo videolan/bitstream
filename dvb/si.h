@@ -184,7 +184,7 @@ static inline uint8_t *dvb_string_set(const uint8_t *p_string, size_t i_length,
 
     if (!strcmp(psz_encoding, "ISO_8859-9")) {
         *pi_out_length = i_length;
-        return strdup(p_string);
+        return (uint8_t *)strdup((const char *)p_string);
     }
 
     for (i = 0; ppsz_dvb_encodings[i] != NULL; i++) {
@@ -229,7 +229,7 @@ static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
         }
 
         return pf_iconv(iconv_opaque, psz_encoding,
-                        p_string, i_length);
+                        (char *)p_string, i_length);
     }
 
     return strdup("");
@@ -750,7 +750,7 @@ static inline void desc48_set_service(uint8_t *p_desc,
 static inline uint8_t *desc48_get_service(const uint8_t *p_desc,
                                           uint8_t *pi_length)
 {
-    const uint8_t *p = p_desc + DESC48_HEADER_SIZE + 1 + p_desc[3];
+    uint8_t *p = (uint8_t *)p_desc + DESC48_HEADER_SIZE + 1 + p_desc[3];
     *pi_length = p[0];
     return p + 1;
 }

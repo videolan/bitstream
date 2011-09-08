@@ -225,7 +225,7 @@ static inline bool tlv_append_data(uint8_t *p_tlv, uint16_t i_type,
 static inline uint8_t *tlv_find_data(uint8_t *p_tlv, uint16_t i_type,
                                      uint16_t n, uint16_t *pi_length)
 {
-    const uint8_t *p_tlv_n = tlv_find_param(p_tlv, i_type, n);
+    uint8_t *p_tlv_n = tlv_find_param(p_tlv, i_type, n);
     *pi_length = tlv_get_length(p_tlv_n);
     return p_tlv_n + 4;
 }
@@ -400,7 +400,8 @@ static inline bool ecmg_validate(uint8_t *p_tlv)
         {ECMG_PARAM_CPNUMBER, 1, 1}, {ECMG_PARAM_ECM, 1, 1}, {0, 0, 0}
     };
 
-    const tlv_param_count_t *p_param = {0, 0, 0};
+    const tlv_param_count_t null_param = {0, 0, 0};
+    const tlv_param_count_t *p_param = &null_param;
     uint8_t *p_tlv_n;
     int j = 0;
 
