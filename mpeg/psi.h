@@ -1034,7 +1034,6 @@ static inline bool cat_validate(const uint8_t *p_cat)
 {
     uint16_t i_section_size = psi_get_length(p_cat) + PSI_HEADER_SIZE
                                - PSI_CRC_SIZE;
-    const uint8_t *p_cat_n;
 
     if (!psi_get_syntax(p_cat) || psi_get_section(p_cat)
          || psi_get_lastsection(p_cat)
@@ -1058,7 +1057,6 @@ static inline bool cat_table_validate(uint8_t **pp_sections)
 
     for (i = 0; i <= i_last_section; i++) {
         uint8_t *p_section = psi_table_get_section(pp_sections, i);
-        int j = 0;
 
         if (!psi_check_crc(p_section))
             return false;

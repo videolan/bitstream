@@ -211,7 +211,6 @@ static inline bool tlv_append_data(uint8_t *p_tlv, uint16_t i_type,
                                    const uint8_t *p_data, uint16_t i_length)
 {
     uint8_t *p_tlv_n = tlv_find_param(p_tlv, TLV_PARAM_EMPTY, 0);
-    int i;
     if (!tlv_validate_param(p_tlv, p_tlv_n,
                             i_length + TLV_PARAM_EMPTY_SIZE))
         return false;
