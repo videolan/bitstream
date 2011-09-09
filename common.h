@@ -39,7 +39,7 @@ typedef enum print_type_t {
     PRINT_XML
 } print_type_t;
 
-typedef void (*f_print)(void *, const char *, ...);
+typedef void (*f_print)(void *, const char *, ...) __attribute__ ((format(printf, 2, 3)));
 typedef char * (*f_iconv)(void *, const char *, char *, size_t);
 
 #ifdef __cplusplus
