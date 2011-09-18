@@ -33,8 +33,8 @@ My coding style is Linux kernel + Hungarian conventions. Really, I do not
 care about the coding style of new files; do (WTF) you want. However, for
 existing files, please try to follow the original conventions.
 
-biTStream is released under the WTF public license because since it is a
-direct application of standards, there is no added value. The WTF license
+biTStream is released under the MIT license because since it is a
+direct application of standards, there is no added value. The MIT license
 doesn't require you to contribute back your changes, and you can use
 biTStream in proprietary applications. However, if you add new structures,
 or fix bugs in current structures, you'd be very nice to contribute them
