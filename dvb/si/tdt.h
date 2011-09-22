@@ -66,8 +66,8 @@ static inline void tdt_set_utc(uint8_t *p_tdt, uint64_t i_utc)
 
 static inline uint64_t tdt_get_utc(const uint8_t *p_tdt)
 {
-    return ((uint64_t)p_tdt[3] << 32) | (p_tdt[4] << 24) | (p_tdt[5] << 16)
-             | (p_tdt[6] << 8) | p_tdt[7];
+    return (uint64_t)(((uint64_t)p_tdt[3] << 32) | ((uint64_t)p_tdt[4] << 24) |
+                      ((uint64_t)p_tdt[5] << 16) | ((uint64_t)p_tdt[6] << 8) | p_tdt[7]);
 }
 
 static inline bool tdt_validate(const uint8_t *p_tdt)
