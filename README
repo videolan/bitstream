@@ -39,3 +39,77 @@ doesn't require you to contribute back your changes, and you can use
 biTStream in proprietary applications. However, if you add new structures,
 or fix bugs in current structures, you'd be very nice to contribute them
 (again, there is no point in concealing this). Thanks.
+
+
+Supported SI tables
+===================
+
+ * Program Allocation Table (PAT)
+ * Conditional Access Table (CAT)
+ * Program Map Table (PMT)
+ * Network Information Table (NIT)
+ * Bouquet Association Table (BAT)
+ * Service Definition Table (SDT)
+ * Event Information Table (EIT)
+ * Time and Date Table (TDT)
+ * Time Offset Table (TOT)
+ * Running Status Table (RST)
+ * Stuffing Table (ST)
+ * Discontinuity Information Table (DIT)
+
+
+Supported MPEG descriptors
+==========================
+
+ * Descriptor 0x02: Video stream descriptor
+ * Descriptor 0x03: Audio stream descriptor
+ * Descriptor 0x04: Hierarchy descriptor
+ * Descriptor 0x05: Registration descriptor
+ * Descriptor 0x06: Data stream alignment descriptor
+ * Descriptor 0x07: Target Background Grid descriptor
+ * Descriptor 0x08: Video Window descriptor
+ * Descriptor 0x09: Conditional access descriptor
+ * Descriptor 0x0A: ISO-639 language descriptor
+ * Descriptor 0x0B: System clock descriptor
+ * Descriptor 0x0C: Multiplex buffer utilization descriptor
+ * Descriptor 0x0D: Copyright descriptor
+ * Descriptor 0x0E: Maximum bitrate descriptor
+ * Descriptor 0x0F: Private data indicator descriptor
+ * Descriptor 0x10: Smoothing buffer descriptor
+ * Descriptor 0x11: STD descriptor
+ * Descriptor 0x12: IBP descriptor
+
+
+Supported DVB descriptors
+=========================
+
+ * Descriptor 0x40: Network name descriptor
+ * Descriptor 0x41: Service list descriptor
+ * Descriptor 0x43: Satellite delivery system descriptor
+ * Descriptor 0x44: Cable delivery system descriptor
+ * Descriptor 0x46: VBI teletext descriptor
+ * Descriptor 0x47: Bouquet name descriptor
+ * Descriptor 0x48: Service descriptor
+ * Descriptor 0x4a: Linkage descriptor (partially implemented)
+ * Descriptor 0x4d: Short event descriptor
+ * Descriptor 0x4e: Extended event descriptor
+ * Descriptor 0x52: Stream identifier descriptor
+ * Descriptor 0x54: Content descriptor
+ * Descriptor 0x55: Parental rating descriptor
+ * Descriptor 0x56: Teletext descriptor
+ * Descriptor 0x58: Local time offset descriptor
+ * Descriptor 0x59: Subtitling descriptor
+ * Descriptor 0x5a: Terrestrial delivery system descriptor
+ * Descriptor 0x5f: Private data specifier descriptor
+ * Descriptor 0x6a: AC-3 descriptor [p]
+
+Legend:
+  [p] - Partitial support, only parser is implemented.
+
+To see what is unsupported look in the TODO file.
+
+
+Example usage
+=============
+
+To see biTSream in action look in examples directory.
