@@ -1,0 +1,76 @@
+TODO items for biTStream. The items are not ordered by importance
+so if you like something just do it and send a patch.
+
+- Add support (parser, generator, example) for these MPEG descriptors:
+  - Descriptor 0x1b MPEG-4_video_descriptor
+  - Descriptor 0x1c MPEG-4_audio_descriptor
+  - Descriptor 0x1d IOD_descriptor
+  - Descriptor 0x1e SL_descriptor
+  - Descriptor 0x1f FMC_descriptor
+  - Descriptor 0x20 external_ES_ID_descriptor
+  - Descriptor 0x21 MuxCode_descriptor
+  - Descriptor 0x22 FmxBufferSize_descriptor
+  - Descriptor 0x23 multiplexbuffer_descriptor
+  - Descriptor 0x24 content_labeling_descriptor
+  - Descriptor 0x25 metadata_pointer_descriptor
+  - Descriptor 0x26 metadata_descriptor
+  - Descriptor 0x27 metadata_STD_descriptor
+  - Descriptor 0x28 AVC video descriptor
+  - Descriptor 0x29 IPMP_descriptor (defined in ISO/IEC 13818-11, MPEG-2 IPMP)
+  - Descriptor 0x2a AVC timing and HRD descriptor
+  - Descriptor 0x2b MPEG-2_AAC_audio_descriptor
+  - Descriptor 0x2c FlexMuxTiming_descriptor
+
+- Add support for Selection Information Table (SIT).
+
+- Add generators and example usage for these DVB descriptors:
+  - Descriptor 0x4a: Linkage descriptor
+  - Descriptor 0x6a: AC-3 descriptor
+
+- Add support (parser, generator, example) for these DVB descriptors:
+  - Descriptor 0x42: Stuffing descriptor
+  - Descriptor 0x45: VBI data descriptor
+  - Descriptor 0x49: Country availability descriptor
+  - Descriptor 0x4b: NVOD_reference_descriptor
+  - Descriptor 0x4c: time_shifted_service_descriptor
+  - Descriptor 0x4f: time_shifted_event_descriptor
+  - Descriptor 0x50: component_descriptor
+  - Descriptor 0x51: mosaic_descriptor
+  - Descriptor 0x53: CA_identifier_descriptor
+  - Descriptor 0x57: telephone_descriptor
+  - Descriptor 0x5b: multilingual_network_name_descriptor
+  - Descriptor 0x5c: multilingual_bouquet_name_descriptor
+  - Descriptor 0x5d: multilingual_service_name_descriptor
+  - Descriptor 0x5e: multilingual_component_descriptor
+  - Descriptor 0x60: service_move_descriptor
+  - Descriptor 0x61: short_smoothing_buffer_descriptor
+  - Descriptor 0x62: frequency_list_descriptor
+  - Descriptor 0x63: partial_transport_stream_descriptor
+  - Descriptor 0x64: data_broadcast_descriptor
+  - Descriptor 0x65: scrambling_descriptor
+  - Descriptor 0x66: data_broadcast_id_descriptor
+  - Descriptor 0x67: transport_stream_descriptor
+  - Descriptor 0x68: DSNG_descriptor
+  - Descriptor 0x69: PDC_descriptor
+  - Descriptor 0x6b: ancillary_data_descriptor
+  - Descriptor 0x6c: cell_list_descriptor
+  - Descriptor 0x6d: cell_frequency_link_descriptor
+  - Descriptor 0x6e: announcement_support_descriptor
+  - Descriptor 0x6f: application_signalling_descriptor
+  - Descriptor 0x70: adaptation_field_data_descriptor
+  - Descriptor 0x71: service_identifier_descriptor
+  - Descriptor 0x72: service_availability_descriptor
+  - Descriptor 0x73: default_authority_descriptor
+  - Descriptor 0x74: related_content_descriptor
+  - Descriptor 0x75: TVA_id_descriptor
+  - Descriptor 0x76: content_identifier_descriptor
+  - Descriptor 0x77: time_slice_fec_identifier_descriptor
+  - Descriptor 0x78: ECM_repetition_rate_descriptor
+  - Descriptor 0x79: S2_satellite_delivery_system_descriptor
+  - Descriptor 0x7a: enhanced_AC-3_descriptor
+  - Descriptor 0x7b: DTS descriptor
+  - Descriptor 0x7c: AAC descriptor
+  - Descriptor 0x7d: XAIT location descriptor
+  - Descriptor 0x7e: FTA_content_management_descriptor
+  - Descriptor 0x7f: extension descriptor
+    - Add support for extension descriptors
