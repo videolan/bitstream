@@ -11,3 +11,7 @@ N: Christophe Massiot
 E: massiot AT via DOT ecp DOT fr
 C: massiot
 D: All of the code
+
+N: Georgi Chorbadzhiyski
+E: gf AT unixsol DOT org
+D: Additional MPEG/DVB PSI and descriptors support, examples/dvb_gen_si
