@@ -36,6 +36,10 @@
 #ifndef __BITSTREAM_DVB_SIM_H__
 #define __BITSTREAM_DVB_SIM_H__
 
+#include <stdint.h>   /* uint8_t, uint16_t, etc... */
+#include <stdbool.h>  /* bool */
+#include <string.h>   /* memcpy, NULL */
+
 #ifdef __cplusplus
 extern "C"
 {
