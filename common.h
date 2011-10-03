@@ -29,6 +29,10 @@
 #ifndef __BITSTREAM_COMMON_H__
 #define __BITSTREAM_COMMON_H__
 
+#include <stdint.h>   /* uint8_t, uint16_t, etc... */
+#include <stdbool.h>  /* bool */
+#include <string.h>   /* memset, memcpy */
+
 #ifdef __cplusplus
 extern "C"
 {
