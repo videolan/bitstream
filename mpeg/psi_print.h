@@ -54,11 +54,9 @@ static inline void cat_table_print(uint8_t **pp_sections, f_print pf_print,
 
     for (i = 0; i <= i_last_section; i++) {
         uint8_t *p_section = psi_table_get_section(pp_sections, i);
-        uint8_t *p_descs = cat_alloc_descs(p_section);
 
-        descs_print(p_descs, pf_print, opaque, NULL, NULL, i_print_type);
-
-        cat_free_descs(p_descs);
+        descl_print(cat_get_descl(p_section), cat_get_desclength(p_section),
+                    pf_print, opaque, NULL, NULL, i_print_type);
     }
 
     switch (i_print_type) {

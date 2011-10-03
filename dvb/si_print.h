@@ -32,7 +32,7 @@ extern "C"
 /*****************************************************************************
  * Descriptors list
  *****************************************************************************/
-static inline void descs_print(uint8_t *p_descs,
+static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
                                f_print pf_print, void *print_opaque,
                                f_iconv pf_iconv, void *iconv_opaque,
                                print_type_t i_print_type)
@@ -41,7 +41,7 @@ static inline void descs_print(uint8_t *p_descs,
     uint8_t *p_desc;
     uint32_t i_private_data_specifier = 0;
 
-    while ((p_desc = descs_get_desc(p_descs, j)) != NULL) {
+    while ((p_desc = descl_get_desc(p_descl, i_length, j)) != NULL) {
         uint8_t i_tag = desc_get_tag(p_desc);
         j++;
 
@@ -125,6 +125,15 @@ static inline void descs_print(uint8_t *p_descs,
 print_end:
         desc_print_end(p_desc, pf_print, print_opaque, i_print_type);
     }
+}
+
+static inline void descs_print(uint8_t *p_descs,
+                               f_print pf_print, void *print_opaque,
+                               f_iconv pf_iconv, void *iconv_opaque,
+                               print_type_t i_print_type)
+{
+    descl_print(p_descs + DESCS_HEADER_SIZE, descs_get_length(p_descs),
+                pf_print, print_opaque, pf_iconv, iconv_opaque, i_print_type);
 }
 
 /*****************************************************************************
