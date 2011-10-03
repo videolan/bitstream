@@ -34,6 +34,10 @@
 #ifndef __BITSTREAM_MPEG_PES_H__
 #define __BITSTREAM_MPEG_PES_H__
 
+#include <stdint.h>   /* uint8_t, uint16_t, etc... */
+#include <stdbool.h>  /* bool */
+#include <string.h>   /* memset */
+
 #ifdef __cplusplus
 extern "C"
 {
