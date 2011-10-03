@@ -35,6 +35,9 @@
 #ifndef __BITSTREAM_MPEG_AAC_H__
 #define __BITSTREAM_MPEG_AAC_H__
 
+#include <stdint.h>   /* uint8_t, uint16_t, etc... */
+#include <stdbool.h>  /* bool */
+
 #ifdef __cplusplus
 extern "C"
 {
