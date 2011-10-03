@@ -34,6 +34,11 @@
 #ifndef __BITSTREAM_MPEG_TS_H__
 #define __BITSTREAM_MPEG_TS_H__
 
+#include <stdlib.h>   /* malloc */
+#include <stdint.h>   /* uint8_t, uint16_t, etc... */
+#include <stdbool.h>  /* bool */
+#include <string.h>   /* memset */
+
 #ifdef __cplusplus
 extern "C"
 {
