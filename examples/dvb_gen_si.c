@@ -281,6 +281,12 @@ static void build_desc20(uint8_t *desc) {
     desc20_set_external_es_id(desc, 0x1234);
 }
 
+/* MPEG Descriptor 0x23: MultiplexBuffer descriptor */
+static void build_desc23(uint8_t *desc) {
+    desc23_init(desc);
+    desc23_set_mb_buffer_size(desc, 112233);
+    desc23_set_tb_leak_rate(desc, 445566);
+}
 
 /* =========================================================================
  * DVB defined descriptors
@@ -1648,6 +1654,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc20(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc23(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
