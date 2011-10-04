@@ -225,6 +225,12 @@ static void build_desc12(uint8_t *desc) {
     desc12_set_max_gop_length(desc, 5000);
 }
 
+/* MPEG Descriptor 0x1b: MPEG4 Video descriptor */
+static void build_desc1b(uint8_t *desc) {
+    desc1b_init(desc);
+    desc1b_set_mpeg4_visual_profile_and_level(desc, 0x12);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1475,6 +1481,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc11(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc1b(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

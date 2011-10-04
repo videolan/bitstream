@@ -78,6 +78,7 @@ Supported MPEG descriptors
  * Descriptor 0x10: Smoothing buffer descriptor
  * Descriptor 0x11: STD descriptor
  * Descriptor 0x12: IBP descriptor
+ * Descriptor 0x1b: MPEG-4 video descriptor
 
 
 Supported DVB descriptors
