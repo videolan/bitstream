@@ -237,6 +237,14 @@ static void build_desc1c(uint8_t *desc) {
     desc1c_set_mpeg4_audio_profile_and_level(desc, 0x13);
 }
 
+/* MPEG Descriptor 0x1d: IOD descriptor */
+static void build_desc1d(uint8_t *desc) {
+    desc1d_init(desc);
+    desc1d_set_scope(desc, 0x01);
+    desc1d_set_iod_label(desc, 0x23);
+    desc1d_set_iod(desc, 0x45);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1575,6 +1583,25 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc59(desc);
+
+            // Finish descriptor generation
+            desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
+            descs_set_length(desc_loop, desc - desc_loop - DESCS_HEADER_SIZE);
+        }
+
+        pmt_n = pmt_get_es(pmt, pmt_n_counter++);
+        pmtn_init(pmt_n);
+        pmtn_set_streamtype(pmt_n, 0x06);
+        pmtn_set_pid(pmt_n, pmt_pid + 25);
+        pmtn_set_desclength(pmt_n, 0);
+        {
+            // Add descriptors to transport_stream_n
+            desc_counter = 0;
+            desc_loop = pmtn_get_descs(pmt_n);
+            descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc1d(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
