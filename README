@@ -82,6 +82,7 @@ Supported MPEG descriptors
  * Descriptor 0x1c: MPEG-4 audio descriptor
  * Descriptor 0x1d: IOD_descriptor
  * Descriptor 0x1e: SL_descriptor
+ * Descriptor 0x1f: FMC_descriptor
 
 
 Supported DVB descriptors

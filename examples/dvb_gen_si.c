@@ -251,6 +251,30 @@ static void build_desc1e(uint8_t *desc) {
     desc1e_set_es_id(desc, 0x1234);
 }
 
+/* MPEG Descriptor 0x1f: FMC descriptor */
+static void build_desc1f(uint8_t *desc) {
+    uint8_t k = 0;
+    uint8_t *entry_n;
+
+    desc1f_init(desc);
+    desc_set_length(desc, 255);
+
+    entry_n = desc1f_get_entry(desc, k++);
+    desc1fn_set_es_id(entry_n, 0x1122);
+    desc1fn_set_flexmux_channel(entry_n, 0x33);
+
+    entry_n = desc1f_get_entry(desc, k++);
+    desc1fn_set_es_id(entry_n, 0x4455);
+    desc1fn_set_flexmux_channel(entry_n, 0x66);
+
+    entry_n = desc1f_get_entry(desc, k++);
+    desc1fn_set_es_id(entry_n, 0x7788);
+    desc1fn_set_flexmux_channel(entry_n, 0x99);
+
+    entry_n = desc1f_get_entry(desc, k);
+    desc_set_length(desc, entry_n - desc - DESC1F_HEADER_SIZE);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1611,6 +1635,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc1d(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc1f(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
