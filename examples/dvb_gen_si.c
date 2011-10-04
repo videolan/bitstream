@@ -275,6 +275,13 @@ static void build_desc1f(uint8_t *desc) {
     desc_set_length(desc, entry_n - desc - DESC1F_HEADER_SIZE);
 }
 
+/* MPEG Descriptor 0x20: External ES_ID descriptor */
+static void build_desc20(uint8_t *desc) {
+    desc20_init(desc);
+    desc20_set_external_es_id(desc, 0x1234);
+}
+
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1638,6 +1645,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc1f(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc20(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

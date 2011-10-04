@@ -56,5 +56,6 @@
 #include <bitstream/mpeg/psi/desc_1d.h>
 #include <bitstream/mpeg/psi/desc_1e.h>
 #include <bitstream/mpeg/psi/desc_1f.h>
+#include <bitstream/mpeg/psi/desc_20.h>
 
 #endif
