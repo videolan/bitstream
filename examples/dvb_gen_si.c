@@ -231,6 +231,12 @@ static void build_desc1b(uint8_t *desc) {
     desc1b_set_mpeg4_visual_profile_and_level(desc, 0x12);
 }
 
+/* MPEG Descriptor 0x1c: MPEG4 Audio descriptor */
+static void build_desc1c(uint8_t *desc) {
+    desc1c_init(desc);
+    desc1c_set_mpeg4_audio_profile_and_level(desc, 0x13);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1509,6 +1515,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc52(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc1c(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
