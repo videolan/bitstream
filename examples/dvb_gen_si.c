@@ -245,6 +245,12 @@ static void build_desc1d(uint8_t *desc) {
     desc1d_set_iod(desc, 0x45);
 }
 
+/* MPEG Descriptor 0x1e: SL descriptor */
+static void build_desc1e(uint8_t *desc) {
+    desc1e_init(desc);
+    desc1e_set_es_id(desc, 0x1234);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1599,6 +1605,9 @@ static void generate_pmt(void) {
             desc_counter = 0;
             desc_loop = pmtn_get_descs(pmt_n);
             descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc1e(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc1d(desc);

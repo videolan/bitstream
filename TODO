@@ -2,7 +2,6 @@ TODO items for biTStream. The items are not ordered by importance
 so if you like something just do it and send a patch.
 
 - Add support (parser, generator, example) for these MPEG descriptors:
-  - Descriptor 0x1e SL_descriptor
   - Descriptor 0x1f FMC_descriptor
   - Descriptor 0x20 external_ES_ID_descriptor
   - Descriptor 0x21 MuxCode_descriptor
