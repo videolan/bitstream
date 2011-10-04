@@ -1,8 +1,8 @@
 PREFIX ?= /usr/local
-INCLUDE = $(DESTDIR)/$(PREFIX)/include/bitstream
+INCLUDE = $(subst //,/,$(DESTDIR)/$(PREFIX)/include/bitstream)
 
 all:
-	@echo "nothing to do"
+	@echo "Run \"make install\" to install biTStream into $(INCLUDE)"
 
 install:
 	@install -d $(INCLUDE)
