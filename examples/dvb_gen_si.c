@@ -288,6 +288,14 @@ static void build_desc23(uint8_t *desc) {
     desc23_set_tb_leak_rate(desc, 445566);
 }
 
+/* MPEG Descriptor 0x27: Metadata STD descriptor */
+static void build_desc27(uint8_t *desc) {
+    desc27_init(desc);
+    desc27_set_input_leak_rate(desc, 12345);
+    desc27_set_buffer_size(desc, 23456);
+    desc27_set_output_leak_rate(desc, 34567);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1657,6 +1665,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc23(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc27(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
