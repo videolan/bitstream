@@ -86,6 +86,7 @@ Supported MPEG descriptors
  * Descriptor 0x20: External ES_ID descriptor
  * Descriptor 0x23: MultiplexBuffer descriptor
  * Descriptor 0x27: Metadata STD descriptor
+ * Descriptor 0x28: AVC video descriptor
 
 
 Supported DVB descriptors

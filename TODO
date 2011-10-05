@@ -7,7 +7,6 @@ so if you like something just do it and send a patch.
   - Descriptor 0x24 content_labeling_descriptor
   - Descriptor 0x25 metadata_pointer_descriptor
   - Descriptor 0x26 metadata_descriptor
-  - Descriptor 0x28 AVC video descriptor
   - Descriptor 0x29 IPMP_descriptor (defined in ISO/IEC 13818-11, MPEG-2 IPMP)
   - Descriptor 0x2a AVC timing and HRD descriptor
   - Descriptor 0x2b MPEG-2_AAC_audio_descriptor

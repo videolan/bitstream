@@ -296,6 +296,19 @@ static void build_desc27(uint8_t *desc) {
     desc27_set_output_leak_rate(desc, 34567);
 }
 
+/* MPEG Descriptor 0x28: AVC video descriptor */
+static void build_desc28(uint8_t *desc) {
+    desc28_init(desc);
+    desc28_set_profile_idc(desc, 0x12);
+    desc28_set_constraint_set0_flag(desc, true);
+    desc28_set_constraint_set1_flag(desc, true);
+    desc28_set_constraint_set2_flag(desc, false);
+    desc28_set_avc_compatible_flags(desc, 0x0a);
+    desc28_set_level_idc(desc, 0x34);
+    desc28_set_avc_still_present(desc, false);
+    desc28_set_avc_24_hour_picture_flag(desc, false);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1668,6 +1681,25 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc27(desc);
+
+            // Finish descriptor generation
+            desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
+            descs_set_length(desc_loop, desc - desc_loop - DESCS_HEADER_SIZE);
+        }
+
+        pmt_n = pmt_get_es(pmt, pmt_n_counter++);
+        pmtn_init(pmt_n);
+        pmtn_set_streamtype(pmt_n, 0x1b);
+        pmtn_set_pid(pmt_n, pmt_pid + 26);
+        pmtn_set_desclength(pmt_n, 0);
+        {
+            // Add descriptors to transport_stream_n
+            desc_counter = 0;
+            desc_loop = pmtn_get_descs(pmt_n);
+            descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc28(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
