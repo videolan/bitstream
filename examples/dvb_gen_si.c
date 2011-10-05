@@ -323,6 +323,14 @@ static void build_desc2a(uint8_t *desc) {
     desc2a_set_picture_to_display_conversion_flag(desc, true);
 }
 
+/* MPEG Descriptor 0x2b: MPEG-2 AAC audio descriptor */
+static void build_desc2b(uint8_t *desc) {
+    desc2b_init(desc);
+    desc2b_set_aac_profile(desc, 0x12);
+    desc2b_set_aac_channel_config(desc, 0x05);
+    desc2b_set_aac_additional_info(desc, 0x00);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1717,6 +1725,25 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc2a(desc);
+
+            // Finish descriptor generation
+            desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
+            descs_set_length(desc_loop, desc - desc_loop - DESCS_HEADER_SIZE);
+        }
+
+        pmt_n = pmt_get_es(pmt, pmt_n_counter++);
+        pmtn_init(pmt_n);
+        pmtn_set_streamtype(pmt_n, 0x0f); // AAC
+        pmtn_set_pid(pmt_n, pmt_pid + 27);
+        pmtn_set_desclength(pmt_n, 0);
+        {
+            // Add descriptors to transport_stream_n
+            desc_counter = 0;
+            desc_loop = pmtn_get_descs(pmt_n);
+            descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc2b(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
