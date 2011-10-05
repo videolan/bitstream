@@ -309,6 +309,20 @@ static void build_desc28(uint8_t *desc) {
     desc28_set_avc_24_hour_picture_flag(desc, false);
 }
 
+/* MPEG Descriptor 0x2a: AVC timing and HRD descriptor */
+static void build_desc2a(uint8_t *desc) {
+    desc2a_init(desc);
+    desc2a_set_hrd_management_valid_flag(desc, false);
+    desc2a_set_picture_and_timing_info_present(desc, true);
+    desc2a_set_90khz_flag(desc, false); // depends on picture_and_timing_info
+    desc2a_set_N(desc, 12345678); // depends on 90khz == false
+    desc2a_set_K(desc, 34567890); // depends on 90khz == false
+    desc2a_set_num_units_in_tick(desc, 456789); // depends on picture_and_timing_info
+    desc2a_set_fixed_frame_rate_flag(desc, true);
+    desc2a_set_temporal_poc_flag(desc, false);
+    desc2a_set_picture_to_display_conversion_flag(desc, true);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1700,6 +1714,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc28(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc2a(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
