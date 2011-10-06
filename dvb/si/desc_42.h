@@ -1,9 +1,9 @@
 /*****************************************************************************
- * descs_list.h: All supported ETSI EN 300 468 descriptors
+ * desc_42.h: ETSI EN 300 468 Descriptor 0x42: Stuffing descriptor
  *****************************************************************************
- * Copyright (C) 2009-2010 VideoLAN
+ * Copyright (C) 2011 Unix Solutions Ltd.
  *
- * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ * Authors: Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,36 +25,51 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifndef __BITSTREAM_DVB_DESCS_LIST_H__
-#define __BITSTREAM_DVB_DESCS_LIST_H__
-
 /*
- * 1. Keep the list ordered.
- * 2. When you are adding new descriptor here, make sure you also add
- *    the needed code in bitstream/mpeg/psi/descs_print.h
+ * Normative references:
+ *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
  */
 
-#include <bitstream/dvb/si/desc_40.h>
-#include <bitstream/dvb/si/desc_41.h>
-#include <bitstream/dvb/si/desc_42.h>
-#include <bitstream/dvb/si/desc_43.h>
-#include <bitstream/dvb/si/desc_44.h>
-#include <bitstream/dvb/si/desc_46.h>
-#include <bitstream/dvb/si/desc_47.h>
-#include <bitstream/dvb/si/desc_48.h>
-#include <bitstream/dvb/si/desc_4a.h>
-#include <bitstream/dvb/si/desc_4d.h>
-#include <bitstream/dvb/si/desc_4e.h>
-#include <bitstream/dvb/si/desc_52.h>
-#include <bitstream/dvb/si/desc_54.h>
-#include <bitstream/dvb/si/desc_55.h>
-#include <bitstream/dvb/si/desc_56.h>
-#include <bitstream/dvb/si/desc_58.h>
-#include <bitstream/dvb/si/desc_59.h>
-#include <bitstream/dvb/si/desc_5a.h>
-#include <bitstream/dvb/si/desc_5f.h>
-#include <bitstream/dvb/si/desc_6a.h>
-#include <bitstream/dvb/si/desc_83p28.h>
-#include <bitstream/dvb/si/desc_88p28.h>
+#ifndef __BITSTREAM_DVB_DESC_42_H__
+#define __BITSTREAM_DVB_DESC_42_H__
+
+#include <bitstream/common.h>
+#include <bitstream/mpeg/psi/descriptors.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/*****************************************************************************
+ * Descriptor 0x42: Service list descriptor
+ *****************************************************************************/
+#define DESC42_HEADER_SIZE      DESC_HEADER_SIZE
+
+static inline void desc42_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x42);
+}
+
+static inline bool desc42_validate(const uint8_t *p_desc)
+{
+    return true;
+}
+
+static inline void desc42_print(uint8_t *p_desc, f_print pf_print,
+                                void *opaque, print_type_t i_print_type)
+{
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<STUFFING_DESC length=\"%u\"/>", desc_get_length(p_desc));
+        break;
+    default:
+        pf_print(opaque, "    - desc 42 stuffing length=%u", desc_get_length(p_desc));
+    }
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

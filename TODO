@@ -14,7 +14,6 @@ so if you like something just do it and send a patch.
   - Descriptor 0x6a: AC-3 descriptor
 
 - Add support (parser, generator, example) for these DVB descriptors:
-  - Descriptor 0x42: Stuffing descriptor
   - Descriptor 0x45: VBI data descriptor
   - Descriptor 0x49: Country availability descriptor
   - Descriptor 0x4b: NVOD_reference_descriptor

@@ -1794,6 +1794,11 @@ static void generate_pmt(void) {
             desc_loop = pmtn_get_descs(pmt_n);
             descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
 
+/* DVB  Descriptor 0x42: Stuffing descriptor */
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc0f(desc);
+            desc42_init(desc); /* Every descriptor can be stuffed */
+
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc2b(desc);
 
