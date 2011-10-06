@@ -57,6 +57,7 @@ Supported SI tables
  * Running Status Table (RST)
  * Stuffing Table (ST)
  * Discontinuity Information Table (DIT)
+ * Selection Information Table (SIT)
 
 
 Supported MPEG descriptors

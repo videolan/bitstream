@@ -49,5 +49,6 @@
 #include <bitstream/dvb/si/rst.h>
 #include <bitstream/dvb/si/st.h>
 #include <bitstream/dvb/si/dit.h>
+#include <bitstream/dvb/si/sit.h>
 
 #endif

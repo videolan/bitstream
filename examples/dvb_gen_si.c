@@ -1827,6 +1827,95 @@ static void generate_dit(void) {
     free(dit);
 }
 
+/* Selection Information Table (SIT) */
+static void generate_sit(void) {
+    uint8_t *sit = psi_allocate();
+    uint8_t *sit_n;
+    uint8_t sit_n_counter;
+    uint8_t *desc_loop, *desc;
+    uint8_t desc_counter;
+
+    // Generate empty SIT
+    sit_init(sit);
+    psi_set_version(sit, 0);
+    psi_set_current(sit);
+    sit_set_length(sit, 0);
+    sit_set_desclength(sit, 0);
+    psi_set_crc(sit);
+    output_psi_section(sit, SIT_PID, &cc);
+
+    // Add elementary streams
+    sit_init(sit);
+    psi_set_version(sit, 1);
+    psi_set_current(sit);
+    sit_set_length(sit, 0);
+    sit_set_desclength(sit, 0);
+
+    {
+        // Add descriptors to program descriptors
+        sit_set_length(sit, PSI_MAX_SIZE);
+        sit_set_desclength(sit, DESCS_MAX_SIZE);
+
+        desc_counter = 0;
+        desc_loop = sit_get_descs(sit);
+
+        desc = descs_get_desc(desc_loop, desc_counter++);
+        build_desc05(desc);
+
+        // Finish descriptor generation
+        desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
+        sit_set_desclength(sit, desc - desc_loop - DESCS_HEADER_SIZE);
+        sit_set_length(sit, sit_get_desclength(sit));
+    }
+
+    {
+        sit_set_length(sit, PSI_MAX_SIZE); // This needed so sit_get_es works
+
+        // Process elementary streams
+        sit_n_counter = 0;
+
+        sit_n = sit_get_service(sit, sit_n_counter++);
+        sitn_init(sit_n);
+        sitn_set_sid(sit_n, sid);
+        sitn_set_running_status(sit_n, 1);
+        sitn_set_desclength(sit_n, 0);
+        {
+            // Add descriptors to transport_stream_n
+            desc_counter = 0;
+            desc_loop = sitn_get_descs(sit_n);
+            descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc05(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc05(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc05(desc);
+
+            // Finish descriptor generation
+            desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
+            descs_set_length(desc_loop, desc - desc_loop - DESCS_HEADER_SIZE);
+        }
+
+        sit_n = sit_get_service(sit, sit_n_counter++);
+        sitn_init(sit_n);
+        sitn_set_sid(sit_n, sid + 1000);
+        sitn_set_running_status(sit_n, 3);
+        sitn_set_desclength(sit_n, 0);
+
+        // Set transport_stream_loop length
+        sit_n = sit_get_service(sit, sit_n_counter); // Get last service
+        sit_set_length(sit, sit_n - sit_get_service(sit, 0) + sit_get_desclength(sit));
+    }
+
+    psi_set_crc(sit);
+    output_psi_section(sit, SIT_PID, &cc);
+
+    free(sit);
+}
+
 int main(void)
 {
     generate_pat();
@@ -1841,6 +1930,7 @@ int main(void)
     generate_rst();
     generate_pmt();
     generate_dit();
+    generate_sit();
 
     return EXIT_SUCCESS;
 }
