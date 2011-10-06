@@ -46,6 +46,7 @@ Supported SI tables
 
  * Program Allocation Table (PAT)
  * Conditional Access Table (CAT)
+ * Transport Stream Descriptor Table (TSDT)
  * Program Map Table (PMT)
  * Network Information Table (NIT)
  * Bouquet Association Table (BAT)

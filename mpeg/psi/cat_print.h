@@ -33,6 +33,7 @@
 #include <bitstream/mpeg/psi/descriptors.h>
 #include <bitstream/mpeg/psi/descs_print.h>
 #include <bitstream/mpeg/psi/cat.h>
+#include <bitstream/mpeg/psi/tsdt.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -44,15 +45,21 @@ static inline void cat_table_print(uint8_t **pp_sections, f_print pf_print,
 {
     uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
     uint8_t i;
+    char *psz_table_name = "CAT";
+
+    if (psi_get_tableid(psi_table_get_section(pp_sections, 0)) == TSDT_TABLE_ID)
+        psz_table_name = "TSDT";
 
     switch (i_print_type) {
     case PRINT_XML:
-        pf_print(opaque, "<CAT version=\"%hhu\" current_next=\"%d\">",
+        pf_print(opaque, "<%s version=\"%hhu\" current_next=\"%d\">",
+                 psz_table_name,
                  psi_table_get_version(pp_sections),
                  !psi_table_get_current(pp_sections) ? 0 : 1);
         break;
     default:
-        pf_print(opaque, "new CAT version=%hhu%s",
+        pf_print(opaque, "new %s version=%hhu%s",
+                 psz_table_name,
                  psi_table_get_version(pp_sections),
                  !psi_table_get_current(pp_sections) ? " (next)" : "");
     }
@@ -66,10 +73,10 @@ static inline void cat_table_print(uint8_t **pp_sections, f_print pf_print,
 
     switch (i_print_type) {
     case PRINT_XML:
-        pf_print(opaque, "</CAT>");
+        pf_print(opaque, "</%s>", psz_table_name);
         break;
     default:
-        pf_print(opaque, "end CAT");
+        pf_print(opaque, "end %s", psz_table_name);
     }
 }
 

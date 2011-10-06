@@ -845,6 +845,46 @@ static void generate_cat(void) {
     free(cat);
 }
 
+/* MPEG Conditional Access Table (TSDT) */
+static void generate_tsdt(void) {
+    // Generate empty tsdt
+    uint8_t *tsdt = psi_allocate();
+    uint8_t *desc;
+    uint8_t desc_loop[DESCS_HEADER_SIZE + DESCS_MAX_SIZE];
+    uint8_t desc_counter;
+
+    tsdt_init(tsdt);
+    tsdt_set_length(tsdt, 0);
+    psi_set_version(tsdt, 0);
+    psi_set_current(tsdt);
+    psi_set_crc(tsdt);
+    output_psi_section(tsdt, TSDT_PID, &cc);
+
+    // Add couple of descriptors to TSDT
+    psi_set_version(tsdt, 1);
+    psi_set_current(tsdt);
+    psi_set_length(tsdt, PSI_MAX_SIZE);
+
+    descs_set_length(desc_loop, DESCS_MAX_SIZE);
+    desc_counter = 0;
+
+    desc = descs_get_desc(desc_loop, desc_counter++);
+    build_desc0f(desc);
+
+    // Finish descriptor generation
+    desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
+    descs_set_length(desc_loop, desc - desc_loop - DESCS_HEADER_SIZE);
+    tsdt_set_desclength(tsdt, descs_get_length(desc_loop));
+    // Put descriptor loop into TSDT
+    memcpy(tsdt_get_descl(tsdt), desc_loop + DESCS_HEADER_SIZE,
+        descs_get_length(desc_loop));
+
+    psi_set_crc(tsdt);
+    output_psi_section(tsdt, TSDT_PID, &cc);
+
+    free(tsdt);
+}
+
 /* DVB  Network Information Table (NIT) */
 static void generate_nit(void) {
     uint8_t *nit = psi_allocate();
@@ -1791,6 +1831,7 @@ int main(void)
 {
     generate_pat();
     generate_cat();
+    generate_tsdt();
     generate_nit();
     generate_bat();
     generate_sdt();

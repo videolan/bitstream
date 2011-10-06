@@ -69,6 +69,8 @@ static PSI_TABLE_DECLARE(pp_current_pat_sections);
 static PSI_TABLE_DECLARE(pp_next_pat_sections);
 static PSI_TABLE_DECLARE(pp_current_cat_sections);
 static PSI_TABLE_DECLARE(pp_next_cat_sections);
+static PSI_TABLE_DECLARE(pp_current_tsdt_sections);
+static PSI_TABLE_DECLARE(pp_next_tsdt_sections);
 static PSI_TABLE_DECLARE(pp_current_nit_sections);
 static PSI_TABLE_DECLARE(pp_next_nit_sections);
 static PSI_TABLE_DECLARE(pp_current_bat_sections);
@@ -341,6 +343,65 @@ static void handle_cat_section(uint16_t i_pid, uint8_t *p_section)
         return;
 
     handle_cat();
+}
+
+/*****************************************************************************
+ * handle_tsdt
+ *****************************************************************************/
+static void handle_tsdt(void)
+{
+    PSI_TABLE_DECLARE(pp_old_tsdt_sections);
+
+    if (psi_table_validate(pp_current_tsdt_sections) &&
+        psi_table_compare(pp_current_tsdt_sections, pp_next_tsdt_sections)) {
+        /* Identical TSDT. Shortcut. */
+        psi_table_free(pp_next_tsdt_sections);
+        psi_table_init(pp_next_tsdt_sections);
+        return;
+    }
+
+    if (!tsdt_table_validate(pp_next_tsdt_sections)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_tsdt\"/>\n");
+            break;
+        default:
+            printf("invalid TSDT received\n");
+        }
+        psi_table_free(pp_next_tsdt_sections);
+        psi_table_init(pp_next_tsdt_sections);
+        return;
+    }
+
+    /* Switch tables. */
+    psi_table_copy(pp_old_tsdt_sections, pp_current_tsdt_sections);
+    psi_table_copy(pp_current_tsdt_sections, pp_next_tsdt_sections);
+    psi_table_init(pp_next_tsdt_sections);
+
+    if (psi_table_validate(pp_old_tsdt_sections))
+        psi_table_free(pp_old_tsdt_sections);
+
+    tsdt_table_print(pp_current_tsdt_sections, print_wrapper, NULL, i_print_type);
+}
+
+static void handle_tsdt_section(uint16_t i_pid, uint8_t *p_section)
+{
+    if (i_pid != TSDT_PID || !tsdt_validate(p_section)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_tsdt_section\"/>\n");
+            break;
+        default:
+            printf("invalid TSDT section received on PID %hu\n", i_pid);
+        }
+        free(p_section);
+        return;
+    }
+
+    if (!psi_table_section(pp_next_tsdt_sections, p_section))
+        return;
+
+    handle_tsdt();
 }
 
 /*****************************************************************************
@@ -725,6 +786,10 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
         handle_cat_section(i_pid, p_section);
         break;
 
+    case TSDT_TABLE_ID:
+        handle_tsdt_section(i_pid, p_section);
+        break;
+
     case PMT_TABLE_ID:
         handle_pmt(i_pid, p_section);
         break;
@@ -852,6 +917,7 @@ int main(int i_argc, char **ppsz_argv)
 
     p_pids[PAT_PID].i_psi_refcount++;
     p_pids[CAT_PID].i_psi_refcount++;
+    p_pids[TSDT_PID].i_psi_refcount++;
     p_pids[NIT_PID].i_psi_refcount++;
     p_pids[BAT_PID].i_psi_refcount++;
     p_pids[SDT_PID].i_psi_refcount++;

@@ -40,6 +40,7 @@
 #include <bitstream/mpeg/psi/psi.h>
 #include <bitstream/mpeg/psi/pat.h>
 #include <bitstream/mpeg/psi/cat.h>
+#include <bitstream/mpeg/psi/tsdt.h>
 #include <bitstream/mpeg/psi/pmt.h>
 
 #endif

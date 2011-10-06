@@ -1,9 +1,9 @@
 /*****************************************************************************
- * psi_print.h: ISO/IEC 13818-1 Program Stream Information (printing)
+ * tsdt_print.h: ISO/IEC 13818-1 Transport stream descriptor table (printing)
  *****************************************************************************
- * Copyright (C) 2010 VideoLAN
+ * Copyright (C) 2011 Unix Solutions Ltd.
  *
- * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ * Authors: Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,14 +25,24 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifndef __BITSTREAM_MPEG_PSI_PRINT_H__
-#define __BITSTREAM_MPEG_PSI_PRINT_H__
+#ifndef __BITSTREAM_MPEG_TSDT_PRINT_H__
+#define __BITSTREAM_MPEG_TSDT_PRINT_H__
 
 #include <bitstream/common.h>
-#include <bitstream/mpeg/psi.h>
-#include <bitstream/mpeg/psi/pat_print.h>
+#include <bitstream/mpeg/psi/psi.h>
+#include <bitstream/mpeg/psi/descriptors.h>
+#include <bitstream/mpeg/psi/descs_print.h>
 #include <bitstream/mpeg/psi/cat_print.h>
-#include <bitstream/mpeg/psi/tsdt_print.h>
-#include <bitstream/mpeg/psi/pmt_print.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#define tsdt_table_print cat_table_print
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
