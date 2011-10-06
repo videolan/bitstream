@@ -89,6 +89,7 @@ Supported MPEG descriptors
  * Descriptor 0x28: AVC video descriptor
  * Descriptor 0x2a: AVC timing and HRD descriptor
  * Descriptor 0x2b: MPEG-2 AAC audio descriptor
+ * Descriptor 0x2c: FlexMuxTiming_descriptor
 
 
 Supported DVB descriptors

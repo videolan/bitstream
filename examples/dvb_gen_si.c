@@ -331,6 +331,15 @@ static void build_desc2b(uint8_t *desc) {
     desc2b_set_aac_additional_info(desc, 0x00);
 }
 
+/* MPEG Descriptor 0x2c: FlexMuxTiming descriptor */
+static void build_desc2c(uint8_t *desc) {
+    desc2c_init(desc);
+    desc2c_set_fcr_es_id(desc, 0x1234);
+    desc2c_set_fcr_resolution(desc, 123456789);
+    desc2c_set_fcr_length(desc, 55);
+    desc2c_set_fmx_rate_length(desc, 66);
+}
+
 /* =========================================================================
  * DVB defined descriptors
  * ========================================================================= */
@@ -1703,6 +1712,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc27(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc2c(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
