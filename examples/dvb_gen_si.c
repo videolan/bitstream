@@ -643,7 +643,69 @@ static void build_desc50(uint8_t *desc) {
     desc50_set_text(desc, (uint8_t *)text, strlen(text)); // Not required
 }
 
-/* ---  Descriptor 0x51: mosaic_descriptor */
+/* DVB  Descriptor 0x51: Mosaic descriptor */
+static void build_desc51(uint8_t *desc) {
+    uint8_t k = 0;
+    uint8_t *cell_n;
+
+    desc51_init(desc);
+    desc51_set_mosaic_entry_point(desc, 1);
+    desc51_set_horizontal_cells(desc, 2); // +1 == 3
+    desc51_set_vertical_cells(desc, 2);   // +1 == 3 (3x3 == 9 cells)
+
+    desc_set_length(desc, 255);
+    cell_n = desc51_get_logical_cell(desc, k++);
+    {
+        desc51n_set_logical_cell_id(cell_n, 0);
+        desc51n_set_logical_cell_presentation_info(cell_n, 1);
+        desc51n_set_elementary_cell_field_length(cell_n, 3);
+        {
+            desc51n_set_elementary_cell_id(cell_n, 0, 0);
+            desc51n_set_elementary_cell_id(cell_n, 1, 1);
+            desc51n_set_elementary_cell_id(cell_n, 2, 2);
+        }
+
+        desc51n_set_cell_linkage_info(cell_n, 1); // bouquet_id
+        desc51n_set_bouquet_id(cell_n, onid + 100);
+    }
+
+    cell_n = desc51_get_logical_cell(desc, k++);
+    {
+        desc51n_set_logical_cell_id(cell_n, 1);
+        desc51n_set_logical_cell_presentation_info(cell_n, 2);
+        desc51n_set_elementary_cell_field_length(cell_n, 3);
+        {
+            desc51n_set_elementary_cell_id(cell_n, 0, 3);
+            desc51n_set_elementary_cell_id(cell_n, 1, 4);
+            desc51n_set_elementary_cell_id(cell_n, 2, 5);
+        }
+        desc51n_set_cell_linkage_info(cell_n, 2); // 2 or 3, onid, tsid, sid
+        desc51n_set_onid(cell_n, onid + 500);
+        desc51n_set_tsid(cell_n, tsid + 500);
+        desc51n_set_sid(cell_n, sid + 500);
+    }
+
+    cell_n = desc51_get_logical_cell(desc, k++);
+    {
+        desc51n_set_logical_cell_id(cell_n, 2);
+        desc51n_set_logical_cell_presentation_info(cell_n, 3);
+        desc51n_set_elementary_cell_field_length(cell_n, 3);
+        {
+            desc51n_set_elementary_cell_id(cell_n, 0, 6);
+            desc51n_set_elementary_cell_id(cell_n, 1, 7);
+            desc51n_set_elementary_cell_id(cell_n, 2, 8);
+        }
+        desc51n_set_cell_linkage_info(cell_n, 4); // onid, tsid, sid, event_id
+        desc51n_set_onid(cell_n, onid + 1000);
+        desc51n_set_tsid(cell_n, tsid + 1000);
+        desc51n_set_sid(cell_n, sid + 1000);
+        desc51n_set_event_id(cell_n, event_id + 1000);
+    }
+
+    cell_n = desc51_get_logical_cell(desc, k);
+    desc_set_length(desc, cell_n - desc - DESC_HEADER_SIZE);
+}
+
 /* DVB  Descriptor 0x52: Stream identifier descriptor */
 static void build_desc52(uint8_t *desc) {
     desc52_init(desc);
@@ -1302,6 +1364,9 @@ static void generate_sdt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc49(desc, true);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc51(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);

@@ -14,7 +14,6 @@ so if you like something just do it and send a patch.
   - Descriptor 0x6a: AC-3 descriptor
 
 - Add support (parser, generator, example) for these DVB descriptors:
-  - Descriptor 0x51: mosaic_descriptor
   - Descriptor 0x53: CA_identifier_descriptor
   - Descriptor 0x57: telephone_descriptor
   - Descriptor 0x5b: multilingual_network_name_descriptor

@@ -51,6 +51,7 @@
 #include <bitstream/dvb/si/desc_4e.h>
 #include <bitstream/dvb/si/desc_4f.h>
 #include <bitstream/dvb/si/desc_50.h>
+#include <bitstream/dvb/si/desc_51.h>
 #include <bitstream/dvb/si/desc_52.h>
 #include <bitstream/dvb/si/desc_54.h>
 #include <bitstream/dvb/si/desc_55.h>
