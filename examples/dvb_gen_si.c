@@ -632,7 +632,17 @@ static void build_desc4f(uint8_t *desc) {
     desc4f_set_reference_event_id(desc, event_id + 2000);
 }
 
-/* ---  Descriptor 0x50: component_descriptor */
+/* DVB  Descriptor 0x50: Component descriptor */
+static void build_desc50(uint8_t *desc) {
+    char *text = "Stereo";
+    desc50_init(desc);
+    desc50_set_stream_content(desc, 0x02);
+    desc50_set_component_type(desc, 0x03);
+    desc50_set_component_tag(desc, 46);
+    desc50_set_language(desc, (uint8_t *)"eng");
+    desc50_set_text(desc, (uint8_t *)text, strlen(text)); // Not required
+}
+
 /* ---  Descriptor 0x51: mosaic_descriptor */
 /* DVB  Descriptor 0x52: Stream identifier descriptor */
 static void build_desc52(uint8_t *desc) {
@@ -1791,6 +1801,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc1c(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc50(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
