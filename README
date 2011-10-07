@@ -106,6 +106,7 @@ Supported DVB descriptors
  * Descriptor 0x46: VBI teletext descriptor
  * Descriptor 0x47: Bouquet name descriptor
  * Descriptor 0x48: Service descriptor
+ * Descriptor 0x49: Country availability descriptor
  * Descriptor 0x4a: Linkage descriptor (partially implemented)
  * Descriptor 0x4d: Short event descriptor
  * Descriptor 0x4e: Extended event descriptor

@@ -513,7 +513,29 @@ static void build_desc48(uint8_t *desc) {
     desc48_set_length(desc);
 }
 
-/* ---  Descriptor 0x49: Country availability descriptor */
+/* DVB  Descriptor 0x49: Country availability descriptor */
+static void build_desc49(uint8_t *desc, bool b_available) {
+    uint8_t k = 0;
+    uint8_t *code_n;
+
+    desc49_init(desc);
+    desc49_set_country_availability_flag(desc, b_available);
+
+    desc_set_length(desc, 255);
+
+    code_n = desc49_get_code(desc, k++);
+    desc49n_set_code(code_n, (uint8_t *)"GBR");
+
+    code_n = desc49_get_code(desc, k++);
+    desc49n_set_code(code_n, (uint8_t *)"FRA");
+
+    code_n = desc49_get_code(desc, k++);
+    desc49n_set_code(code_n, (uint8_t *)"BUL");
+
+    code_n = desc49_get_code(desc, k);
+    desc_set_length(desc, code_n - desc - DESC_HEADER_SIZE);
+}
+
 /* DVB  Descriptor 0x4a: Linkage descriptor (partially implemented) */
 /* ---  Descriptor 0x4b: NVOD_reference_descriptor */
 /* ---  Descriptor 0x4c: time_shifted_service_descriptor */
@@ -1232,6 +1254,9 @@ static void generate_sdt(void) {
             build_desc48(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc49(desc, true);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);
 
             // Finish descriptor generation
@@ -1253,6 +1278,9 @@ static void generate_sdt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc48(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc49(desc, false);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);
