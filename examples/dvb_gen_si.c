@@ -564,7 +564,12 @@ static void build_desc4b(uint8_t *desc, bool b_available) {
     desc_set_length(desc, ref_n - desc - DESC_HEADER_SIZE);
 }
 
-/* ---  Descriptor 0x4c: time_shifted_service_descriptor */
+/* DVB  Descriptor 0x4c: time_shifted_service_descriptor */
+static void build_desc4c(uint8_t *desc) {
+    desc4c_init(desc);
+    desc4c_set_reference_sid(desc, sid + 1000);
+}
+
 /* DVB  Descriptor 0x4d: Short event descriptor */
 static void build_desc4d(uint8_t *desc) {
     char *event_name = "Major TV event";
@@ -1331,6 +1336,9 @@ static void generate_sdt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc48(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc4c(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);
