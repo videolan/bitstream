@@ -537,7 +537,33 @@ static void build_desc49(uint8_t *desc, bool b_available) {
 }
 
 /* DVB  Descriptor 0x4a: Linkage descriptor (partially implemented) */
-/* ---  Descriptor 0x4b: NVOD_reference_descriptor */
+/* DVB  Descriptor 0x4b: NVOD_reference_descriptor */
+static void build_desc4b(uint8_t *desc, bool b_available) {
+    uint8_t k = 0;
+    uint8_t *ref_n;
+
+    desc4b_init(desc);
+    desc_set_length(desc, 255);
+
+    ref_n = desc4b_get_reference(desc, k++);
+    desc4bn_set_tsid(ref_n, tsid);
+    desc4bn_set_onid(ref_n, onid);
+    desc4bn_set_sid (ref_n, sid);
+
+    ref_n = desc4b_get_reference(desc, k++);
+    desc4bn_set_tsid(ref_n, tsid + 100);
+    desc4bn_set_onid(ref_n, onid + 100);
+    desc4bn_set_sid (ref_n, sid  + 100);
+
+    ref_n = desc4b_get_reference(desc, k++);
+    desc4bn_set_tsid(ref_n, tsid + 200);
+    desc4bn_set_onid(ref_n, onid + 200);
+    desc4bn_set_sid (ref_n, sid  + 200);
+
+    ref_n = desc4b_get_reference(desc, k);
+    desc_set_length(desc, ref_n - desc - DESC_HEADER_SIZE);
+}
+
 /* ---  Descriptor 0x4c: time_shifted_service_descriptor */
 /* DVB  Descriptor 0x4d: Short event descriptor */
 static void build_desc4d(uint8_t *desc) {
@@ -1330,6 +1356,9 @@ static void generate_sdt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc48(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc4b(desc, false);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);

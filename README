@@ -108,6 +108,7 @@ Supported DVB descriptors
  * Descriptor 0x48: Service descriptor
  * Descriptor 0x49: Country availability descriptor
  * Descriptor 0x4a: Linkage descriptor (partially implemented)
+ * Descriptor 0x4b: NVOD reference descriptor
  * Descriptor 0x4d: Short event descriptor
  * Descriptor 0x4e: Extended event descriptor
  * Descriptor 0x52: Stream identifier descriptor

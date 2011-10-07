@@ -140,6 +140,7 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
         CASE_DESC_ICONV(48)
         CASE_DESC(49)
         CASE_DESC(4a)
+        CASE_DESC(4b)
         CASE_DESC_ICONV(4d)
         CASE_DESC_ICONV(4e)
         CASE_DESC(52)
