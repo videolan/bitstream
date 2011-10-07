@@ -102,6 +102,7 @@ Supported DVB descriptors
  * Descriptor 0x41: Service list descriptor
  * Descriptor 0x43: Satellite delivery system descriptor
  * Descriptor 0x44: Cable delivery system descriptor
+ * Descriptor 0x45: VBI data descriptor
  * Descriptor 0x46: VBI teletext descriptor
  * Descriptor 0x47: Bouquet name descriptor
  * Descriptor 0x48: Service descriptor

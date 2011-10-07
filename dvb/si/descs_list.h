@@ -39,6 +39,7 @@
 #include <bitstream/dvb/si/desc_42.h>
 #include <bitstream/dvb/si/desc_43.h>
 #include <bitstream/dvb/si/desc_44.h>
+#include <bitstream/dvb/si/desc_45.h>
 #include <bitstream/dvb/si/desc_46.h>
 #include <bitstream/dvb/si/desc_47.h>
 #include <bitstream/dvb/si/desc_48.h>

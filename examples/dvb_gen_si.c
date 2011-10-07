@@ -407,7 +407,63 @@ static void build_desc44(uint8_t *desc) {
     desc44_set_fecinner       (desc, 6); // 8/9
 }
 
-/* ---  Descriptor 0x45: VBI data descriptor */
+/* DVB  Descriptor 0x45: VBI data descriptor */
+static void build_desc45(uint8_t *desc) {
+    uint8_t k = 0;
+    uint8_t *data_n;
+
+    desc45_init(desc);
+    desc_set_length(desc, 255);
+
+    data_n = desc45_get_data(desc, k++);
+    desc45n_set_service_id (data_n, 0x01);   // EBU teletext
+    desc45n_set_data_length(data_n, 8);      // How much bytes are after this
+    {
+        uint8_t j, max_j = desc45n_get_data_length(data_n);
+        for (j = 0; j < max_j; j++) {
+            desc45n_set_field_parity(data_n, j, (j % 2) == 0);
+            desc45n_set_line_offset (data_n, j, j);
+        }
+    }
+
+    data_n = desc45_get_data(desc, k++);
+    desc45n_set_service_id (data_n, 0x03);   // Reserved
+    desc45n_set_data_length(data_n, 4);      // How much bytes are after this
+    desc45n_set_byte(data_n, 0, 0x12);
+    desc45n_set_byte(data_n, 1, 0x34);
+    desc45n_set_byte(data_n, 2, 0x56);
+    desc45n_set_byte(data_n, 3, 0x78);
+
+    data_n = desc45_get_data(desc, k++);
+    desc45n_set_service_id (data_n, 0x04);   // VPS
+    desc45n_set_data_length(data_n, 1);      // How much bytes are after this
+    {
+        uint8_t j, max_j = desc45n_get_data_length(data_n);
+        for (j = 0; j < max_j; j++) {
+            desc45n_set_field_parity(data_n, j, (j % 2) == 2);
+            desc45n_set_line_offset (data_n, j, j + 10);
+        }
+    }
+
+    data_n = desc45_get_data(desc, k++);
+    desc45n_set_service_id (data_n, 0x05);   // WSS
+    desc45n_set_data_length(data_n, 4);      // How much bytes are after this
+    {
+        uint8_t j, max_j = desc45n_get_data_length(data_n);
+        for (j = 0; j < max_j; j++) {
+            desc45n_set_field_parity(data_n, j, (j % 2) == 1);
+            desc45n_set_line_offset (data_n, j, j + 20);
+        }
+    }
+
+    data_n = desc45_get_data(desc, k++);
+    desc45n_set_service_id (data_n, 0x06);   // Closed Captioning
+    desc45n_set_data_length(data_n, 0);      // How much bytes are after this
+
+    data_n = desc45_get_data(desc, k);
+    desc_set_length(desc, data_n - desc - DESC45_HEADER_SIZE);
+}
+
 /* DVB  Descriptor 0x46: VBI teletext descriptor */
 static void build_desc46(uint8_t *desc) {
     uint8_t k = 0;
@@ -1680,6 +1736,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc46(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc45(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
