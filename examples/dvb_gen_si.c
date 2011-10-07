@@ -625,7 +625,13 @@ static void build_desc4e(uint8_t *desc) {
     desc4e_set_length(desc);
 }
 
-/* ---  Descriptor 0x4f: time_shifted_event_descriptor */
+/* DVB  Descriptor 0x4f: time_shifted_event_descriptor */
+static void build_desc4f(uint8_t *desc) {
+    desc4f_init(desc);
+    desc4f_set_reference_sid(desc, sid + 2000);
+    desc4f_set_reference_event_id(desc, event_id + 2000);
+}
+
 /* ---  Descriptor 0x50: component_descriptor */
 /* ---  Descriptor 0x51: mosaic_descriptor */
 /* DVB  Descriptor 0x52: Stream identifier descriptor */
@@ -1484,6 +1490,9 @@ static void generate_eit(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc4d(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc4f(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

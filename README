@@ -112,6 +112,7 @@ Supported DVB descriptors
  * Descriptor 0x4c: Time shifted service descriptor
  * Descriptor 0x4d: Short event descriptor
  * Descriptor 0x4e: Extended event descriptor
+ * Descriptor 0x4f: Time shifted event descriptor
  * Descriptor 0x52: Stream identifier descriptor
  * Descriptor 0x54: Content descriptor
  * Descriptor 0x55: Parental rating descriptor
