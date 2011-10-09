@@ -166,7 +166,7 @@ static void build_desc0a(uint8_t *desc) {
     desc0an_set_audiotype(lang_n, 0);
 
     lang_n = desc0a_get_language(desc, k);
-    desc_set_length(desc, lang_n - desc - DESC0A_HEADER_SIZE);
+    desc_set_length(desc, lang_n - desc - DESC_HEADER_SIZE);
 }
 
 /* MPEG Descriptor 0x0B: System clock descriptor */
@@ -272,7 +272,7 @@ static void build_desc1f(uint8_t *desc) {
     desc1fn_set_flexmux_channel(entry_n, 0x99);
 
     entry_n = desc1f_get_entry(desc, k);
-    desc_set_length(desc, entry_n - desc - DESC1F_HEADER_SIZE);
+    desc_set_length(desc, entry_n - desc - DESC_HEADER_SIZE);
 }
 
 /* MPEG Descriptor 0x20: External ES_ID descriptor */
@@ -376,7 +376,7 @@ static void build_desc41(uint8_t *desc) {
     desc41n_set_type(service_n, 2);
 
     service_n = desc41_get_service(desc, k);
-    desc_set_length(desc, service_n - desc - DESC41_HEADER_SIZE);
+    desc_set_length(desc, service_n - desc - DESC_HEADER_SIZE);
 }
 
 /* ---  Descriptor 0x42: Stuffing descriptor */
@@ -461,7 +461,7 @@ static void build_desc45(uint8_t *desc) {
     desc45n_set_data_length(data_n, 0);      // How much bytes are after this
 
     data_n = desc45_get_data(desc, k);
-    desc_set_length(desc, data_n - desc - DESC45_HEADER_SIZE);
+    desc_set_length(desc, data_n - desc - DESC_HEADER_SIZE);
 }
 
 /* DVB  Descriptor 0x46: VBI teletext descriptor */
@@ -491,7 +491,7 @@ static void build_desc46(uint8_t *desc) {
     desc46n_set_teletextpage(lang_n, 64);
 
     lang_n = desc46_get_language(desc, k);
-    desc_set_length(desc, lang_n - desc - DESC46_HEADER_SIZE);
+    desc_set_length(desc, lang_n - desc - DESC_HEADER_SIZE);
 }
 
 /* DVB  Descriptor 0x47: Bouquet name descriptor */
@@ -752,7 +752,7 @@ static void build_desc54(uint8_t *desc) {
     desc54n_set_user(content_n, 177);
 
     content_n = desc54_get_content(desc, k);
-    desc_set_length(desc, content_n - desc - DESC54_HEADER_SIZE);
+    desc_set_length(desc, content_n - desc - DESC_HEADER_SIZE);
 }
 
 /* DVB  Descriptor 0x55: Parental rating descriptor */
@@ -780,7 +780,7 @@ static void build_desc55(uint8_t *desc) {
     desc55n_set_rating(rating_n, 24);
 
     rating_n = desc55_get_rating(desc, k);
-    desc_set_length(desc, rating_n - desc - DESC55_HEADER_SIZE);
+    desc_set_length(desc, rating_n - desc - DESC_HEADER_SIZE);
 }
 
 /* DVB  Descriptor 0x56: Teletext descriptor */
@@ -817,7 +817,7 @@ static void build_desc58(uint8_t *desc) {
     desc58n_set_next_offset(lto_n, 0x1830);
 
     lto_n = desc58_get_lto(desc, k);
-    desc_set_length(desc, lto_n - desc - DESC58_HEADER_SIZE);
+    desc_set_length(desc, lto_n - desc - DESC_HEADER_SIZE);
 }
 
 /* DVB  Descriptor 0x59: Subtitling descriptor */
@@ -847,7 +847,7 @@ static void build_desc59(uint8_t *desc) {
     desc59n_set_ancillarypage(lang_n, 7);
 
     lang_n = desc59_get_language(desc, k);
-    desc_set_length(desc, lang_n - desc - DESC59_HEADER_SIZE);
+    desc_set_length(desc, lang_n - desc - DESC_HEADER_SIZE);
 }
 
 /* DVB  Descriptor 0x5a: Terrestrial delivery system descriptor */
