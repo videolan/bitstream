@@ -712,7 +712,27 @@ static void build_desc52(uint8_t *desc) {
     desc52_set_component_tag(desc, 46);
 }
 
-/* ---  Descriptor 0x53: CA_identifier_descriptor */
+/* DVB  Descriptor 0x53: CA_identifier_descriptor */
+static void build_desc53(uint8_t *desc) {
+    uint8_t k = 0;
+    uint8_t *cas_n;
+
+    desc53_init(desc);
+    desc_set_length(desc, 255);
+
+    cas_n = desc53_get_ca(desc, k++);
+    desc53n_set_ca_sysid(cas_n, 0xaabb);
+
+    cas_n = desc53_get_ca(desc, k++);
+    desc53n_set_ca_sysid(cas_n, 0xccdd);
+
+    cas_n = desc53_get_ca(desc, k++);
+    desc53n_set_ca_sysid(cas_n, 0xeeff);
+
+    cas_n = desc53_get_ca(desc, k);
+    desc_set_length(desc, cas_n - desc - DESC_HEADER_SIZE);
+}
+
 /* DVB  Descriptor 0x54: Content descriptor */
 static void build_desc54(uint8_t *desc) {
     uint8_t k = 0;
@@ -1559,6 +1579,9 @@ static void generate_eit(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc54(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc53(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc55(desc);

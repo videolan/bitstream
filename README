@@ -116,6 +116,7 @@ Supported DVB descriptors
  * Descriptor 0x50: Component descriptor
  * Descriptor 0x51: Mosaic descriptor
  * Descriptor 0x52: Stream identifier descriptor
+ * Descriptor 0x53: CA identifier descriptor
  * Descriptor 0x54: Content descriptor
  * Descriptor 0x55: Parental rating descriptor
  * Descriptor 0x56: Teletext descriptor
