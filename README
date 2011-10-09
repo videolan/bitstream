@@ -120,6 +120,7 @@ Supported DVB descriptors
  * Descriptor 0x54: Content descriptor
  * Descriptor 0x55: Parental rating descriptor
  * Descriptor 0x56: Teletext descriptor
+ * Descriptor 0x57: Telephone descriptor
  * Descriptor 0x58: Local time offset descriptor
  * Descriptor 0x59: Subtitling descriptor
  * Descriptor 0x5a: Terrestrial delivery system descriptor

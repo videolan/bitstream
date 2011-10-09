@@ -790,7 +790,27 @@ static void build_desc56(uint8_t *desc) {
     build_desc46(desc);
     desc56_init(desc);
 }
-/* ---  Descriptor 0x57: telephone_descriptor */
+
+/* DVB  Descriptor 0x57: telephone_descriptor */
+static void build_desc57(uint8_t *desc) {
+    char *country_prefix = "+";
+    char *international_area_code = "359";
+    char *operator_code = "2";
+    char *national_area_code = "";
+    char *core_number = "9868620";
+
+    desc57_init(desc);
+
+    desc57_set_foreign_availability(desc, true);
+    desc57_set_connection_type(desc, 3);
+
+    desc57_set_country_prefix(desc, country_prefix, strlen(country_prefix));
+    desc57_set_international_area_code(desc, international_area_code, strlen(international_area_code));
+    desc57_set_operator_code(desc, operator_code, strlen(operator_code));
+    desc57_set_national_area_code(desc, national_area_code, strlen(national_area_code));
+    desc57_set_core_number(desc, core_number, strlen(core_number));
+    desc57_set_length(desc);
+}
 
 /* DVB  Descriptor 0x58: Local time offset descriptor */
 static void build_desc58(uint8_t *desc) {
@@ -1387,6 +1407,9 @@ static void generate_sdt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc51(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc57(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);
