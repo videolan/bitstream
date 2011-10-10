@@ -34,7 +34,8 @@
 #ifndef __BITSTREAM_DVB_CI_H__
 #define __BITSTREAM_DVB_CI_H__
 
-#include <bitstream/mpeg/psi.h>
+#include <bitstream/mpeg/psi/psi.h>
+#include <bitstream/mpeg/psi/descriptors.h>
 
 #ifdef __cplusplus
 extern "C"

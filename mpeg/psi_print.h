@@ -28,8 +28,6 @@
 #ifndef __BITSTREAM_MPEG_PSI_PRINT_H__
 #define __BITSTREAM_MPEG_PSI_PRINT_H__
 
-#include <bitstream/common.h>
-#include <bitstream/mpeg/psi.h>
 #include <bitstream/mpeg/psi/pat_print.h>
 #include <bitstream/mpeg/psi/cat_print.h>
 #include <bitstream/mpeg/psi/tsdt_print.h>

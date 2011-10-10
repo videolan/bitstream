@@ -35,7 +35,8 @@
 #define __BITSTREAM_DVB_SI_H__
 
 #include <bitstream/common.h>
-#include <bitstream/mpeg/psi.h>
+#include <bitstream/mpeg/psi/psi.h>
+#include <bitstream/mpeg/psi/descriptors.h>
 #include <bitstream/dvb/si/numbers.h>
 #include <bitstream/dvb/si/datetime.h>
 #include <bitstream/dvb/si/strings.h>
