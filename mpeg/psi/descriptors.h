@@ -35,6 +35,8 @@
 
 #include <bitstream/common.h>
 
+#include <stdio.h> /* sprintf */
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -115,12 +117,22 @@ static inline void desc_print_error(const uint8_t *p_desc, f_print pf_print,
 static inline void desc_print(const uint8_t *p_desc, f_print pf_print,
                               void *opaque, print_type_t i_print_type)
 {
+    uint8_t i, i_length;
+    char psz_value[2 * 255 + 1];
+
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque, "<UNKNOWN_DESC />");
         break;
     default:
-        pf_print(opaque, "    - desc %2.2hhx unknown", desc_get_tag(p_desc));
+        i_length = desc_get_length(p_desc);
+
+        for (i = 0; i < i_length; i++)
+            sprintf(psz_value + 2 * i, "%02x", p_desc[2 + i]);
+        psz_value[2 * i] = '\0';
+
+        pf_print(opaque, "    - desc %02x unknown length=%u value=%s",
+            desc_get_tag(p_desc), i_length, psz_value);
     }
 }
 
