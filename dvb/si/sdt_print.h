@@ -85,10 +85,10 @@ static inline void sdt_table_print(uint8_t **pp_sections,
                          sdtn_get_ca(p_service) ? 1 : 0);
                 break;
             default:
-                pf_print(print_opaque, "  * service sid=%hu eit%s%s running=%hhu%s",
+                pf_print(print_opaque, "  * service sid=%hu%s%s running=%hhu%s",
                          sdtn_get_sid(p_service),
-                         sdtn_get_eitschedule(p_service) ? " schedule" : "",
-                         sdtn_get_eitpresent(p_service) ? " present" : "",
+                         sdtn_get_eitschedule(p_service) ? " eit_schedule" : "",
+                         sdtn_get_eitpresent(p_service) ? " eit_pf" : "",
                          sdtn_get_running(p_service),
                          sdtn_get_ca(p_service) ? " scrambled" : "");
             }
