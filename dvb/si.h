@@ -38,30 +38,12 @@
 #include <bitstream/common.h>
 #include <bitstream/mpeg/psi.h>
 #include <bitstream/dvb/si/numbers.h>
+#include <bitstream/dvb/si/datetime.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-/* EN 300 468 Annex C, year is from 1900 */
-static inline uint16_t dvb_mjd_set(int y, int m, int d)
-{
-    int l = (m == 1 || m == 2) ? 1 : 0;
-    int mjd = 14956 + d + (y - l) * 1461 / 4 + (m + 1 + l * 12) * 306001 / 10000;
-    return (uint16_t)mjd;
-}
-
-static inline void dvb_mjd_get(uint16_t mjd, int *y, int *m, int *d)
-{
-    int k;
-    int yp = (mjd * 20 - 301564) / 7305;
-    int mp = (mjd * 10000 - 149561000 - yp * 3652500) / 306001;
-    *d = mjd - 14956 - yp * 1461 / 4 - mp * 306001 / 10000;
-    k = (mp == 14 || mp == 15) ? 1 : 0;
-    *y = yp + k;
-    *m = mp - 1 - k * 12;
-}
 
 /*****************************************************************************
  * DVB string
