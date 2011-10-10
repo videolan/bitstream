@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -49,12 +50,21 @@ extern "C"
 static inline void desc5f_init(uint8_t *p_desc)
 {
     desc_set_tag(p_desc, 0x5f);
+    desc_set_length(p_desc, DESC5F_HEADER_SIZE - DESC_HEADER_SIZE);
 }
 
 static inline uint32_t desc5f_get_specifier(const uint8_t *p_desc)
 {
     return (p_desc[2] << 24) | (p_desc[3] << 16) |
            (p_desc[4] << 8) | p_desc[5];
+}
+
+static inline void desc5f_set_specifier(uint8_t *p_desc, uint32_t i_specifier)
+{
+    p_desc[2] = (i_specifier >> 24) & 0xff;
+    p_desc[3] = (i_specifier >> 16) & 0xff;
+    p_desc[4] = (i_specifier >>  8) & 0xff;
+    p_desc[5] = i_specifier & 0xff;
 }
 
 static inline bool desc5f_validate(const uint8_t *p_desc)
@@ -67,11 +77,11 @@ static inline void desc5f_print(const uint8_t *p_desc, f_print pf_print,
 {
     switch (i_print_type) {
     case PRINT_XML:
-        pf_print(opaque, "<PRIVATE_DATA_SPECIFIER_DESC specifier=\"%u\" />",
+        pf_print(opaque, "<PRIVATE_DATA_SPECIFIER_DESC specifier=\"0x%08x\" />",
                  desc5f_get_specifier(p_desc));
         break;
     default:
-        pf_print(opaque, "    - desc 5f private data specifier=%u",
+        pf_print(opaque, "    - desc 5f private_data specifier=0x%08x",
                  desc5f_get_specifier(p_desc));
     }
 }
