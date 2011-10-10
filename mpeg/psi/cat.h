@@ -54,6 +54,7 @@ static inline void cat_init(uint8_t *p_cat)
     psi_init(p_cat, true);
     psi_set_tableid(p_cat, CAT_TABLE_ID);
     p_cat[1] &= ~0x40;
+    psi_set_tableidext(p_cat, 0xffff);
     psi_set_section(p_cat, 0);
     psi_set_lastsection(p_cat, 0);
 }
@@ -67,6 +68,11 @@ static inline void cat_set_length(uint8_t *p_cat, uint16_t i_cat_length)
 static inline uint16_t cat_get_desclength(const uint8_t *p_cat)
 {
     return psi_get_length(p_cat) - (CAT_HEADER_SIZE + PSI_CRC_SIZE - PSI_HEADER_SIZE);
+}
+
+static inline void cat_set_desclength(uint8_t *p_cat, uint16_t i_desc_len)
+{
+    cat_set_length(p_cat, i_desc_len);
 }
 
 static inline uint8_t *cat_get_descl(uint8_t *p_cat)

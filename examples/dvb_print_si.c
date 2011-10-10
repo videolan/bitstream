@@ -67,6 +67,8 @@ static int i_nb_sids = 0;
 
 static PSI_TABLE_DECLARE(pp_current_pat_sections);
 static PSI_TABLE_DECLARE(pp_next_pat_sections);
+static PSI_TABLE_DECLARE(pp_current_cat_sections);
+static PSI_TABLE_DECLARE(pp_next_cat_sections);
 static PSI_TABLE_DECLARE(pp_current_nit_sections);
 static PSI_TABLE_DECLARE(pp_next_nit_sections);
 static PSI_TABLE_DECLARE(pp_current_sdt_sections);
@@ -278,6 +280,65 @@ static void handle_pat_section(uint16_t i_pid, uint8_t *p_section)
         return;
 
     handle_pat();
+}
+
+/*****************************************************************************
+ * handle_cat
+ *****************************************************************************/
+static void handle_cat(void)
+{
+    PSI_TABLE_DECLARE(pp_old_cat_sections);
+
+    if (psi_table_validate(pp_current_cat_sections) &&
+        psi_table_compare(pp_current_cat_sections, pp_next_cat_sections)) {
+        /* Identical CAT. Shortcut. */
+        psi_table_free(pp_next_cat_sections);
+        psi_table_init(pp_next_cat_sections);
+        return;
+    }
+
+    if (!cat_table_validate(pp_next_cat_sections)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_cat\"/>\n");
+            break;
+        default:
+            printf("invalid CAT received\n");
+        }
+        psi_table_free(pp_next_cat_sections);
+        psi_table_init(pp_next_cat_sections);
+        return;
+    }
+
+    /* Switch tables. */
+    psi_table_copy(pp_old_cat_sections, pp_current_cat_sections);
+    psi_table_copy(pp_current_cat_sections, pp_next_cat_sections);
+    psi_table_init(pp_next_cat_sections);
+
+    if (psi_table_validate(pp_old_cat_sections))
+        psi_table_free(pp_old_cat_sections);
+
+    cat_table_print(pp_current_cat_sections, print_wrapper, NULL, i_print_type);
+}
+
+static void handle_cat_section(uint16_t i_pid, uint8_t *p_section)
+{
+    if (i_pid != CAT_PID || !cat_validate(p_section)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_cat_section\"/>\n");
+            break;
+        default:
+            printf("invalid CAT section received on PID %hu\n", i_pid);
+        }
+        free(p_section);
+        return;
+    }
+
+    if (!psi_table_section(pp_next_cat_sections, p_section))
+        return;
+
+    handle_cat();
 }
 
 /*****************************************************************************
@@ -508,6 +569,10 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
         handle_pat_section(i_pid, p_section);
         break;
 
+    case CAT_TABLE_ID:
+        handle_cat_section(i_pid, p_section);
+        break;
+
     case PMT_TABLE_ID:
         handle_pmt(i_pid, p_section);
         break;
@@ -614,6 +679,7 @@ int main(int i_argc, char **ppsz_argv)
     }
 
     p_pids[PAT_PID].i_psi_refcount++;
+    p_pids[CAT_PID].i_psi_refcount++;
     p_pids[NIT_PID].i_psi_refcount++;
     p_pids[SDT_PID].i_psi_refcount++;
     p_pids[EIT_PID].i_psi_refcount++;
