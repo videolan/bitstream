@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -83,6 +84,14 @@ static inline uint8_t desc0an_get_audiotype(const uint8_t *p_desc_n)
     return p_desc_n[3];
 }
 
+static inline const char *desc0a_get_audiotype_txt(uint8_t audio_type)
+{
+    return audio_type == 0x00 ? "undefined" :
+           audio_type == 0x01 ? "clean effects" :
+           audio_type == 0x02 ? "hearing impaired" :
+           audio_type == 0x03 ? "visual impaired commentary" : "reserved";
+}
+
 static inline bool desc0a_validate(const uint8_t *p_desc)
 {
     return !(desc_get_length(p_desc) % DESC0A_LANGUAGE_SIZE);
@@ -98,14 +107,18 @@ static inline void desc0a_print(uint8_t *p_desc, f_print pf_print,
         j++;
         switch (i_print_type) {
         case PRINT_XML:
-            pf_print(opaque, "<AUDIO_LANGUAGE_DESC language=\"%3.3s\" audiotype=\"0x%hhx\"/>",
+            pf_print(opaque, "<AUDIO_LANGUAGE_DESC language=\"%3.3s\" audiotype=\"%u\" autiotype_txt=\"%s\"/>",
                      (const char *)desc0an_get_code(p_desc_n),
-                     desc0an_get_audiotype(p_desc_n));
+                     desc0an_get_audiotype(p_desc_n),
+                     desc0a_get_audiotype_txt(desc0an_get_audiotype(p_desc_n))
+                    );
             break;
         default:
-            pf_print(opaque, "    - desc 0a audio_language language=%3.3s audiotype=0x%hhx",
+            pf_print(opaque, "    - desc 0a audio_language language=%3.3s audiotype=%u audiotype_txt=\"%s\"",
                      (const char *)desc0an_get_code(p_desc_n),
-                     desc0an_get_audiotype(p_desc_n));
+                     desc0an_get_audiotype(p_desc_n),
+                     desc0a_get_audiotype_txt(desc0an_get_audiotype(p_desc_n))
+                    );
         }
     }
 }
