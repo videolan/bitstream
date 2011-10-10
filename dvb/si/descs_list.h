@@ -1,5 +1,5 @@
 /*****************************************************************************
- * si.h: ETSI EN 300 468 Service Information
+ * descs_list.h: All supported ETSI EN 300 468 descriptors
  *****************************************************************************
  * Copyright (C) 2009-2010 VideoLAN
  *
@@ -25,26 +25,28 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#ifndef __BITSTREAM_DVB_DESCS_LIST_H__
+#define __BITSTREAM_DVB_DESCS_LIST_H__
+
 /*
- * Normative references:
- *  - ISO/IEC 13818-1:2007(E) (MPEG-2 Systems)
- *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
+ * 1. Keep the list ordered.
+ * 2. When you are adding new descriptor here, make sure you also add
+ *    the needed code in bitstream/mpeg/psi/descs_print.h
  */
 
-#ifndef __BITSTREAM_DVB_SI_H__
-#define __BITSTREAM_DVB_SI_H__
-
-#include <bitstream/common.h>
-#include <bitstream/mpeg/psi.h>
-#include <bitstream/dvb/si/numbers.h>
-#include <bitstream/dvb/si/datetime.h>
-#include <bitstream/dvb/si/strings.h>
-#include <bitstream/dvb/si/descs_list.h>
-#include <bitstream/dvb/si/nit.h>
-#include <bitstream/dvb/si/sdt.h>
-#include <bitstream/dvb/si/eit.h>
-#include <bitstream/dvb/si/tdt.h>
-#include <bitstream/dvb/si/tot.h>
-#include <bitstream/dvb/si/rst.h>
+#include <bitstream/dvb/si/desc_40.h>
+#include <bitstream/dvb/si/desc_41.h>
+#include <bitstream/dvb/si/desc_43.h>
+#include <bitstream/dvb/si/desc_44.h>
+#include <bitstream/dvb/si/desc_46.h>
+#include <bitstream/dvb/si/desc_48.h>
+#include <bitstream/dvb/si/desc_4a.h>
+#include <bitstream/dvb/si/desc_56.h>
+#include <bitstream/dvb/si/desc_59.h>
+#include <bitstream/dvb/si/desc_5a.h>
+#include <bitstream/dvb/si/desc_5f.h>
+#include <bitstream/dvb/si/desc_6a.h>
+#include <bitstream/dvb/si/desc_83p28.h>
+#include <bitstream/dvb/si/desc_88p28.h>
 
 #endif

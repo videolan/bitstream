@@ -1,5 +1,5 @@
 /*****************************************************************************
- * si.h: ETSI EN 300 468 Service Information
+ * desc_88p28.h: ETSI EN 300 468 Descriptor 0x88: HD simulcast logical channel
  *****************************************************************************
  * Copyright (C) 2009-2010 VideoLAN
  *
@@ -27,24 +27,43 @@
 
 /*
  * Normative references:
- *  - ISO/IEC 13818-1:2007(E) (MPEG-2 Systems)
  *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
+ *  - IEC/CENELEC 62 216
  */
 
-#ifndef __BITSTREAM_DVB_SI_H__
-#define __BITSTREAM_DVB_SI_H__
+#ifndef __BITSTREAM_DVB_DESC_88P28_H__
+#define __BITSTREAM_DVB_DESC_88P28_H__
 
 #include <bitstream/common.h>
-#include <bitstream/mpeg/psi.h>
-#include <bitstream/dvb/si/numbers.h>
-#include <bitstream/dvb/si/datetime.h>
-#include <bitstream/dvb/si/strings.h>
-#include <bitstream/dvb/si/descs_list.h>
-#include <bitstream/dvb/si/nit.h>
-#include <bitstream/dvb/si/sdt.h>
-#include <bitstream/dvb/si/eit.h>
-#include <bitstream/dvb/si/tdt.h>
-#include <bitstream/dvb/si/tot.h>
-#include <bitstream/dvb/si/rst.h>
+#include <bitstream/mpeg/psi/descriptors.h>
+#include <bitstream/dvb/si/desc_83p28.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/*****************************************************************************
+ * Descriptor 0x88: HD simulcast logical channel descriptor (IEC/CENELEC 62 216)
+ * Only valid if a private data specifier descriptor 28 is present before.
+ *****************************************************************************/
+#define DESC88P28_HEADER_SIZE      DESC83P28_HEADER_SIZE
+#define DESC88P28_SERVICE_SIZE     DESC83P28_SERVICE_SIZE
+
+static inline void desc88p28_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x88);
+}
+
+#define desc88p28_get_service desc83p28_get_service
+#define desc88p28_get_sid desc83p28_get_sid
+#define desc88p28_get_visible desc83p28_get_visible
+#define desc88p28_get_lcn desc83p28_get_lcn
+#define desc88p28_validate desc83p28_validate
+#define desc88p28_print desc83p28_print
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * si.h: ETSI EN 300 468 Service Information
+ * desc_5f.h: ETSI EN 300 468 Descriptor 0x5f: Private data specifier
  *****************************************************************************
  * Copyright (C) 2009-2010 VideoLAN
  *
@@ -27,24 +27,57 @@
 
 /*
  * Normative references:
- *  - ISO/IEC 13818-1:2007(E) (MPEG-2 Systems)
  *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
  */
 
-#ifndef __BITSTREAM_DVB_SI_H__
-#define __BITSTREAM_DVB_SI_H__
+#ifndef __BITSTREAM_DVB_DESC_5F_H__
+#define __BITSTREAM_DVB_DESC_5F_H__
 
 #include <bitstream/common.h>
-#include <bitstream/mpeg/psi.h>
-#include <bitstream/dvb/si/numbers.h>
-#include <bitstream/dvb/si/datetime.h>
-#include <bitstream/dvb/si/strings.h>
-#include <bitstream/dvb/si/descs_list.h>
-#include <bitstream/dvb/si/nit.h>
-#include <bitstream/dvb/si/sdt.h>
-#include <bitstream/dvb/si/eit.h>
-#include <bitstream/dvb/si/tdt.h>
-#include <bitstream/dvb/si/tot.h>
-#include <bitstream/dvb/si/rst.h>
+#include <bitstream/mpeg/psi/descriptors.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/*****************************************************************************
+ * Descriptor 0x5f: Private data specifier descriptor
+ *****************************************************************************/
+#define DESC5F_HEADER_SIZE      (DESC_HEADER_SIZE + 4)
+
+static inline void desc5f_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x5f);
+}
+
+static inline uint32_t desc5f_get_specifier(const uint8_t *p_desc)
+{
+    return (p_desc[2] << 24) | (p_desc[3] << 16) |
+           (p_desc[4] << 8) | p_desc[5];
+}
+
+static inline bool desc5f_validate(const uint8_t *p_desc)
+{
+    return desc_get_length(p_desc) >= DESC5F_HEADER_SIZE - DESC_HEADER_SIZE;
+}
+
+static inline void desc5f_print(const uint8_t *p_desc, f_print pf_print,
+                                void *opaque, print_type_t i_print_type)
+{
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(opaque, "<PRIVATE_DATA_SPECIFIER_DESC specifier=\"%u\" />",
+                 desc5f_get_specifier(p_desc));
+        break;
+    default:
+        pf_print(opaque, "    - desc 5f private data specifier=%u",
+                 desc5f_get_specifier(p_desc));
+    }
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

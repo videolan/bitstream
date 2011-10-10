@@ -1,5 +1,5 @@
 /*****************************************************************************
- * si.h: ETSI EN 300 468 Service Information
+ * desc_56.h: ETSI EN 300 468 Descriptor 0x56: Teletext descriptor
  *****************************************************************************
  * Copyright (C) 2009-2010 VideoLAN
  *
@@ -27,24 +27,46 @@
 
 /*
  * Normative references:
- *  - ISO/IEC 13818-1:2007(E) (MPEG-2 Systems)
  *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
  */
 
-#ifndef __BITSTREAM_DVB_SI_H__
-#define __BITSTREAM_DVB_SI_H__
+#ifndef __BITSTREAM_DVB_DESC_56_H__
+#define __BITSTREAM_DVB_DESC_56_H__
 
 #include <bitstream/common.h>
-#include <bitstream/mpeg/psi.h>
-#include <bitstream/dvb/si/numbers.h>
-#include <bitstream/dvb/si/datetime.h>
-#include <bitstream/dvb/si/strings.h>
-#include <bitstream/dvb/si/descs_list.h>
-#include <bitstream/dvb/si/nit.h>
-#include <bitstream/dvb/si/sdt.h>
-#include <bitstream/dvb/si/eit.h>
-#include <bitstream/dvb/si/tdt.h>
-#include <bitstream/dvb/si/tot.h>
-#include <bitstream/dvb/si/rst.h>
+#include <bitstream/mpeg/psi/descriptors.h>
+#include <bitstream/dvb/si/desc_46.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/*****************************************************************************
+ * Descriptor 0x56: Teletext descriptor
+ *****************************************************************************/
+#define DESC56_HEADER_SIZE      DESC46_HEADER_SIZE
+#define DESC56_LANGUAGE_SIZE    DESC46_LANGUAGE_SIZE
+
+static inline void desc56_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x56);
+}
+
+#define desc56_get_language desc46_get_language
+#define desc56n_set_code desc46n_set_code
+#define desc56n_get_code desc46n_get_code
+#define desc56n_set_teletexttype desc46n_set_teletexttype
+#define desc56n_get_teletexttype desc46n_get_teletexttype
+#define desc56n_set_teletextmagazine desc46n_set_teletextmagazine
+#define desc56n_get_teletextmagazine desc46n_get_teletextmagazine
+#define desc56n_set_teletextpage desc46n_set_teletextpage
+#define desc56n_get_teletextpage desc46n_get_teletextpage
+#define desc56_validate desc46_validate
+#define desc56_print desc46_print
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
