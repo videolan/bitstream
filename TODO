@@ -14,7 +14,6 @@ so if you like something just do it and send a patch.
   - Descriptor 0x6a: AC-3 descriptor
 
 - Add support (parser, generator, example) for these DVB descriptors:
-  - Descriptor 0x5c: multilingual_bouquet_name_descriptor
   - Descriptor 0x5d: multilingual_service_name_descriptor
   - Descriptor 0x5e: multilingual_component_descriptor
   - Descriptor 0x60: service_move_descriptor

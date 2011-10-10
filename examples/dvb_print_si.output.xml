@@ -80,6 +80,11 @@
 <DESC id="0x47" length="17" value="5465737420426f7571756574204e616d65">
 <BOUQUET_NAME_DESC bouquetname="Test Bouquet Name"/>
 </DESC>
+<DESC id="0x5c" length="39" value="656e67094d20426f7571756574667265094d20426f757175657462756c094d20426f7571756574">
+<MULTILINGUAL_BOUQUET_NAME_DESC code="eng" bouquetname="M Bouquet"/>
+<MULTILINGUAL_BOUQUET_NAME_DESC code="fre" bouquetname="M Bouquet"/>
+<MULTILINGUAL_BOUQUET_NAME_DESC code="bul" bouquetname="M Bouquet"/>
+</DESC>
 <TS tsid="10000" onid="40000">
 <DESC id="0x41" length="12" value="4e20014e84024ee8014f4c02">
 <SERVICE_LIST_DESC sid="20000" type="0x01" />

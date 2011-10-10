@@ -912,7 +912,31 @@ static void build_desc5b(uint8_t *desc) {
     desc_set_length(desc, data_n - desc - DESC_HEADER_SIZE);
 }
 
-/* ---  Descriptor 0x5c: multilingual_bouquet_name_descriptor */
+/* DVB  Descriptor 0x5c: Multilingual bouquet name descriptor */
+static void build_desc5c(uint8_t *desc) {
+    char *bouquet_name = "M Bouquet";
+    uint8_t k = 0;
+    uint8_t *data_n;
+
+    desc5c_init(desc);
+    desc_set_length(desc, 255);
+
+    data_n = desc5c_get_data(desc, k++);
+    desc5cn_set_code(data_n, (uint8_t *)"eng");
+    desc5cn_set_bouquetname(data_n, (uint8_t *)bouquet_name, strlen(bouquet_name));
+
+    data_n = desc5c_get_data(desc, k++);
+    desc5cn_set_code(data_n, (uint8_t *)"fre");
+    desc5cn_set_bouquetname(data_n, (uint8_t *)bouquet_name, strlen(bouquet_name));
+
+    data_n = desc5c_get_data(desc, k++);
+    desc5cn_set_code(data_n, (uint8_t *)"bul");
+    desc5cn_set_bouquetname(data_n, (uint8_t *)bouquet_name, strlen(bouquet_name));
+
+    data_n = desc5c_get_data(desc, k);
+    desc_set_length(desc, data_n - desc - DESC_HEADER_SIZE);
+}
+
 /* ---  Descriptor 0x5d: multilingual_service_name_descriptor */
 /* ---  Descriptor 0x5e: multilingual_component_descriptor */
 /* DVB  Descriptor 0x5f: Private data specifier descriptor */
@@ -1308,6 +1332,9 @@ static void generate_bat(void) {
 
         desc = descs_get_desc(desc_loop, desc_counter++);
         build_desc47(desc);
+
+        desc = descs_get_desc(desc_loop, desc_counter++);
+        build_desc5c(desc);
 
         // Finish descriptor generation
         desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

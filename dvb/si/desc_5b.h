@@ -110,6 +110,7 @@ static inline void desc5b_print(const uint8_t *p_desc,
                                 print_type_t i_print_type)
 {
     const uint8_t *p_desc_n;
+    bool b_bouquet = desc_get_tag(p_desc) == 0x5c;
     uint8_t j = 0;
 
     while ((p_desc_n = desc5b_get_data(p_desc, j++)) != NULL) {
@@ -120,14 +121,18 @@ static inline void desc5b_print(const uint8_t *p_desc,
         case PRINT_XML:
             psz_network_name = dvb_string_xml_escape(psz_network_name);
             pf_print(print_opaque,
-                     "<MULTILINGUAL_NETWORK_NAME_DESC code=\"%3.3s\" networkname=\"%s\"/>",
+                     !b_bouquet
+                      ? "<MULTILINGUAL_NETWORK_NAME_DESC code=\"%3.3s\" networkname=\"%s\"/>"
+                      : "<MULTILINGUAL_BOUQUET_NAME_DESC code=\"%3.3s\" bouquetname=\"%s\"/>",
                      desc5bn_get_code(p_desc_n),
                      psz_network_name
                     );
             break;
         default:
             pf_print(print_opaque,
-                     "    - desc 5b multilingual_network_name code=\"%3.3s\" networkname=\"%s\"",
+                     !b_bouquet
+                      ? "    - desc 5b multilingual_network_name code=\"%3.3s\" networkname=\"%s\""
+                      : "    - desc 5c multilingual_bouquet_name code=\"%3.3s\" bouquetname=\"%s\"",
                      desc5bn_get_code(p_desc_n),
                      psz_network_name
                     );

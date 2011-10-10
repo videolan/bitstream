@@ -50,6 +50,9 @@ new BAT networkid=40000 version=0
 end BAT
 new BAT networkid=40000 version=1
     - desc 47 bouquetname="Test Bouquet Name"
+    - desc 5c multilingual_bouquet_name code="eng" bouquetname="M Bouquet"
+    - desc 5c multilingual_bouquet_name code="fre" bouquetname="M Bouquet"
+    - desc 5c multilingual_bouquet_name code="bul" bouquetname="M Bouquet"
   * ts tsid=10000 onid=40000
     - desc 41 service_list sid=20000 type=0x01
     - desc 41 service_list sid=20100 type=0x02
