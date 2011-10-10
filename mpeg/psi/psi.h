@@ -215,7 +215,7 @@ static inline uint16_t psi_get_tableidext(const uint8_t *p_section)
 
 static inline void psi_set_version(uint8_t *p_section, uint8_t i_version)
 {
-    p_section[5] = i_version << 1;
+    p_section[5] = (i_version << 1) | 0xc0;
 }
 
 static inline uint8_t psi_get_version(const uint8_t *p_section)
