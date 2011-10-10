@@ -652,6 +652,29 @@ static void handle_tot_section(uint16_t i_pid, uint8_t *p_tot)
 }
 
 /*****************************************************************************
+ * handle_dit
+ *****************************************************************************/
+static void handle_dit_section(uint16_t i_pid, uint8_t *p_dit)
+{
+    if (i_pid != DIT_PID || !dit_validate(p_dit)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_dit_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid DIT section received on PID %hu\n", i_pid);
+        }
+        free(p_dit);
+        return;
+    }
+
+    dit_print(p_dit, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+
+    free(p_dit);
+}
+
+/*****************************************************************************
  * handle_rst
  *****************************************************************************/
 static void handle_rst_section(uint16_t i_pid, uint8_t *p_rst)
@@ -728,6 +751,10 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
 
     case RST_TABLE_ID:
         handle_rst_section(i_pid, p_section);
+        break;
+
+    case DIT_TABLE_ID:
+        handle_dit_section(i_pid, p_section);
         break;
 
     default:
@@ -831,6 +858,7 @@ int main(int i_argc, char **ppsz_argv)
     p_pids[EIT_PID].i_psi_refcount++;
     p_pids[TDT_PID].i_psi_refcount++;
     p_pids[RST_PID].i_psi_refcount++;
+    p_pids[DIT_PID].i_psi_refcount++;
 
     switch (i_print_type) {
     case PRINT_XML:

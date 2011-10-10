@@ -1,9 +1,9 @@
 /*****************************************************************************
- * si_print.h: ETSI EN 300 468 Service Information (printing)
+ * dit_print.h: ETSI EN 300 468 Discontinuity Information Table (DIT) (printing)
  *****************************************************************************
- * Copyright (C) 2010 VideoLAN
+ * Copyright (C) 2011 Unix Solutions Ltd.
  *
- * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ * Authors: Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,17 +25,39 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifndef __BITSTREAM_DVB_SI_PRINT_H__
-#define __BITSTREAM_DVB_SI_PRINT_H__
+#ifndef __BITSTREAM_DVB_DIT_PRINT_H__
+#define __BITSTREAM_DVB_DIT_PRINT_H__
 
-#include <bitstream/mpeg/psi/descs_print.h>
-#include <bitstream/dvb/si/nit_print.h>
-#include <bitstream/dvb/si/bat_print.h>
-#include <bitstream/dvb/si/sdt_print.h>
-#include <bitstream/dvb/si/eit_print.h>
-#include <bitstream/dvb/si/tdt_print.h>
-#include <bitstream/dvb/si/tot_print.h>
-#include <bitstream/dvb/si/rst_print.h>
-#include <bitstream/dvb/si/dit_print.h>
+#include <bitstream/common.h>
+#include <bitstream/dvb/si/dit.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/*****************************************************************************
+ * Discontinuity Information Table
+ *****************************************************************************/
+static inline void dit_print(uint8_t *p_dit,
+                             f_print pf_print, void *print_opaque,
+                             f_iconv pf_iconv, void *iconv_opaque,
+                             print_type_t i_print_type)
+{
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(print_opaque, "<DIT transition_flag=\"%u\"/>",
+                 dit_get_transition_flag(p_dit));
+        break;
+    default:
+        pf_print(print_opaque, "new DIT transition_flag=%u",
+                 dit_get_transition_flag(p_dit));
+        pf_print(print_opaque, "end DIT");
+    }
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
