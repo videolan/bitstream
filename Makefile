@@ -9,7 +9,9 @@ install:
 	@install -d $(INCLUDE)
 	@install -m 644 common.h $(INCLUDE)/
 	@install -d $(INCLUDE)/dvb
-	@install -m 644 dvb/* $(INCLUDE)/dvb
+	@install -m 644 dvb/*.h $(INCLUDE)/dvb
+	@install -d $(INCLUDE)/dvb/si
+	@install -m 644 dvb/si/*.h $(INCLUDE)/dvb/si
 	@install -d $(INCLUDE)/ietf
 	@install -m 644 ietf/* $(INCLUDE)/ietf
 	@install -d $(INCLUDE)/mpeg
