@@ -1,9 +1,9 @@
 /*****************************************************************************
- * si_print.h: ETSI EN 300 468 Service Information (printing)
+ * tdt_print.h: ETSI EN 300 468 Time and Date Table (TDT) (printing)
  *****************************************************************************
- * Copyright (C) 2010 VideoLAN
+ * Copyright (C) 2011 Unix Solutions Ltd.
  *
- * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ * Authors: Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,13 +25,45 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifndef __BITSTREAM_DVB_SI_PRINT_H__
-#define __BITSTREAM_DVB_SI_PRINT_H__
+#ifndef __BITSTREAM_DVB_TDT_PRINT_H__
+#define __BITSTREAM_DVB_TDT_PRINT_H__
 
-#include <bitstream/mpeg/psi/descs_print.h>
-#include <bitstream/dvb/si/nit_print.h>
-#include <bitstream/dvb/si/sdt_print.h>
-#include <bitstream/dvb/si/eit_print.h>
-#include <bitstream/dvb/si/tdt_print.h>
+#include <bitstream/common.h>
+#include <bitstream/dvb/si/datetime.h>
+#include <bitstream/dvb/si/tdt.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/*****************************************************************************
+ * Time and Date Table
+ *****************************************************************************/
+static inline void tdt_print(uint8_t *p_tdt,
+                             f_print pf_print, void *print_opaque,
+                             f_iconv pf_iconv, void *iconv_opaque,
+                             print_type_t i_print_type)
+{
+    time_t ts;
+    char ts_str[24];
+
+    ts = dvb_time_format_UTC(tdt_get_utc(p_tdt), NULL, ts_str);
+
+    switch (i_print_type) {
+    case PRINT_XML:
+        pf_print(print_opaque, "<TDT time=\"%ld\" time_dec=\"%s\"/>",
+                 ts, ts_str);
+        break;
+    default:
+        pf_print(print_opaque, "new TDT time=%ld time_dec=\"%s\"",
+                 ts, ts_str);
+        pf_print(print_opaque, "end TDT");
+    }
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

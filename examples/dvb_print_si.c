@@ -548,6 +548,29 @@ static void handle_eit_section(uint16_t i_pid, uint8_t *p_eit)
 }
 
 /*****************************************************************************
+ * handle_tdt
+ *****************************************************************************/
+static void handle_tdt_section(uint16_t i_pid, uint8_t *p_tdt)
+{
+    if (i_pid != TDT_PID || !tdt_validate(p_tdt)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_tdt_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid TDT section received on PID %hu\n", i_pid);
+        }
+        free(p_tdt);
+        return;
+    }
+
+    tdt_print(p_tdt, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+
+    free(p_tdt);
+}
+
+/*****************************************************************************
  * handle_section
  *****************************************************************************/
 static void handle_section(uint16_t i_pid, uint8_t *p_section)
@@ -585,6 +608,10 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
 
     case SDT_TABLE_ID_ACTUAL:
         handle_sdt_section(i_pid, p_section);
+        break;
+
+    case TDT_TABLE_ID:
+        handle_tdt_section(i_pid, p_section);
         break;
 
     default:
@@ -685,6 +712,7 @@ int main(int i_argc, char **ppsz_argv)
     p_pids[NIT_PID].i_psi_refcount++;
     p_pids[SDT_PID].i_psi_refcount++;
     p_pids[EIT_PID].i_psi_refcount++;
+    p_pids[TDT_PID].i_psi_refcount++;
 
     switch (i_print_type) {
     case PRINT_XML:
