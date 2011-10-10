@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -47,9 +48,23 @@ extern "C"
  *****************************************************************************/
 #define DESC43_HEADER_SIZE      (DESC_HEADER_SIZE + 11)
 
+static inline void desc43_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x43);
+    desc_set_length(p_desc, DESC43_HEADER_SIZE - DESC_HEADER_SIZE);
+}
+
 static inline uint32_t desc43_get_frequency(const uint8_t *p_desc)
 {
     return dvb_bcd_get(p_desc + 2, 32) * 10; /* kHz */
+}
+
+static inline void desc43_set_frequency_bcd(uint8_t *p_desc, uint32_t i_freq_bcd)
+{
+    p_desc[2] = (i_freq_bcd >> 24) & 0xff;
+    p_desc[3] = (i_freq_bcd >> 16) & 0xff;
+    p_desc[4] = (i_freq_bcd >>  8) & 0xff;
+    p_desc[5] = i_freq_bcd         & 0xff;
 }
 
 static inline unsigned int desc43_get_position(const uint8_t *p_desc)
@@ -57,9 +72,20 @@ static inline unsigned int desc43_get_position(const uint8_t *p_desc)
     return dvb_bcd_get(p_desc + 6, 16); /* 10th degree */
 }
 
+static inline void desc43_set_position_bcd(uint8_t *p_desc, uint16_t i_pos_bcd)
+{
+    p_desc[6] = (i_pos_bcd >> 8) & 0xff;
+    p_desc[7] = i_pos_bcd        & 0xff;
+}
+
 static inline bool desc43_get_east(const uint8_t *p_desc)
 {
     return !!(p_desc[8] & 0x80);
+}
+
+static inline void desc43_set_east(uint8_t *p_desc, bool b_east)
+{
+    p_desc[8] = b_east ? (p_desc[8] | 0x80) : (p_desc[8] &~ 0x80); // 1xxxxxxx
 }
 
 static inline uint8_t desc43_get_polarization(const uint8_t *p_desc)
@@ -67,9 +93,19 @@ static inline uint8_t desc43_get_polarization(const uint8_t *p_desc)
     return (p_desc[8] & 0x60) >> 5;
 }
 
+static inline void desc43_set_polarization(uint8_t *p_desc, uint8_t i_polarization)
+{
+    p_desc[8] = ((i_polarization & 0x03) << 5) | (p_desc[8] &~ 0x60); // x11xxxxx
+}
+
 static inline uint8_t desc43_get_rolloff(const uint8_t *p_desc)
 {
     return (p_desc[8] & 0x18) >> 3;
+}
+
+static inline void desc43_set_rolloff(uint8_t *p_desc, uint8_t i_rolloff)
+{
+    p_desc[8] = (p_desc[8] &~ 0x18) | (i_rolloff & 0x03 << 3); // xxx11xxx
 }
 
 static inline bool desc43_get_dvbs2(const uint8_t *p_desc)
@@ -77,9 +113,19 @@ static inline bool desc43_get_dvbs2(const uint8_t *p_desc)
     return !!(p_desc[8] & 0x4);
 }
 
-static inline bool desc43_get_modulation(const uint8_t *p_desc)
+static inline void desc43_set_dvbs2(uint8_t *p_desc, bool b_dvbs2)
+{
+    p_desc[8] = b_dvbs2 ? (p_desc[8] | 0x04) : (p_desc[8] &~ 0x04); // xxxxx1xx
+}
+
+static inline uint8_t desc43_get_modulation(const uint8_t *p_desc)
 {
     return p_desc[8] & 0x3;
+}
+
+static inline void desc43_set_modulation(uint8_t *p_desc, uint8_t i_modulation)
+{
+    p_desc[8] = (p_desc[8] &~ 0x03) | (i_modulation & 0x03); // xxxxxx11
 }
 
 static inline unsigned int desc43_get_symbolrate(const uint8_t *p_desc)
@@ -87,9 +133,22 @@ static inline unsigned int desc43_get_symbolrate(const uint8_t *p_desc)
     return dvb_bcd_get(p_desc + 9, 28) * 100; /* sy/s */
 }
 
+static inline void desc43_set_symbolrate_bcd(uint8_t *p_desc, uint32_t i_symbolrate_bcd)
+{
+    p_desc[ 9] = (i_symbolrate_bcd >> 20) & 0xff;
+    p_desc[10] = (i_symbolrate_bcd >> 12) & 0xff;
+    p_desc[11] = (i_symbolrate_bcd >>  4) & 0xff;
+    p_desc[12] = ((i_symbolrate_bcd & 0x0f) << 4) | (p_desc[12] & 0x0f);
+}
+
 static inline uint8_t desc43_get_fecinner(const uint8_t *p_desc)
 {
     return p_desc[12] & 0xf;
+}
+
+static inline void desc43_set_fecinner(uint8_t *p_desc, uint8_t i_fecinner)
+{
+    p_desc[12] = (p_desc[12] & 0xf0) | (i_fecinner & 0x0f);
 }
 
 static inline const char *dvb_delivery_get_fec(uint8_t i_fec)
