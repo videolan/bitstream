@@ -35,6 +35,7 @@
 
 #include <bitstream/common.h>
 #include <bitstream/mpeg/psi.h>
+#include <bitstream/mpeg/psi/pat_print.h>
 
 /* here you must manually include <bitstream/dvb/si.h> or the ATSC equivalent
  * if/when it is available */
