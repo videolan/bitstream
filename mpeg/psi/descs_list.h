@@ -1,5 +1,5 @@
 /*****************************************************************************
- * psi.h: ISO/IEC 13818-1 Program Stream Information
+ * descs_list.h: All supported ISO/IEC 13818-1 descriptors
  *****************************************************************************
  * Copyright (C) 2009-2010 VideoLAN
  *
@@ -25,21 +25,17 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
+#ifndef __BITSTREAM_MPEG_DESCS_LIST_H__
+#define __BITSTREAM_MPEG_DESCS_LIST_H__
+
 /*
- * Normative references:
- *  - ISO/IEC 13818-1:2007(E) (MPEG-2 Systems)
+ * 1. Keep the list ordered.
+ * 2. When you are adding new descriptor here, make sure you also add
+ *    the needed code in bitstream/mpeg/psi/descs_print.h
  */
 
-#ifndef __BITSTREAM_MPEG_PSI_H__
-#define __BITSTREAM_MPEG_PSI_H__
-
-#include <bitstream/common.h>
-#include <bitstream/mpeg/ts.h>
-#include <bitstream/mpeg/psi/descriptors.h>
-#include <bitstream/mpeg/psi/descs_list.h>
-#include <bitstream/mpeg/psi/psi.h>
-#include <bitstream/mpeg/psi/pat.h>
-#include <bitstream/mpeg/psi/cat.h>
-#include <bitstream/mpeg/psi/pmt.h>
+#include <bitstream/mpeg/psi/desc_05.h>
+#include <bitstream/mpeg/psi/desc_09.h>
+#include <bitstream/mpeg/psi/desc_0a.h>
 
 #endif
