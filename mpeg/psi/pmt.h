@@ -114,6 +114,44 @@ static inline uint8_t pmtn_get_streamtype(const uint8_t *p_pmt_n)
     return p_pmt_n[0];
 }
 
+static inline const char *pmt_get_streamtype_txt(uint8_t i_stream_type) {
+    /* ISO/IEC 13818-1 | Table 2-36 - Stream type assignments */
+    if (i_stream_type == 0 || (i_stream_type > 0x1c && i_stream_type < 0x7e))
+        return "Reserved";
+    switch (i_stream_type) {
+        case 0x01: return "11172-2 video (MPEG-1)";
+        case 0x02: return "13818-2 video (MPEG-2)";
+        case 0x03: return "11172-3 audio (MPEG-1)";
+        case 0x04: return "13818-3 audio (MPEG-2)";
+        case 0x05: return "13818-1 private sections";
+        case 0x06: return "13818-1 PES private data";
+        case 0x07: return "13522 MHEG";
+        case 0x08: return "H.222.0/13818-1 Annex A - DSM CC";
+        case 0x09: return "H.222.1";
+        case 0x0A: return "13818-6 type A";
+        case 0x0B: return "13818-6 type B";
+        case 0x0C: return "13818-6 type C";
+        case 0x0D: return "13818-6 type D";
+        case 0x0E: return "H.222.0/13818-1 auxiliary";
+        case 0x0F: return "13818-7 Audio with ADTS transport syntax";
+        case 0x10: return "14496-2 Visual (MPEG-4 part 2 video)";
+        case 0x11: return "14496-3 Audio with LATM transport syntax (14496-3/AMD 1)";
+        case 0x12: return "14496-1 SL-packetized or FlexMux stream in PES packets";
+        case 0x13: return "14496-1 SL-packetized or FlexMux stream in 14496 sections";
+        case 0x14: return "ISO/IEC 13818-6 Synchronized Download Protocol";
+        case 0x15: return "Metadata in PES packets";
+        case 0x16: return "Metadata in metadata_sections";
+        case 0x17: return "Metadata in 13818-6 Data Carousel";
+        case 0x18: return "Metadata in 13818-6 Object Carousel";
+        case 0x19: return "Metadata in 13818-6 Synchronized Download Protocol";
+        case 0x1A: return "13818-11 MPEG-2 IPMP stream";
+        case 0x1B: return "H.264/14496-10 video (MPEG-4/AVC)";
+        case 0x42: return "AVS Video";
+        case 0x7F: return "IPMP stream";
+        default  : return "Unknown";
+    }
+}
+
 static inline void pmtn_set_pid(uint8_t *p_pmt_n, uint16_t i_pid)
 {
     p_pmt_n[1] &= ~0x1f;

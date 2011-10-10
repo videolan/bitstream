@@ -30,7 +30,6 @@
 
 #include <bitstream/common.h>
 #include <bitstream/mpeg/psi/psi.h>
-#include <bitstream/mpeg/psi/descriptors.h>
 #include <bitstream/mpeg/psi/descs_print.h>
 #include <bitstream/mpeg/psi/pmt.h>
 
@@ -68,12 +67,18 @@ static inline void pmt_print(uint8_t *p_pmt,
         j++;
         switch (i_print_type) {
         case PRINT_XML:
-            pf_print(print_opaque, "<ES pid=\"%hu\" streamtype=\"0x%hx\">", pmtn_get_pid(p_es),
-                     pmtn_get_streamtype(p_es));
+            pf_print(print_opaque, "<ES pid=\"%hu\" streamtype=\"0x%02x\" streamtype_txt=\"%s\">",
+                     pmtn_get_pid(p_es),
+                     pmtn_get_streamtype(p_es),
+                     pmt_get_streamtype_txt(pmtn_get_streamtype(p_es))
+                    );
             break;
         default:
-            pf_print(print_opaque, "  * ES pid=%hu streamtype=0x%hx", pmtn_get_pid(p_es),
-                     pmtn_get_streamtype(p_es));
+            pf_print(print_opaque, "  * ES pid=%hu streamtype=0x%02x streamtype_txt=\"%s\"",
+                     pmtn_get_pid(p_es),
+                     pmtn_get_streamtype(p_es),
+                     pmt_get_streamtype_txt(pmtn_get_streamtype(p_es))
+                    );
         }
 
         descs_print(pmtn_get_descs(p_es), pf_print, print_opaque,
