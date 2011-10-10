@@ -36,6 +36,7 @@
 #include <bitstream/common.h>
 #include <bitstream/mpeg/psi.h>
 #include <bitstream/mpeg/psi/pat_print.h>
+#include <bitstream/mpeg/psi/cat_print.h>
 
 /* here you must manually include <bitstream/dvb/si.h> or the ATSC equivalent
  * if/when it is available */
@@ -44,43 +45,6 @@
 extern "C"
 {
 #endif
-
-/*****************************************************************************
- * Conditional Access Table
- *****************************************************************************/
-static inline void cat_table_print(uint8_t **pp_sections, f_print pf_print,
-                                   void *opaque, print_type_t i_print_type)
-{
-    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
-    uint8_t i;
-
-    switch (i_print_type) {
-    case PRINT_XML:
-        pf_print(opaque, "<CAT version=\"%hhu\" current_next=\"%d\">",
-                 psi_table_get_version(pp_sections),
-                 !psi_table_get_current(pp_sections) ? 0 : 1);
-        break;
-    default:
-        pf_print(opaque, "new CAT version=%hhu%s",
-                 psi_table_get_version(pp_sections),
-                 !psi_table_get_current(pp_sections) ? " (next)" : "");
-    }
-
-    for (i = 0; i <= i_last_section; i++) {
-        uint8_t *p_section = psi_table_get_section(pp_sections, i);
-
-        descl_print(cat_get_descl(p_section), cat_get_desclength(p_section),
-                    pf_print, opaque, NULL, NULL, i_print_type);
-    }
-
-    switch (i_print_type) {
-    case PRINT_XML:
-        pf_print(opaque, "</CAT>");
-        break;
-    default:
-        pf_print(opaque, "end CAT");
-    }
-}
 
 /*****************************************************************************
  * Program Map Table
