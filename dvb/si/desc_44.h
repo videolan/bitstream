@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -49,9 +50,26 @@ extern "C"
  *****************************************************************************/
 #define DESC44_HEADER_SIZE      (DESC_HEADER_SIZE + 11)
 
+static inline void desc44_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x44);
+    desc_set_length(p_desc, DESC44_HEADER_SIZE - DESC_HEADER_SIZE);
+    p_desc[6]  = 0xff;
+    p_desc[7] |= 0xf0;
+}
+
+
 static inline uint64_t desc44_get_frequency(const uint8_t *p_desc)
 {
     return (uint64_t)dvb_bcd_get(p_desc + 2, 32) * 100; /* Hz */
+}
+
+static inline void desc44_set_frequency_bcd(uint8_t *p_desc, uint32_t i_freq_bcd)
+{
+    p_desc[2] = (i_freq_bcd >> 24) & 0xff;
+    p_desc[3] = (i_freq_bcd >> 16) & 0xff;
+    p_desc[4] = (i_freq_bcd >>  8) & 0xff;
+    p_desc[5] = i_freq_bcd         & 0xff;
 }
 
 static inline uint8_t desc44_get_fecouter(const uint8_t *p_desc)
@@ -59,13 +77,25 @@ static inline uint8_t desc44_get_fecouter(const uint8_t *p_desc)
     return p_desc[7] & 0xf;
 }
 
+static inline void desc44_set_fecouter(uint8_t *p_desc, uint8_t i_fecouter)
+{
+    p_desc[7] = 0xf0 | (i_fecouter & 0x0f);
+}
+
 static inline uint8_t desc44_get_modulation(const uint8_t *p_desc)
 {
     return p_desc[8];
 }
 
+static inline void desc44_set_modulation(uint8_t *p_desc, uint8_t i_modulation)
+{
+    p_desc[8] = i_modulation;
+}
+
 #define desc44_get_symbolrate desc43_get_symbolrate
+#define desc44_set_symbolrate_bcd desc43_set_symbolrate_bcd
 #define desc44_get_fecinner desc43_get_fecinner
+#define desc44_set_fecinner desc43_set_fecinner
 
 static inline bool desc44_validate(const uint8_t *p_desc)
 {
@@ -98,14 +128,14 @@ static inline void desc44_print(const uint8_t *p_desc, f_print pf_print,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque,
-             "<CABLE_DESC frequency=\"%"PRIu64"\" fecouter=\"0x%s\" modulation=\"0x%s\" symbolrate=\"%u\" fecinner=\"%s\"/>",
+             "<CABLE_DESC frequency=\"%"PRIu64"\" fecouter=\"%s\" modulation=\"%s\" symbolrate=\"%u\" fecinner=\"%s\"/>",
              desc44_get_frequency(p_desc), psz_fecouter, psz_modulation,
              desc44_get_symbolrate(p_desc),
              dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
         break;
     default:
         pf_print(opaque,
-             "    - desc 44 dvb-c frequency=%"PRIu64" Hz fecouter=0x%s modulation=0x%s symbolrate=%u fecinner=%s",
+             "    - desc 44 dvb-c frequency=%"PRIu64" Hz fecouter=%s modulation=%s symbolrate=%u fecinner=%s",
              desc44_get_frequency(p_desc), psz_fecouter, psz_modulation,
              desc44_get_symbolrate(p_desc),
              dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
