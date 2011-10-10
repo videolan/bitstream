@@ -30,6 +30,7 @@
 
 #include <bitstream/mpeg/psi/descs_print.h>
 #include <bitstream/dvb/si/nit_print.h>
+#include <bitstream/dvb/si/bat_print.h>
 #include <bitstream/dvb/si/sdt_print.h>
 #include <bitstream/dvb/si/eit_print.h>
 #include <bitstream/dvb/si/tdt_print.h>

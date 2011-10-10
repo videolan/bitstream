@@ -71,6 +71,8 @@ static PSI_TABLE_DECLARE(pp_current_cat_sections);
 static PSI_TABLE_DECLARE(pp_next_cat_sections);
 static PSI_TABLE_DECLARE(pp_current_nit_sections);
 static PSI_TABLE_DECLARE(pp_next_nit_sections);
+static PSI_TABLE_DECLARE(pp_current_bat_sections);
+static PSI_TABLE_DECLARE(pp_next_bat_sections);
 static PSI_TABLE_DECLARE(pp_current_sdt_sections);
 static PSI_TABLE_DECLARE(pp_next_sdt_sections);
 
@@ -469,6 +471,62 @@ static void handle_nit_section(uint16_t i_pid, uint8_t *p_section)
 }
 
 /*****************************************************************************
+ * handle_bat
+ *****************************************************************************/
+static void handle_bat(void)
+{
+    if (psi_table_validate(pp_current_bat_sections) &&
+        psi_table_compare(pp_current_bat_sections, pp_next_bat_sections)) {
+        /* Same version BAT. Shortcut. */
+        psi_table_free(pp_next_bat_sections);
+        psi_table_init(pp_next_bat_sections);
+        return;
+    }
+
+    if (!bat_table_validate(pp_next_bat_sections)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_bat\"/>\n");
+            break;
+        default:
+            printf("invalid BAT received\n");
+        }
+        psi_table_free( pp_next_bat_sections );
+        psi_table_init( pp_next_bat_sections );
+        return;
+    }
+
+    /* Switch tables. */
+    psi_table_free(pp_current_bat_sections);
+    psi_table_copy(pp_current_bat_sections, pp_next_bat_sections);
+    psi_table_init(pp_next_bat_sections);
+
+    bat_table_print(pp_current_bat_sections, print_wrapper, NULL,
+                    iconv_wrapper, NULL, i_print_type);
+}
+
+static void handle_bat_section(uint16_t i_pid, uint8_t *p_section)
+{
+    if (i_pid != BAT_PID || !bat_validate(p_section)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_bat_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid BAT section received on PID %hu\n", i_pid);
+        }
+        free(p_section);
+        return;
+    }
+
+    if (!psi_table_section(pp_next_bat_sections, p_section))
+        return;
+
+    handle_bat();
+}
+
+/*****************************************************************************
  * handle_sdt
  *****************************************************************************/
 static void handle_sdt(void)
@@ -629,6 +687,10 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
         handle_nit_section(i_pid, p_section);
         break;
 
+    case BAT_TABLE_ID:
+        handle_bat_section(i_pid, p_section);
+        break;
+
     case SDT_TABLE_ID_ACTUAL:
         handle_sdt_section(i_pid, p_section);
         break;
@@ -737,6 +799,7 @@ int main(int i_argc, char **ppsz_argv)
     p_pids[PAT_PID].i_psi_refcount++;
     p_pids[CAT_PID].i_psi_refcount++;
     p_pids[NIT_PID].i_psi_refcount++;
+    p_pids[BAT_PID].i_psi_refcount++;
     p_pids[SDT_PID].i_psi_refcount++;
     p_pids[EIT_PID].i_psi_refcount++;
     p_pids[TDT_PID].i_psi_refcount++;

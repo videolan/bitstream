@@ -41,6 +41,7 @@
 #include <bitstream/dvb/si/strings.h>
 #include <bitstream/dvb/si/descs_list.h>
 #include <bitstream/dvb/si/nit.h>
+#include <bitstream/dvb/si/bat.h>
 #include <bitstream/dvb/si/sdt.h>
 #include <bitstream/dvb/si/eit.h>
 #include <bitstream/dvb/si/tdt.h>
