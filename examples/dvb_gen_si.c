@@ -887,7 +887,31 @@ static void build_desc5a(uint8_t *desc) {
     desc5a_set_otherfrequency (desc, true);
 }
 
-/* ---  Descriptor 0x5b: multilingual_network_name_descriptor */
+/* DVB  Descriptor 0x5b: multilingual_network_name_descriptor */
+static void build_desc5b(uint8_t *desc) {
+    char *network_name = "M Network";
+    uint8_t k = 0;
+    uint8_t *data_n;
+
+    desc5b_init(desc);
+    desc_set_length(desc, 255);
+
+    data_n = desc5b_get_data(desc, k++);
+    desc5bn_set_code(data_n, (uint8_t *)"eng");
+    desc5bn_set_networkname(data_n, (uint8_t *)network_name, strlen(network_name));
+
+    data_n = desc5b_get_data(desc, k++);
+    desc5bn_set_code(data_n, (uint8_t *)"fre");
+    desc5bn_set_networkname(data_n, (uint8_t *)network_name, strlen(network_name));
+
+    data_n = desc5b_get_data(desc, k++);
+    desc5bn_set_code(data_n, (uint8_t *)"bul");
+    desc5bn_set_networkname(data_n, (uint8_t *)network_name, strlen(network_name));
+
+    data_n = desc5b_get_data(desc, k);
+    desc_set_length(desc, data_n - desc - DESC_HEADER_SIZE);
+}
+
 /* ---  Descriptor 0x5c: multilingual_bouquet_name_descriptor */
 /* ---  Descriptor 0x5d: multilingual_service_name_descriptor */
 /* ---  Descriptor 0x5e: multilingual_component_descriptor */
@@ -1161,6 +1185,9 @@ static void generate_nit(void) {
 
         desc = descs_get_desc(desc_loop, desc_counter++);
         build_desc5a(desc);
+
+        desc = descs_get_desc(desc_loop, desc_counter++);
+        build_desc5b(desc);
 
         // Finish descriptor generation
         desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

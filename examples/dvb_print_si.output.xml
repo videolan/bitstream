@@ -48,6 +48,11 @@
 <DESC id="0x5a" length="11" value="499602d243b26dffffffff">
 <TERRESTRIAL_DESC frequency="12345678900" bandwidth="6" priority="LP" timeslicing="1" mpefec="1" constellation="64-qam" hierarchy="2+in-depth" coderatehp="3/4" coderatelp="5/6" guard="1/16" transmission="4k" otherfrequency="1"/>
 </DESC>
+<DESC id="0x5b" length="39" value="656e67094d204e6574776f726b667265094d204e6574776f726b62756c094d204e6574776f726b">
+<MULTILINGUAL_NETWORK_NAME_DESC code="eng" networkname="M Network"/>
+<MULTILINGUAL_NETWORK_NAME_DESC code="fre" networkname="M Network"/>
+<MULTILINGUAL_NETWORK_NAME_DESC code="bul" networkname="M Network"/>
+</DESC>
 <TS tsid="10000" onid="40000">
 <DESC id="0x41" length="12" value="4e20014e84024ee8014f4c02">
 <SERVICE_LIST_DESC sid="20000" type="0x01" />

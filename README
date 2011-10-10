@@ -124,6 +124,7 @@ Supported DVB descriptors
  * Descriptor 0x58: Local time offset descriptor
  * Descriptor 0x59: Subtitling descriptor
  * Descriptor 0x5a: Terrestrial delivery system descriptor
+ * Descriptor 0x5b: Multilingual network name descriptor
  * Descriptor 0x5f: Private data specifier descriptor
  * Descriptor 0x6a: AC-3 descriptor [p]
 
