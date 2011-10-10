@@ -34,6 +34,7 @@
  *    the needed code in bitstream/mpeg/psi/descs_print.h
  */
 
+#include <bitstream/mpeg/psi/desc_02.h>
 #include <bitstream/mpeg/psi/desc_05.h>
 #include <bitstream/mpeg/psi/desc_09.h>
 #include <bitstream/mpeg/psi/desc_0a.h>

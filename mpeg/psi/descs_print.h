@@ -100,6 +100,7 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
                                  i_print_type);                             \
             break;
 
+        CASE_DESC(02)
         CASE_DESC(05)
         CASE_DESC(09)
         CASE_DESC(0a)
