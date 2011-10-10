@@ -571,6 +571,29 @@ static void handle_tdt_section(uint16_t i_pid, uint8_t *p_tdt)
 }
 
 /*****************************************************************************
+ * handle_tot
+ *****************************************************************************/
+static void handle_tot_section(uint16_t i_pid, uint8_t *p_tot)
+{
+    if (i_pid != TOT_PID || !tot_validate(p_tot)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_tot_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid TOT section received on PID %hu\n", i_pid);
+        }
+        free(p_tot);
+        return;
+    }
+
+    tot_print(p_tot, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+
+    free(p_tot);
+}
+
+/*****************************************************************************
  * handle_section
  *****************************************************************************/
 static void handle_section(uint16_t i_pid, uint8_t *p_section)
@@ -612,6 +635,10 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
 
     case TDT_TABLE_ID:
         handle_tdt_section(i_pid, p_section);
+        break;
+
+    case TOT_TABLE_ID:
+        handle_tot_section(i_pid, p_section);
         break;
 
     default:

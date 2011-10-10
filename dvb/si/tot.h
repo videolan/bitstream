@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -60,6 +61,12 @@ static inline void tot_init(uint8_t *p_tot)
     p_tot[8] = 0xf0;
 }
 
+static inline void tot_set_length(uint8_t *p_tot, uint16_t i_tot_length)
+{
+    psi_set_length(p_tot, TOT_HEADER_SIZE + PSI_CRC_SIZE - PSI_HEADER_SIZE
+                    + i_tot_length);
+}
+
 static inline void tot_set_desclength(uint8_t *p_tot, uint16_t i_length)
 {
     p_tot[8] &= ~0xf;
@@ -70,6 +77,11 @@ static inline void tot_set_desclength(uint8_t *p_tot, uint16_t i_length)
 static inline uint16_t tot_get_desclength(const uint8_t *p_tot)
 {
     return ((p_tot[8] & 0xf) << 8) | p_tot[9];
+}
+
+static inline uint8_t *tot_get_descs(uint8_t *p_tot)
+{
+    return &p_tot[8];
 }
 
 static inline bool tot_validate(const uint8_t *p_tot)
