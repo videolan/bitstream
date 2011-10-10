@@ -140,6 +140,11 @@
 <DESC id="0x57" length="15" value="e3ad872b3335393239383638363230">
 <TELEPHONE_DESC foreign_availability="1" connection_type="3" country_prefix="+" international_area_code="359" operator_code="2" national_area_code="" core_number="9868620" full_telephone="+35929868620"/>
 </DESC>
+<DESC id="0x5d" length="72" value="656e670a4d2050726f7669646572094d20536572766963656672650a4d2050726f7669646572094d205365727669636562756c0a4d2050726f7669646572094d2053657276696365">
+<MULTILINGUAL_SERVICE_NAME_DESC code="eng" provider="M Provider" service="M Service"/>
+<MULTILINGUAL_SERVICE_NAME_DESC code="fre" provider="M Provider" service="M Service"/>
+<MULTILINGUAL_SERVICE_NAME_DESC code="bul" provider="M Provider" service="M Service"/>
+</DESC>
 <DESC id="0x5f" length="4" value="aabbccdd">
 <PRIVATE_DATA_SPECIFIER_DESC specifier="0xaabbccdd" />
 </DESC>

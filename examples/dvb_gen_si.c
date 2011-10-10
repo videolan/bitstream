@@ -937,7 +937,36 @@ static void build_desc5c(uint8_t *desc) {
     desc_set_length(desc, data_n - desc - DESC_HEADER_SIZE);
 }
 
-/* ---  Descriptor 0x5d: multilingual_service_name_descriptor */
+/* DVB  Descriptor 0x5d: Multilingual service name descriptor */
+static void build_desc5d(uint8_t *desc) {
+    char *provider_name = "M Provider";
+    char *service_name = "M Service";
+    uint8_t k = 0;
+    uint8_t *data_n;
+
+    desc5d_init(desc);
+    desc_set_length(desc, 255);
+
+    data_n = desc5d_get_data(desc, k++);
+    desc5dn_set_code(data_n, (uint8_t *)"eng");
+    desc5dn_set_provider_name(data_n, (uint8_t *)provider_name, strlen(provider_name));
+    desc5dn_set_service_name(data_n, (uint8_t *)service_name, strlen(service_name));
+
+    data_n = desc5d_get_data(desc, k++);
+    desc5dn_set_code(data_n, (uint8_t *)"fre");
+    desc5dn_set_provider_name(data_n, (uint8_t *)provider_name, strlen(provider_name));
+    desc5dn_set_service_name(data_n, (uint8_t *)service_name, strlen(service_name));
+
+    data_n = desc5d_get_data(desc, k++);
+    desc5dn_set_code(data_n, (uint8_t *)"bul");
+    desc5dn_set_provider_name(data_n, (uint8_t *)provider_name, strlen(provider_name));
+    desc5dn_set_service_name(data_n, (uint8_t *)service_name, strlen(service_name));
+
+
+    data_n = desc5d_get_data(desc, k);
+    desc_set_length(desc, data_n - desc - DESC_HEADER_SIZE);
+}
+
 /* ---  Descriptor 0x5e: multilingual_component_descriptor */
 /* DVB  Descriptor 0x5f: Private data specifier descriptor */
 static void build_desc5f(uint8_t *desc) {
@@ -1464,6 +1493,9 @@ static void generate_sdt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc57(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc5d(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);

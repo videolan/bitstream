@@ -88,6 +88,9 @@ new SDT actual tsid=10000 version=1 onid=40000
             - elementary_cell cell_id=7
             - elementary_cell cell_id=8
     - desc 57 telephone foreign_availability=1 connection_type=3 country_prefix=+ international_area_code=359 operator_code=2 national_area_code= core_number=9868620 phone=+35929868620
+    - desc 5d multilingual_service_name code="eng" provider="M Provider" service="M Service"
+    - desc 5d multilingual_service_name code="fre" provider="M Provider" service="M Service"
+    - desc 5d multilingual_service_name code="bul" provider="M Provider" service="M Service"
     - desc 5f private_data specifier=0xaabbccdd
   * service sid=20100 eit_schedule running=1
     - desc 48 service type=0x1 provider="Test Provider Name" service="Test Service Name"

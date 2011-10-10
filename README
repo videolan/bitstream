@@ -126,6 +126,7 @@ Supported DVB descriptors
  * Descriptor 0x5a: Terrestrial delivery system descriptor
  * Descriptor 0x5b: Multilingual network name descriptor
  * Descriptor 0x5c: Multilingual bouquet name descriptor
+ * Descriptor 0x5d: Multilingual service name descriptor
  * Descriptor 0x5f: Private data specifier descriptor
  * Descriptor 0x6a: AC-3 descriptor [p]
 
