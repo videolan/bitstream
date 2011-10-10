@@ -77,6 +77,16 @@ static inline uint8_t desc46n_get_teletexttype(const uint8_t *p_desc_n)
     return p_desc_n[3] >> 3;
 }
 
+static inline char *desc46_get_teletexttype_txt(uint8_t i_type)
+{
+    return i_type == 0x00 ? "Reserved" :
+           i_type == 0x01 ? "Initial teletext page" :
+           i_type == 0x02 ? "Teletext subtitle page" :
+           i_type == 0x03 ? "Additional information page" :
+           i_type == 0x04 ? "Programme schedule page" :
+           i_type == 0x05 ? "Teletext subtitle page for hearing impaired people schedule page" : "Reserved";
+}
+
 static inline void desc46n_set_teletextmagazine(uint8_t *p_desc_n,
                                                 uint8_t i_magazine)
 {
@@ -115,18 +125,22 @@ static inline void desc46_print(uint8_t *p_desc, f_print pf_print,
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,
-                 "<%s language=\"%3.3s\" type=\"0x%hhx\" mag=\"%hhu\" page=\"0x%hhx\"/>",
+                 "<%s language=\"%3.3s\" type=\"0x%hhx\" type_txt=\"%s\" mag=\"%hhu\" page=\"0x%hhux\"/>",
                  desc_get_tag(p_desc) == 0x46 ? "VBI_TELX_DESC" : "TELX_DESC",
                  (const char *)desc46n_get_code(p_desc_n),
                  desc46n_get_teletexttype(p_desc_n),
+                 desc46_get_teletexttype_txt(desc46n_get_teletexttype(p_desc_n)),
                  desc46n_get_teletextmagazine(p_desc_n),
                  desc46n_get_teletextpage(p_desc_n));
             break;
         default:
             pf_print(opaque,
-                 "    - desc %x telx language=%3.3s type=0x%hhx mag=%hhu page=0x%hhx",
-                 desc_get_tag(p_desc), (const char *)desc46n_get_code(p_desc_n),
+                 "    - desc %x %s language=%3.3s type=0x%hhx type_txt=\"%s\" mag=%hhu page=0x%hhux",
+                 desc_get_tag(p_desc),
+                 desc_get_tag(p_desc) == 0x46 ? "vbi_telx" : "telx",
+                 (const char *)desc46n_get_code(p_desc_n),
                  desc46n_get_teletexttype(p_desc_n),
+                 desc46_get_teletexttype_txt(desc46n_get_teletexttype(p_desc_n)),
                  desc46n_get_teletextmagazine(p_desc_n),
                  desc46n_get_teletextpage(p_desc_n));
         }
