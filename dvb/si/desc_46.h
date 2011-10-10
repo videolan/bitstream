@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -67,8 +68,8 @@ static inline uint8_t *desc46_get_language(uint8_t *p_desc, uint8_t n)
 
 static inline void desc46n_set_teletexttype(uint8_t *p_desc_n, uint8_t i_type)
 {
-    p_desc_n[3] &= ~0xfc;
-    p_desc_n[3] |= (i_type << 3) & 0xfc;
+    p_desc_n[3] &= ~0xf8;
+    p_desc_n[3] |= (i_type << 3) & 0xf8;
 }
 
 static inline uint8_t desc46n_get_teletexttype(const uint8_t *p_desc_n)
@@ -79,13 +80,13 @@ static inline uint8_t desc46n_get_teletexttype(const uint8_t *p_desc_n)
 static inline void desc46n_set_teletextmagazine(uint8_t *p_desc_n,
                                                 uint8_t i_magazine)
 {
-    p_desc_n[3] &= ~0x3;
-    p_desc_n[3] |= (i_magazine & 0x3);
+    p_desc_n[3] &= ~0x7;
+    p_desc_n[3] |= (i_magazine & 0x7);
 }
 
 static inline uint8_t desc46n_get_teletextmagazine(const uint8_t *p_desc_n)
 {
-    return p_desc_n[3] & 0x3;
+    return p_desc_n[3] & 0x7;
 }
 
 static inline void desc46n_set_teletextpage(uint8_t *p_desc_n, uint8_t i_page)
