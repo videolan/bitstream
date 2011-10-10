@@ -45,6 +45,7 @@
 #include <bitstream/dvb/si/eit.h>
 #include <bitstream/dvb/si/tdt.h>
 #include <bitstream/dvb/si/tot.h>
+#include <bitstream/dvb/si/rst.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -1026,16 +1027,6 @@ static inline void desc88p28_init(uint8_t *p_desc)
 #define desc88p28_get_lcn desc83p28_get_lcn
 #define desc88p28_validate desc83p28_validate
 #define desc88p28_print desc83p28_print
-
-/*****************************************************************************
- * Running Status Table
- *****************************************************************************/
-#define RST_PID                 0x13
-#define RST_TABLE_ID            0x71
-#define RST_HEADER_SIZE         PSI_HEADER_SIZE
-#define RST_EVENT_SIZE          9
-
-/* TODO: unfinished support */
 
 #ifdef __cplusplus
 }
