@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -47,6 +48,11 @@ extern "C"
 #define DESC41_HEADER_SIZE      DESC_HEADER_SIZE
 #define DESC41_SERVICE_SIZE     3
 
+static inline void desc41_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x41);
+}
+
 static inline uint8_t *desc41_get_service(uint8_t *p_desc, uint8_t n)
 {
     uint8_t *p_desc_n = p_desc + DESC41_HEADER_SIZE + n * DESC41_SERVICE_SIZE;
@@ -61,9 +67,20 @@ static inline uint16_t desc41n_get_sid(const uint8_t *p_desc_n)
     return (p_desc_n[0] << 8) | p_desc_n[1];
 }
 
+static inline void desc41n_set_sid(uint8_t *p_desc_n, uint16_t i_sid)
+{
+    p_desc_n[0] = i_sid >> 8;
+    p_desc_n[1] = i_sid & 0xff;
+}
+
 static inline uint8_t desc41n_get_type(const uint8_t *p_desc_n)
 {
     return p_desc_n[2];
+}
+
+static inline void desc41n_set_type(uint8_t *p_desc_n, uint8_t i_type)
+{
+    p_desc_n[2] = i_type;
 }
 
 static inline bool desc41_validate(const uint8_t *p_desc)
@@ -82,12 +99,12 @@ static inline void desc41_print(uint8_t *p_desc, f_print pf_print,
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,
-            "<SERVICE_LIST_DESC sid=\"%hu\" type=\"%hhu\" />",
+            "<SERVICE_LIST_DESC sid=\"%hu\" type=\"0x%02x\" />",
             desc41n_get_sid(p_desc_n), desc41n_get_type(p_desc_n));
             break;
         default:
             pf_print(opaque,
-            "    - desc 41 service_list sid=%hu type=%hhu",
+            "    - desc 41 service_list sid=%hu type=0x%02x",
             desc41n_get_sid(p_desc_n), desc41n_get_type(p_desc_n));
         }
     }
