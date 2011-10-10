@@ -967,7 +967,33 @@ static void build_desc5d(uint8_t *desc) {
     desc_set_length(desc, data_n - desc - DESC_HEADER_SIZE);
 }
 
-/* ---  Descriptor 0x5e: multilingual_component_descriptor */
+/* DVB  Descriptor 0x5e: Multilingual component descriptor */
+static void build_desc5e(uint8_t *desc) {
+    char *text = "Stereo";
+    uint8_t k = 0;
+    uint8_t *data_n;
+
+    desc5e_init(desc);
+    desc5e_set_component_tag(desc, 46);
+    desc_set_length(desc, 255);
+
+    data_n = desc5e_get_data(desc, k++);
+    desc5en_set_code(data_n, (uint8_t *)"eng");
+    desc5en_set_text(data_n, (uint8_t *)text, strlen(text));
+
+    data_n = desc5e_get_data(desc, k++);
+    desc5en_set_code(data_n, (uint8_t *)"fre");
+    desc5en_set_text(data_n, (uint8_t *)text, strlen(text));
+
+    data_n = desc5e_get_data(desc, k++);
+    desc5en_set_code(data_n, (uint8_t *)"bul");
+    desc5en_set_text(data_n, (uint8_t *)text, strlen(text));
+
+    data_n = desc5e_get_data(desc, k);
+    desc_set_length(desc, data_n - desc - DESC_HEADER_SIZE);
+}
+
+
 /* DVB  Descriptor 0x5f: Private data specifier descriptor */
 static void build_desc5f(uint8_t *desc) {
     desc5f_init(desc);
@@ -2001,6 +2027,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc50(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc5e(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

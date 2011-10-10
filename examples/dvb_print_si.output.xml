@@ -348,6 +348,11 @@
 <DESC id="0x50" length="12" value="f2032e656e6753746572656f">
 <COMPONENT_DESC stream_content="0x02" component_type="0x03" component_tag="46" language="eng" text="Stereo"/>
 </DESC>
+<DESC id="0x5e" length="31" value="2e656e670653746572656f6672650653746572656f62756c0653746572656f">
+<MULTILINGUAL_COMPONENT_DESC code="eng" component_tag="46" text="Stereo"/>
+<MULTILINGUAL_COMPONENT_DESC code="fre" component_tag="46" text="Stereo"/>
+<MULTILINGUAL_COMPONENT_DESC code="bul" component_tag="46" text="Stereo"/>
+</DESC>
 </ES>
 <ES pid="122" streamtype="0x06" streamtype_txt="13818-1 PES private data">
 <DESC id="0x46" length="15" value="656e670bff62756c127f6672651940">
