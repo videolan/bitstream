@@ -13,7 +13,9 @@ install:
 	@install -d $(INCLUDE)/ietf
 	@install -m 644 ietf/* $(INCLUDE)/ietf
 	@install -d $(INCLUDE)/mpeg
-	@install -m 644 mpeg/* $(INCLUDE)/mpeg
+	@install -m 644 mpeg/*.h $(INCLUDE)/mpeg
+	@install -d $(INCLUDE)/mpeg/psi
+	@install -m 644 mpeg/psi/*.h $(INCLUDE)/mpeg/psi
 
 uninstall:
 	@echo "REMOVE   $(INCLUDE)"
