@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -94,6 +95,16 @@ static inline uint8_t *desc48_get_service(const uint8_t *p_desc,
     uint8_t *p = (uint8_t *)p_desc + DESC48_HEADER_SIZE + 1 + p_desc[3];
     *pi_length = p[0];
     return p + 1;
+}
+
+static inline void desc48_set_length(uint8_t *p_desc)
+{
+    uint8_t i_provider_len, i_service_len;
+    desc48_get_provider(p_desc, &i_provider_len);
+    desc48_get_service(p_desc, &i_service_len);
+    desc_set_length(p_desc, DESC48_HEADER_SIZE - DESC_HEADER_SIZE
+                            + 1 + i_provider_len
+                            + 1 + i_service_len);
 }
 
 static inline bool desc48_validate(const uint8_t *p_desc)
