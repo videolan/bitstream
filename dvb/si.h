@@ -42,6 +42,7 @@
 #include <bitstream/dvb/si/strings.h>
 #include <bitstream/dvb/si/nit.h>
 #include <bitstream/dvb/si/sdt.h>
+#include <bitstream/dvb/si/eit.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -1023,96 +1024,6 @@ static inline void desc88p28_init(uint8_t *p_desc)
 #define desc88p28_get_lcn desc83p28_get_lcn
 #define desc88p28_validate desc83p28_validate
 #define desc88p28_print desc83p28_print
-
-/*****************************************************************************
- * Event Information Table
- *****************************************************************************/
-#define EIT_PID                         0x12
-#define EIT_TABLE_ID_PF_ACTUAL          0x4e
-#define EIT_TABLE_ID_PF_OTHER           0x4f
-#define EIT_TABLE_ID_SCHED_ACTUAL_FIRST 0x50
-#define EIT_TABLE_ID_SCHED_ACTUAL_LAST  0x5f
-#define EIT_TABLE_ID_SCHED_OTHER_FIRST  0x60
-#define EIT_TABLE_ID_SCHED_OTHER_LAST   0x6f
-#define EIT_HEADER_SIZE                 (PSI_HEADER_SIZE_SYNTAX1 + 6)
-#define EIT_EVENT_SIZE                  12
-
-#define eit_set_sid psi_set_tableidext
-#define eit_get_sid psi_get_tableidext
-
-static inline void eit_init(uint8_t *p_eit, bool b_actual)
-{
-    psi_init(p_eit, true);
-    psi_set_tableid(p_eit, b_actual ? EIT_TABLE_ID_PF_ACTUAL :
-                    EIT_TABLE_ID_PF_OTHER);
-}
-
-static inline void eit_set_length(uint8_t *p_eit, uint16_t i_eit_length)
-{
-    psi_set_length(p_eit, EIT_HEADER_SIZE + PSI_CRC_SIZE - PSI_HEADER_SIZE
-                    + i_eit_length);
-}
-
-static inline void eit_set_tsid(uint8_t *p_eit, uint16_t i_tsid)
-{
-    p_eit[8] = i_tsid >> 8;
-    p_eit[9] = i_tsid & 0xff;
-}
-
-static inline uint16_t eit_get_tsid(const uint8_t *p_eit)
-{
-    return (p_eit[8] << 8) | p_eit[9];
-}
-
-static inline uint16_t eitn_get_desclength(const uint8_t *p_eit_n)
-{
-    return ((p_eit_n[10] & 0xf) << 8) | p_eit_n[11];
-}
-
-static inline bool eit_validate_event(const uint8_t *p_eit,
-                                      const uint8_t *p_eit_n,
-                                      uint16_t i_desclength)
-{
-    uint16_t i_section_size = psi_get_length(p_eit) + PSI_HEADER_SIZE
-                               - PSI_CRC_SIZE;
-    return (p_eit_n + EIT_EVENT_SIZE + i_desclength
-             <= p_eit + i_section_size);
-}
-
-static inline bool eit_validate(const uint8_t *p_eit)
-{
-    uint16_t i_section_size = psi_get_length(p_eit) + PSI_HEADER_SIZE
-                               - PSI_CRC_SIZE;
-    uint8_t i_tid = psi_get_tableid(p_eit);
-    const uint8_t *p_eit_n;
-
-    if (!psi_get_syntax(p_eit)
-         || (i_tid != EIT_TABLE_ID_PF_ACTUAL
-              && i_tid != EIT_TABLE_ID_PF_OTHER
-              && !(i_tid >= EIT_TABLE_ID_SCHED_ACTUAL_FIRST
-                    && i_tid <= EIT_TABLE_ID_SCHED_ACTUAL_LAST)
-              && !(i_tid >= EIT_TABLE_ID_SCHED_OTHER_FIRST
-                    && i_tid <= EIT_TABLE_ID_SCHED_OTHER_LAST)))
-        return false;
-
-    if (!psi_check_crc(p_eit))
-        return false;
-
-    p_eit_n = p_eit + EIT_HEADER_SIZE;
-
-    while (p_eit_n + EIT_EVENT_SIZE - p_eit <= i_section_size
-            && p_eit_n + EIT_EVENT_SIZE + eitn_get_desclength(p_eit_n) - p_eit
-                <= i_section_size) {
-        if (!descs_validate(p_eit_n + 10))
-            return false;
-
-        p_eit_n += EIT_EVENT_SIZE + eitn_get_desclength(p_eit_n);
-    }
-
-    return (p_eit_n - p_eit == i_section_size);
-}
-
-/* TODO: unfinished support */
 
 /*****************************************************************************
  * Running Status Table
