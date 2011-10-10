@@ -35,5 +35,6 @@
 #include <bitstream/dvb/si/eit_print.h>
 #include <bitstream/dvb/si/tdt_print.h>
 #include <bitstream/dvb/si/tot_print.h>
+#include <bitstream/dvb/si/rst_print.h>
 
 #endif

@@ -652,6 +652,29 @@ static void handle_tot_section(uint16_t i_pid, uint8_t *p_tot)
 }
 
 /*****************************************************************************
+ * handle_rst
+ *****************************************************************************/
+static void handle_rst_section(uint16_t i_pid, uint8_t *p_rst)
+{
+    if (i_pid != RST_PID || !rst_validate(p_rst)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_rst_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid RST section received on PID %hu\n", i_pid);
+        }
+        free(p_rst);
+        return;
+    }
+
+    rst_print(p_rst, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+
+    free(p_rst);
+}
+
+/*****************************************************************************
  * handle_section
  *****************************************************************************/
 static void handle_section(uint16_t i_pid, uint8_t *p_section)
@@ -701,6 +724,10 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
 
     case TOT_TABLE_ID:
         handle_tot_section(i_pid, p_section);
+        break;
+
+    case RST_TABLE_ID:
+        handle_rst_section(i_pid, p_section);
         break;
 
     default:
@@ -803,6 +830,7 @@ int main(int i_argc, char **ppsz_argv)
     p_pids[SDT_PID].i_psi_refcount++;
     p_pids[EIT_PID].i_psi_refcount++;
     p_pids[TDT_PID].i_psi_refcount++;
+    p_pids[RST_PID].i_psi_refcount++;
 
     switch (i_print_type) {
     case PRINT_XML:
