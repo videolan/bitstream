@@ -542,6 +542,8 @@ static void handle_eit_section(uint16_t i_pid, uint8_t *p_eit)
         return;
     }
 
+    eit_print(p_eit, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+
     free(p_eit);
 }
 
