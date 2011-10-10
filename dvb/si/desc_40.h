@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ *          Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -78,6 +79,7 @@ static inline void desc40_print(const uint8_t *p_desc,
                                 print_type_t i_print_type)
 {
     uint8_t i_network_name_length;
+    bool b_bouquet_name = desc_get_tag(p_desc) == 0x47;
     const uint8_t *p_network_name = desc40_get_networkname(p_desc,
                                                      &i_network_name_length);
     char *psz_network_name = dvb_string_get(p_network_name,
@@ -87,12 +89,20 @@ static inline void desc40_print(const uint8_t *p_desc,
     switch (i_print_type) {
     case PRINT_XML:
         psz_network_name = dvb_string_xml_escape(psz_network_name);
-        pf_print(print_opaque, "<NETWORK_NAME_DESC networkname=\"%s\"/>",
-                 psz_network_name);
+        if ( !b_bouquet_name )
+            pf_print(print_opaque, "<NETWORK_NAME_DESC networkname=\"%s\"/>",
+                     psz_network_name);
+        else
+            pf_print(print_opaque, "<BOUQUET_NAME_DESC bouquetname=\"%s\"/>",
+                     psz_network_name);
         break;
     default:
-        pf_print(print_opaque, "    - desc 40 network_name networkname=\"%s\"",
-                 psz_network_name);
+        if ( !b_bouquet_name )
+            pf_print(print_opaque, "    - desc 40 networkname=\"%s\"",
+                     psz_network_name);
+        else
+            pf_print(print_opaque, "    - desc 47 bouquetname=\"%s\"",
+                     psz_network_name);
     }
     free(psz_network_name);
 }
