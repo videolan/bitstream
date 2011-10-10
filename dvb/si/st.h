@@ -1,9 +1,9 @@
 /*****************************************************************************
- * si.h: ETSI EN 300 468 Service Information
+ * st.h: ETSI EN 300 468 Stuffing Table (ST)
  *****************************************************************************
- * Copyright (C) 2009-2010 VideoLAN
+ * Copyright (C) 2011 Unix Solutions Ltd.
  *
- * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ * Authors: Georgi Chorbadzhiyski <georgi@unixsol.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,26 +27,43 @@
 
 /*
  * Normative references:
- *  - ISO/IEC 13818-1:2007(E) (MPEG-2 Systems)
  *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
  */
 
-#ifndef __BITSTREAM_DVB_SI_H__
-#define __BITSTREAM_DVB_SI_H__
+#ifndef __BITSTREAM_DVB_ST_H__
+#define __BITSTREAM_DVB_ST_H__
 
 #include <bitstream/common.h>
-#include <bitstream/mpeg/psi.h>
-#include <bitstream/dvb/si/numbers.h>
-#include <bitstream/dvb/si/datetime.h>
-#include <bitstream/dvb/si/strings.h>
-#include <bitstream/dvb/si/descs_list.h>
-#include <bitstream/dvb/si/nit.h>
-#include <bitstream/dvb/si/bat.h>
-#include <bitstream/dvb/si/sdt.h>
-#include <bitstream/dvb/si/eit.h>
-#include <bitstream/dvb/si/tdt.h>
-#include <bitstream/dvb/si/tot.h>
-#include <bitstream/dvb/si/rst.h>
-#include <bitstream/dvb/si/st.h>
+#include <bitstream/mpeg/psi/psi.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/*****************************************************************************
+ * Stuffing Table
+ *****************************************************************************/
+#define ST_TABLE_ID            0x72
+#define ST_HEADER_SIZE         PSI_HEADER_SIZE
+
+static inline void st_init(uint8_t *p_st)
+{
+    psi_init(p_st, false);
+    psi_set_tableid(p_st, ST_TABLE_ID);
+    psi_set_length(p_st, 0);
+}
+
+static inline bool st_validate(const uint8_t *p_st)
+{
+    if (psi_get_tableid(p_st) != ST_TABLE_ID)
+        return false;
+
+    return true;
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
