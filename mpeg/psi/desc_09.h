@@ -47,14 +47,32 @@ extern "C"
  *****************************************************************************/
 #define DESC09_HEADER_SIZE      (DESC_HEADER_SIZE + 4)
 
+static inline void desc09_init(uint8_t *p_desc)
+{
+    desc_set_tag(p_desc, 0x09);
+    desc_set_length(p_desc, DESC09_HEADER_SIZE - DESC_HEADER_SIZE);
+}
+
 static inline uint16_t desc09_get_sysid(const uint8_t *p_desc)
 {
     return (p_desc[2] << 8) | p_desc[3];
 }
 
+static inline void desc09_set_sysid(uint8_t *p_desc, uint16_t i_sysid)
+{
+    p_desc[2] = i_sysid >> 8;
+    p_desc[3] = i_sysid & 0xff;
+}
+
 static inline uint16_t desc09_get_pid(const uint8_t *p_desc)
 {
     return ((p_desc[4] & 0x1f) << 8) | p_desc[5];
+}
+
+static inline void desc09_set_pid(uint8_t *p_desc, uint16_t i_pid)
+{
+    p_desc[4] = ((i_pid >> 8) & 0xff) | 0xE0;
+    p_desc[5] = i_pid & 0xff;
 }
 
 static inline bool desc09_validate(const uint8_t *p_desc)
