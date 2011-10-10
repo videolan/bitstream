@@ -30,6 +30,8 @@
 
 #include <bitstream/common.h>
 #include <bitstream/mpeg/psi/psi.h>
+#include <bitstream/mpeg/psi/descriptors.h>
+#include <bitstream/mpeg/psi/descs_print.h>
 #include <bitstream/mpeg/psi/pmt.h>
 
 #ifdef __cplusplus
