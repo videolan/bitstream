@@ -1008,7 +1008,13 @@ static void build_desc60(uint8_t *desc) {
     desc60_set_new_service_id(desc, 20000);
 }
 
-/* ---  Descriptor 0x61: short_smoothing_buffer_descriptor */
+/* DVB  Descriptor 0x61: Short smoothing buffer descriptor */
+static void build_desc61(uint8_t *desc) {
+    desc61_init(desc);
+    desc61_set_sb_size(desc, 1); // 1536 bytes buffer size
+    desc61_set_sb_leak_rate(desc, 10); // 0.5 Mbit/s
+}
+
 /* ---  Descriptor 0x62: frequency_list_descriptor */
 /* ---  Descriptor 0x63: partial_transport_stream_descriptor */
 /* ---  Descriptor 0x64: data_broadcast_descriptor */
@@ -1700,6 +1706,9 @@ static void generate_eit(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc4d(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc61(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

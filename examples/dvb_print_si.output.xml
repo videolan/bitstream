@@ -206,6 +206,9 @@
 <DESC id="0x4d" length="44" value="656e670e4d616a6f72205456206576656e7419546865206576656e74206f66207468652063656e7475727921">
 <SHORT_EVENT_DESC lang="eng" event_name="Major TV event" text="The event of the century!"/>
 </DESC>
+<DESC id="0x61" length="1" value="4a">
+<SHORT_SMOOTHING_BUFFER_DESC sb_size="1" sb_leak_rate="10"/>
+</DESC>
 </EVENT>
 <EVENT id="30200" start_time="999999999" start_time_dec="2001-09-09 01:46:39 UTC" duration="7200" duration_dec="02:00:00" running_status="0" free_CA_mode="0">
 <DESC id="0x54" length="4" value="244e68b1">

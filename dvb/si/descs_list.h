@@ -67,6 +67,7 @@
 #include <bitstream/dvb/si/desc_5e.h>
 #include <bitstream/dvb/si/desc_5f.h>
 #include <bitstream/dvb/si/desc_60.h>
+#include <bitstream/dvb/si/desc_61.h>
 #include <bitstream/dvb/si/desc_6a.h>
 #include <bitstream/dvb/si/desc_83p28.h>
 #include <bitstream/dvb/si/desc_88p28.h>

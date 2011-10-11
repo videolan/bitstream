@@ -120,6 +120,7 @@ new EIT tableid=0x4e type=actual_pf version=1 tsid=10000 onid=40000 seg_last_sec
        - extended_event_item description="Year" text="2011"
        - extended_event_item description="Rating" text="***++"
     - desc 4d short_event lang=eng event_name="Major TV event" text="The event of the century!"
+    - desc 61 short_smoothing_buffer sb_size=1 sb_leak_rate=10
   * EVENT id=30200 start_time=999999999 start_time_dec="2001-09-09 01:46:39 UTC" duration=7200 duration_dec=02:00:00 running_status=0 free_CA_mode=0
     - desc 54 content content_l1=2 content_l2=4 user=78
     - desc 54 content content_l1=6 content_l2=8 user=177
