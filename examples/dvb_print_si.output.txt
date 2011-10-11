@@ -33,6 +33,11 @@ new NIT actual networkid=40000 version=1
     - desc 5b multilingual_network_name code="eng" networkname="M Network"
     - desc 5b multilingual_network_name code="fre" networkname="M Network"
     - desc 5b multilingual_network_name code="bul" networkname="M Network"
+    - desc 62 frequency_list coding_type=2 coding_type_txt=cable frequency=3120000
+    - desc 62 frequency_list coding_type=2 coding_type_txt=cable frequency=3180000
+    - desc 62 frequency_list coding_type=2 coding_type_txt=cable frequency=3240000
+    - desc 62 frequency_list coding_type=2 coding_type_txt=cable frequency=3300000
+    - desc 62 frequency_list coding_type=2 coding_type_txt=cable frequency=3360000
   * ts tsid=10000 onid=40000
     - desc 41 service_list sid=20000 type=0x01
     - desc 41 service_list sid=20100 type=0x02

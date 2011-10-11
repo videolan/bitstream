@@ -1015,7 +1015,34 @@ static void build_desc61(uint8_t *desc) {
     desc61_set_sb_leak_rate(desc, 10); // 0.5 Mbit/s
 }
 
-/* ---  Descriptor 0x62: frequency_list_descriptor */
+/* DVB  Descriptor 0x62: Frequency list descriptor */
+static void build_desc62(uint8_t *desc) {
+    uint8_t k = 0;
+    uint8_t *freq_n;
+
+    desc62_init(desc);
+    desc62_set_coding_type(desc, 2); // Cable
+    desc_set_length(desc, 255);
+
+    freq_n = desc62_get_frequency(desc, k++);
+    desc62n_set_freq(freq_n, 0x3120000); // 312,0000 Mhz
+
+    freq_n = desc62_get_frequency(desc, k++);
+    desc62n_set_freq(freq_n, 0x3180000); // 318,0000 Mhz
+
+    freq_n = desc62_get_frequency(desc, k++);
+    desc62n_set_freq(freq_n, 0x3240000); // 324,0000 Mhz
+
+    freq_n = desc62_get_frequency(desc, k++);
+    desc62n_set_freq(freq_n, 0x3300000); // 330,0000 Mhz
+
+    freq_n = desc62_get_frequency(desc, k++);
+    desc62n_set_freq(freq_n, 0x3360000); // 336,0000 Mhz
+
+    freq_n = desc62_get_frequency(desc, k);
+    desc_set_length(desc, freq_n - desc - DESC_HEADER_SIZE);
+}
+
 /* ---  Descriptor 0x63: partial_transport_stream_descriptor */
 /* ---  Descriptor 0x64: data_broadcast_descriptor */
 /* ---  Descriptor 0x65: scrambling_descriptor */
@@ -1280,6 +1307,9 @@ static void generate_nit(void) {
 
         desc = descs_get_desc(desc_loop, desc_counter++);
         build_desc5b(desc);
+
+        desc = descs_get_desc(desc_loop, desc_counter++);
+        build_desc62(desc);
 
         // Finish descriptor generation
         desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

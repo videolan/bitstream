@@ -53,6 +53,13 @@
 <MULTILINGUAL_NETWORK_NAME_DESC code="fre" networkname="M Network"/>
 <MULTILINGUAL_NETWORK_NAME_DESC code="bul" networkname="M Network"/>
 </DESC>
+<DESC id="0x62" length="21" value="fe0312000003180000032400000330000003360000">
+<FREQUENCY_LIST_DESC coding_type="2" coding_type_txt="cable" frequency="3120000"/>
+<FREQUENCY_LIST_DESC coding_type="2" coding_type_txt="cable" frequency="3180000"/>
+<FREQUENCY_LIST_DESC coding_type="2" coding_type_txt="cable" frequency="3240000"/>
+<FREQUENCY_LIST_DESC coding_type="2" coding_type_txt="cable" frequency="3300000"/>
+<FREQUENCY_LIST_DESC coding_type="2" coding_type_txt="cable" frequency="3360000"/>
+</DESC>
 <TS tsid="10000" onid="40000">
 <DESC id="0x41" length="12" value="4e20014e84024ee8014f4c02">
 <SERVICE_LIST_DESC sid="20000" type="0x01" />
