@@ -1000,7 +1000,14 @@ static void build_desc5f(uint8_t *desc) {
     desc5f_set_specifier(desc, 0xaabbccdd);
 }
 
-/* ---  Descriptor 0x60: service_move_descriptor */
+/* DVB  Descriptor 0x60: Service move descriptor */
+static void build_desc60(uint8_t *desc) {
+    desc60_init(desc);
+    desc60_set_new_onid(desc, 10000);
+    desc60_set_new_tsid(desc, 15000);
+    desc60_set_new_service_id(desc, 20000);
+}
+
 /* ---  Descriptor 0x61: short_smoothing_buffer_descriptor */
 /* ---  Descriptor 0x62: frequency_list_descriptor */
 /* ---  Descriptor 0x63: partial_transport_stream_descriptor */
@@ -2071,6 +2078,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc56(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc60(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

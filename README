@@ -129,6 +129,7 @@ Supported DVB descriptors
  * Descriptor 0x5d: Multilingual service name descriptor
  * Descriptor 0x5e: Multilingual component descriptor
  * Descriptor 0x5f: Private data specifier descriptor
+ * Descriptor 0x60: Service move descriptor
  * Descriptor 0x6a: AC-3 descriptor [p]
 
 Legend:

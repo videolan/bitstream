@@ -398,6 +398,9 @@
 <TELX_DESC language="bul" type="0x2" type_txt="Teletext subtitle page" mag="2" page="0x127x"/>
 <TELX_DESC language="fre" type="0x3" type_txt="Additional information page" mag="1" page="0x64x"/>
 </DESC>
+<DESC id="0x60" length="6" value="27103a984e20">
+<SERVICE_MOVE_DESC new_onid="10000" new_tsid="15000" new_service_id="20000"/>
+</DESC>
 </ES>
 <ES pid="124" streamtype="0x06" streamtype_txt="13818-1 PES private data">
 <DESC id="0x59" length="24" value="656e67010002000362756c02000300046672650500060007">

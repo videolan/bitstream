@@ -232,6 +232,7 @@ new PMT program=20000 version=1 pcrpid=110
     - desc 56 telx language=eng type=0x1 type_txt="Initial teletext page" mag=3 page=0x255x
     - desc 56 telx language=bul type=0x2 type_txt="Teletext subtitle page" mag=2 page=0x127x
     - desc 56 telx language=fre type=0x3 type_txt="Additional information page" mag=1 page=0x64x
+    - desc 60 service_move new_onid=10000 new_tsid=15000 new_service_id=20000
   * ES pid=124 streamtype=0x06 streamtype_txt="13818-1 PES private data"
     - desc 59 subtitling language=eng type=0x1 composition=2 ancillary=3
     - desc 59 subtitling language=bul type=0x2 composition=3 ancillary=4
