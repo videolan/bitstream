@@ -466,8 +466,8 @@
 <SIT version="0" current_next="1">
 </SIT>
 <SIT version="1" current_next="1">
-<DESC id="0x05" length="4" value="54455354">
-<REGISTRATION_DESC identifier="TEST"/>
+<DESC id="0x63" length="8" value="c01388c01b58c3e8">
+<PARTIAL_TRANSPORT_STREAM_DESC peak_rate="5000" min_overall_smoothing_rate="7000" max_overall_smoothing_buffer="1000"/>
 </DESC>
 <SERVICE sid="20000" running_status="1">
 <DESC id="0x05" length="4" value="54455354">

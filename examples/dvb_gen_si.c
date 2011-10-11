@@ -1043,7 +1043,14 @@ static void build_desc62(uint8_t *desc) {
     desc_set_length(desc, freq_n - desc - DESC_HEADER_SIZE);
 }
 
-/* ---  Descriptor 0x63: partial_transport_stream_descriptor */
+/* DVB  Descriptor 0x63: Partial transport stream descriptor */
+static void build_desc63(uint8_t *desc) {
+    desc63_init(desc);
+    desc63_set_peak_rate(desc, 5000);
+    desc63_set_min_overall_smoothing_rate(desc, 7000);
+    desc63_set_max_overall_smoothing_buffer(desc, 1000);
+}
+
 /* ---  Descriptor 0x64: data_broadcast_descriptor */
 /* ---  Descriptor 0x65: scrambling_descriptor */
 /* ---  Descriptor 0x66: data_broadcast_id_descriptor */
@@ -2286,7 +2293,7 @@ static void generate_sit(void) {
         desc_loop = sit_get_descs(sit);
 
         desc = descs_get_desc(desc_loop, desc_counter++);
-        build_desc05(desc);
+        build_desc63(desc);
 
         // Finish descriptor generation
         desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

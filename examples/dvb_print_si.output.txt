@@ -267,7 +267,7 @@ end DIT
 new SIT version=0
 end SIT
 new SIT version=1
-    - desc 05 registration identifier=TEST
+    - desc 63 partial_transport_stream peak_rate=5000 min_overall_smoothing_rate=7000 max_overall_smoothing_buffer=1000
   * SERVICE sid=20000 running_status=1
     - desc 05 registration identifier=TEST
     - desc 05 registration identifier=TEST
