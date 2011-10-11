@@ -28,11 +28,11 @@
 
 /*
  * Normative references:
- *  - ISO/IEC 13818-1:2007(E) (MPEG-2 Systems)
+ *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
  */
 
-#ifndef __BITSTREAM_MPEG_SIT_H__
-#define __BITSTREAM_MPEG_SIT_H__
+#ifndef __BITSTREAM_DVB_SIT_H__
+#define __BITSTREAM_DVB_SIT_H__
 
 #include <bitstream/common.h>
 #include <bitstream/mpeg/psi/psi.h>

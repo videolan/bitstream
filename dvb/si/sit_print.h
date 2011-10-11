@@ -26,8 +26,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifndef __BITSTREAM_MPEG_SIT_PRINT_H__
-#define __BITSTREAM_MPEG_SIT_PRINT_H__
+#ifndef __BITSTREAM_DVB_SIT_PRINT_H__
+#define __BITSTREAM_DVB_SIT_PRINT_H__
 
 #include <bitstream/common.h>
 #include <bitstream/mpeg/psi/psi.h>

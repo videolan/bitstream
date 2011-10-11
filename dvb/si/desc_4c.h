@@ -30,8 +30,8 @@
  *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
  */
 
-#ifndef __BITSTREAM_MPEG_DESC_4C_H__
-#define __BITSTREAM_MPEG_DESC_4C_H__
+#ifndef __BITSTREAM_DVB_DESC_4C_H__
+#define __BITSTREAM_DVB_DESC_4C_H__
 
 #include <bitstream/common.h>
 #include <bitstream/mpeg/psi/descriptors.h>
