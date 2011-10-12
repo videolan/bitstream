@@ -1102,6 +1102,24 @@ static void build_desc69(uint8_t *desc) {
 }
 
 /* DVB  Descriptor 0x6a: AC-3 descriptor */
+static void build_desc6a(uint8_t *desc) {
+    desc6a_init(desc);
+
+    desc6a_set_component_type_flag  (desc, true);
+    desc6a_set_component_type       (desc, 10);
+
+    desc6a_set_bsid_flag            (desc, true);
+    desc6a_set_bsid                 (desc, 20);
+
+    desc6a_set_mainid_flag          (desc, true);
+    desc6a_set_mainid               (desc, 30);
+
+    desc6a_set_asvc_flag            (desc, true);
+    desc6a_set_asvc                 (desc, 40);
+
+    desc6a_set_length(desc);
+}
+
 /* ---  Descriptor 0x6b: ancillary_data_descriptor */
 /* ---  Descriptor 0x6c: cell_list_descriptor */
 /* ---  Descriptor 0x6d: cell_frequency_link_descriptor */
@@ -2142,6 +2160,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5e(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc6a(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

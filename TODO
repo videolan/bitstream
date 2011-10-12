@@ -11,7 +11,6 @@ so if you like something just do it and send a patch.
 
 - Add generators and example usage for these DVB descriptors:
   - Descriptor 0x4a: Linkage descriptor
-  - Descriptor 0x6a: AC-3 descriptor
 
 - Add support (parser, generator, example) for these DVB descriptors:
   - Descriptor 0x6b: ancillary_data_descriptor

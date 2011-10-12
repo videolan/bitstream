@@ -139,10 +139,7 @@ Supported DVB descriptors
  * Descriptor 0x67: Transport stream descriptor
  * Descriptor 0x68: DSNG descriptor
  * Descriptor 0x69: PDC descriptor
- * Descriptor 0x6a: AC-3 descriptor [p]
-
-Legend:
-  [p] - Partitial support, only parser is implemented.
+ * Descriptor 0x6a: AC-3 descriptor
 
 To see what is unsupported look in the TODO file.
 

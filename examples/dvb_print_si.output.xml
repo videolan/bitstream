@@ -378,6 +378,9 @@
 <MULTILINGUAL_COMPONENT_DESC code="fre" component_tag="46" text="Stereo"/>
 <MULTILINGUAL_COMPONENT_DESC code="bul" component_tag="46" text="Stereo"/>
 </DESC>
+<DESC id="0x6a" length="5" value="ff0a141e28">
+<AC3_DESC component_type_flag="1" component_type="10" bsid_flag="1" bsid="20" mainid_flag="1" mainid="30" asvc_flag="1" asvc="40"/>
+</DESC>
 </ES>
 <ES pid="122" streamtype="0x06" streamtype_txt="13818-1 PES private data">
 <DESC id="0x46" length="15" value="656e670bff62756c127f6672651940">
