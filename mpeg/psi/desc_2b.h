@@ -93,7 +93,7 @@ static inline void desc2b_print(const uint8_t *p_desc, f_print pf_print,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque, "<MPEG2_AAC_AUDIO_DESC profile=\"0x%02x\""
-                " channel_config=\"0x%02x\" additional_info=\"0x%02x\"",
+                " channel_config=\"0x%02x\" additional_info=\"0x%02x\"/>",
                  desc2b_get_aac_profile(p_desc),
                  desc2b_get_aac_channel_config(p_desc),
                  desc2b_get_aac_additional_info(p_desc)

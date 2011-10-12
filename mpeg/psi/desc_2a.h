@@ -231,7 +231,7 @@ static inline void desc2a_print(const uint8_t *p_desc, f_print pf_print,
     case PRINT_XML:
         pf_print(opaque,"<AVC_TIMING_AND_HRD_DESC hrd_management_valid_flag=\"%u\""
                 " picture_and_timing_info_present=\"%u\""
-                " 90khz_flag=\"%u\" N=\"%u\" K=\"%u\" num_units_in_tick=\"%u\""
+                " flag_90khz=\"%u\" N=\"%u\" K=\"%u\" num_units_in_tick=\"%u\""
                 " fixed_frame_rate_flag=\"%u\" temporal_poc_flag=\"%u\""
                 " picture_to_display_conversion_flag=\"%u\"/>",
                  desc2a_get_hrd_management_valid_flag(p_desc),
@@ -248,7 +248,7 @@ static inline void desc2a_print(const uint8_t *p_desc, f_print pf_print,
     default:
         pf_print(opaque,"    - desc 2a avc_timing_and_hrd hrd_management_valid_flag=%u"
                 " picture_and_timing_info_present=%u"
-                " 90khz_flag=%u N=%u K=%u num_units_in_tick=%u"
+                " flag_90khz=%u N=%u K=%u num_units_in_tick=%u"
                 " fixed_frame_rate_flag=%u temporal_poc_flag=%u"
                 " picture_to_display_conversion_flag=%u",
                  desc2a_get_hrd_management_valid_flag(p_desc),

@@ -107,7 +107,7 @@ static inline void desc2c_print(const uint8_t *p_desc, f_print pf_print,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque, "<FLEXMUX_TIMING_DESC fcr_es_id=\"0x%04x\""
-                " fcr_resolution=\"%u\" fcr_length=\"%u\" fmx_rate_length=\"%u\"",
+                " fcr_resolution=\"%u\" fcr_length=\"%u\" fmx_rate_length=\"%u\"/>",
                  desc2c_get_fcr_es_id(p_desc),
                  desc2c_get_fcr_resolution(p_desc),
                  desc2c_get_fcr_length(p_desc),

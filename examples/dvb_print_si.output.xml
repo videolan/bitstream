@@ -465,7 +465,7 @@
 <METADATA_STD_DESC input_leak_rate="12345" buffer_size="23456" output_leak_rate="34567"/>
 </DESC>
 <DESC id="0x2c" length="8" value="1234075bcd153742">
-<FLEXMUX_TIMING_DESC fcr_es_id="0x1234" fcr_resolution="123456789" fcr_length="55" fmx_rate_length="66"
+<FLEXMUX_TIMING_DESC fcr_es_id="0x1234" fcr_resolution="123456789" fcr_length="55" fmx_rate_length="66"/>
 </DESC>
 </ES>
 <ES pid="126" streamtype="0x1b" streamtype_txt="H.264/14496-10 video (MPEG-4/AVC)">
@@ -473,7 +473,7 @@
 <AVC_VIDEO_DESC profile_idc="0x12" constraint_set0_flag="1" constraint_set1_flag="1" constraint_set2_flag="0" AVC_compatible_flags="0x0a" level_idc="0x34" AVC_still_present="0" AVC_24_hour_picture_flag="0"/>
 </DESC>
 <DESC id="0x2a" length="15" value="7f7f00bc614e020f76d20006f855bf">
-<AVC_TIMING_AND_HRD_DESC hrd_management_valid_flag="0" picture_and_timing_info_present="1" 90khz_flag="0" N="12345678" K="34567890" num_units_in_tick="456789" fixed_frame_rate_flag="1" temporal_poc_flag="0" picture_to_display_conversion_flag="1"/>
+<AVC_TIMING_AND_HRD_DESC hrd_management_valid_flag="0" picture_and_timing_info_present="1" flag_90khz="0" N="12345678" K="34567890" num_units_in_tick="456789" fixed_frame_rate_flag="1" temporal_poc_flag="0" picture_to_display_conversion_flag="1"/>
 </DESC>
 </ES>
 <ES pid="127" streamtype="0x0f" streamtype_txt="13818-7 Audio with ADTS transport syntax">
@@ -481,7 +481,7 @@
 <STUFFING_DESC length="4"/>
 </DESC>
 <DESC id="0x2b" length="3" value="120500">
-<MPEG2_AAC_AUDIO_DESC profile="0x12" channel_config="0x05" additional_info="0x00"
+<MPEG2_AAC_AUDIO_DESC profile="0x12" channel_config="0x05" additional_info="0x00"/>
 </DESC>
 </ES>
 </PMT>
