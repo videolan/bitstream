@@ -133,6 +133,7 @@ Supported DVB descriptors
  * Descriptor 0x61: Short smoothing buffer descriptor
  * Descriptor 0x62: Frequency list descriptor
  * Descriptor 0x63: Partial transport stream descriptor
+ * Descriptor 0x64: Data broadcast descriptor
  * Descriptor 0x6a: AC-3 descriptor [p]
 
 Legend:

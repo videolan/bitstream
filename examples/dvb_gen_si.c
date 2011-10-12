@@ -1051,7 +1051,19 @@ static void build_desc63(uint8_t *desc) {
     desc63_set_max_overall_smoothing_buffer(desc, 1000);
 }
 
-/* ---  Descriptor 0x64: data_broadcast_descriptor */
+/* DVB  Descriptor 0x64: Data broadcast descriptor */
+static void build_desc64(uint8_t *desc) {
+    char *selector_byte = "BY\"TE";
+    char *text = "Some text";
+    desc64_init(desc);
+    desc64_set_broadcast_id(desc, 0x1122);
+    desc64_set_component_tag(desc, 78);
+    desc64_set_selector_byte(desc, (uint8_t *)selector_byte, strlen(selector_byte));
+    desc64_set_lang(desc, (uint8_t *)"eng");
+    desc64_set_text(desc, (uint8_t *)text, strlen(text));
+    desc64_set_length(desc);
+}
+
 /* ---  Descriptor 0x65: scrambling_descriptor */
 /* ---  Descriptor 0x66: data_broadcast_id_descriptor */
 /* ---  Descriptor 0x67: transport_stream_descriptor */
@@ -1628,6 +1640,9 @@ static void generate_sdt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc64(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
