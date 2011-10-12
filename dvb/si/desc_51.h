@@ -236,7 +236,7 @@ static inline void desc51n_set_event_id(uint8_t *p_desc_n, uint16_t i_event_id)
     link_n[7] =  i_event_id       & 0xff;
 }
 
-#undef setup_link_
+#undef init_link_n
 
 
 static inline uint8_t *desc51_get_logical_cell(uint8_t *p_desc, uint8_t n)
