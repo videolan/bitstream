@@ -1135,7 +1135,37 @@ static void build_desc6a(uint8_t *desc) {
 /* ---  Descriptor 0x77: time_slice_fec_identifier_descriptor */
 /* ---  Descriptor 0x78: ECM_repetition_rate_descriptor */
 /* ---  Descriptor 0x79: S2_satellite_delivery_system_descriptor */
-/* ---  Descriptor 0x7a: enhanced_AC-3_descriptor */
+
+/* DVB  Descriptor 0x7a: Enhanced AC-3 descriptor */
+static void build_desc7a(uint8_t *desc) {
+    desc7a_init(desc);
+
+    desc7a_set_component_type_flag  (desc, true);
+    desc7a_set_component_type       (desc, 10);
+
+    desc7a_set_bsid_flag            (desc, true);
+    desc7a_set_bsid                 (desc, 20);
+
+    desc7a_set_mainid_flag          (desc, true);
+    desc7a_set_mainid               (desc, 30);
+
+    desc7a_set_asvc_flag            (desc, true);
+    desc7a_set_asvc                 (desc, 40);
+
+    desc7a_set_mixinfoexists_flag   (desc, true);
+
+    desc7a_set_substream1_flag      (desc, true);
+    desc7a_set_substream1           (desc, 50);
+
+    desc7a_set_substream2_flag      (desc, true);
+    desc7a_set_substream2           (desc, 60);
+
+    desc7a_set_substream3_flag      (desc, true);
+    desc7a_set_substream3           (desc, 70);
+
+    desc7a_set_length(desc);
+}
+
 /* ---  Descriptor 0x7b: DTS descriptor */
 /* ---  Descriptor 0x7c: AAC descriptor */
 /* ---  Descriptor 0x7d: XAIT location descriptor */
@@ -2163,6 +2193,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc6a(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc7a(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
