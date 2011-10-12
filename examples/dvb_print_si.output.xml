@@ -414,6 +414,9 @@
 <DESC id="0x60" length="6" value="27103a984e20">
 <SERVICE_MOVE_DESC new_onid="10000" new_tsid="15000" new_service_id="20000"/>
 </DESC>
+<DESC id="0x65" length="1" value="01">
+<SCRAMBLING_DESC scrambling_mode="0x01" scrambling_mode_txt="DVB-CSA1"/>
+</DESC>
 </ES>
 <ES pid="124" streamtype="0x06" streamtype_txt="13818-1 PES private data">
 <DESC id="0x59" length="24" value="656e67010002000362756c02000300046672650500060007">

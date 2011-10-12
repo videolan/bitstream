@@ -1064,7 +1064,12 @@ static void build_desc64(uint8_t *desc) {
     desc64_set_length(desc);
 }
 
-/* ---  Descriptor 0x65: scrambling_descriptor */
+/* DVB  Descriptor 0x65: Scrambling descriptor */
+static void build_desc65(uint8_t *desc) {
+    desc65_init(desc);
+    desc65_set_scrambling_mode(desc, 0x01);
+}
+
 /* ---  Descriptor 0x66: data_broadcast_id_descriptor */
 /* ---  Descriptor 0x67: transport_stream_descriptor */
 /* ---  Descriptor 0x68: DSNG_descriptor */
@@ -2142,6 +2147,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc60(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc65(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
