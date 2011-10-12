@@ -78,6 +78,7 @@ static inline void desc67_print(const uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
     uint8_t i_bytes_length, i;
+    bool b_dsng_desc = desc_get_tag(p_desc) == 0x68;
     const uint8_t *p_bytes = desc67_get_bytes(p_desc, &i_bytes_length);
     char psz_bytes[2 * 255 + 1];
     char psz_bytes_txt[255 + 1];
@@ -95,14 +96,18 @@ static inline void desc67_print(const uint8_t *p_desc, f_print pf_print,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque,
-                 "<TRANSPORT_STREAM_DESC bytes=\"%s\" bytes_txt=\"%s\"/>",
+                 !b_dsng_desc
+                  ? "<TRANSPORT_STREAM_DESC bytes=\"%s\" bytes_txt=\"%s\"/>"
+                  : "<DSNG_DESC bytes=\"%s\" bytes_txt=\"%s\"/>",
                  psz_bytes,
                  psz_bytes_txt
                 );
         break;
     default:
         pf_print(opaque,
-                 "    - desc 67 transport_stream bytes=\"%s\" bytes_txt=\"%s\"",
+                 !b_dsng_desc
+                  ? "    - desc 67 transport_stream bytes=\"%s\" bytes_txt=\"%s\""
+                  : "    - desc 68 dsng bytes=\"%s\" bytes_txt=\"%s\"",
                  psz_bytes,
                  psz_bytes_txt
                 );

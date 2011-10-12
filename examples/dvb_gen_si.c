@@ -1084,7 +1084,13 @@ static void build_desc67(uint8_t *desc, char *bytes) {
     desc67_set_bytes(desc, (uint8_t *)bytes, strlen(bytes));
 }
 
-/* ---  Descriptor 0x68: DSNG_descriptor */
+/* DVB  Descriptor 0x68: DSNG_descriptor */
+static void build_desc68(uint8_t *desc) {
+    char *dsng_bytes = "1234,SNG_Headquarter,SNG_Provider";
+    desc68_init(desc);
+    desc68_set_bytes(desc, (uint8_t *)dsng_bytes, strlen(dsng_bytes));
+}
+
 /* ---  Descriptor 0x69: PDC_descriptor */
 /* DVB  Descriptor 0x6a: AC-3 descriptor */
 /* ---  Descriptor 0x6b: ancillary_data_descriptor */
@@ -1279,6 +1285,9 @@ static void generate_tsdt(void) {
 
     desc = descs_get_desc(desc_loop, desc_counter++);
     build_desc67(desc, "CONT");
+
+    desc = descs_get_desc(desc_loop, desc_counter++);
+    build_desc68(desc);
 
     // Finish descriptor generation
     desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

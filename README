@@ -137,6 +137,7 @@ Supported DVB descriptors
  * Descriptor 0x65: Scrambling descriptor
  * Descriptor 0x66: Data broadcast id descriptor
  * Descriptor 0x67: Transport stream descriptor
+ * Descriptor 0x68: DSNG descriptor
  * Descriptor 0x6a: AC-3 descriptor [p]
 
 Legend:

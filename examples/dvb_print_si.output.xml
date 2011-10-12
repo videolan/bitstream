@@ -35,6 +35,9 @@
 <DESC id="0x67" length="4" value="434f4e54">
 <TRANSPORT_STREAM_DESC bytes="434f4e54" bytes_txt="CONT"/>
 </DESC>
+<DESC id="0x68" length="33" value="313233342c534e475f48656164717561727465722c534e475f50726f7669646572">
+<DSNG_DESC bytes="313233342c534e475f48656164717561727465722c534e475f50726f7669646572" bytes_txt="1234,SNG_Headquarter,SNG_Provider"/>
+</DESC>
 </TSDT>
 <NIT tid="64" networkid="40000" version="0" current_next="1">
 </NIT>
