@@ -14,7 +14,6 @@ so if you like something just do it and send a patch.
   - Descriptor 0x6a: AC-3 descriptor
 
 - Add support (parser, generator, example) for these DVB descriptors:
-  - Descriptor 0x67: transport_stream_descriptor
   - Descriptor 0x68: DSNG_descriptor
   - Descriptor 0x69: PDC_descriptor
   - Descriptor 0x6b: ancillary_data_descriptor

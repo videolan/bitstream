@@ -1078,7 +1078,12 @@ static void build_desc66(uint8_t *desc) {
     desc66_set_selector_byte(desc, (uint8_t *)selector_byte, strlen(selector_byte));
 }
 
-/* ---  Descriptor 0x67: transport_stream_descriptor */
+/* DVB  Descriptor 0x67: Transport stream descriptor */
+static void build_desc67(uint8_t *desc, char *bytes) {
+    desc67_init(desc);
+    desc67_set_bytes(desc, (uint8_t *)bytes, strlen(bytes));
+}
+
 /* ---  Descriptor 0x68: DSNG_descriptor */
 /* ---  Descriptor 0x69: PDC_descriptor */
 /* DVB  Descriptor 0x6a: AC-3 descriptor */
@@ -1270,7 +1275,10 @@ static void generate_tsdt(void) {
     desc_counter = 0;
 
     desc = descs_get_desc(desc_loop, desc_counter++);
-    build_desc0f(desc);
+    build_desc67(desc, "DVB");
+
+    desc = descs_get_desc(desc_loop, desc_counter++);
+    build_desc67(desc, "CONT");
 
     // Finish descriptor generation
     desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

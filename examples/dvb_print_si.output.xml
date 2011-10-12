@@ -29,8 +29,11 @@
 <TSDT version="0" current_next="1">
 </TSDT>
 <TSDT version="1" current_next="1">
-<DESC id="0x0f" length="4" value="aabbccdd">
-<PRIVATE_DATA_INDICATOR_DESC private_indicator="0xaabbccdd"/>
+<DESC id="0x67" length="3" value="445642">
+<TRANSPORT_STREAM_DESC bytes="445642" bytes_txt="DVB"/>
+</DESC>
+<DESC id="0x67" length="4" value="434f4e54">
+<TRANSPORT_STREAM_DESC bytes="434f4e54" bytes_txt="CONT"/>
 </DESC>
 </TSDT>
 <NIT tid="64" networkid="40000" version="0" current_next="1">
