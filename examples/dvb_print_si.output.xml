@@ -182,6 +182,9 @@
 <DESC id="0x64" length="22" value="11224e054259225445656e6709536f6d652074657874">
 <DATA_BROADCAST_DESC broadcast_id="0x1122" component_tag="78" selector_byte="4259225445" selector_byte_txt="BY.TE" lang="eng" text="Some text"/>
 </DESC>
+<DESC id="0x66" length="6" value="1122554e4958">
+<DATA_BROADCAST_ID_DESC broadcast_id="0x1122" selector_byte="554e4958" selector_byte_txt="UNIX"/>
+</DESC>
 </SERVICE>
 <SERVICE sid="20300" eit_schedule="1" eit_pf="1" running="2" free_CA="1">
 <DESC id="0x48" length="38" value="0112546573742050726f7669646572204e616d6511546573742053657276696365204e616d65">

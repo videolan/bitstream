@@ -108,6 +108,7 @@ new SDT actual tsid=10000 version=1 onid=40000
     - desc 4c time_shifted_service reference_sid=21000
     - desc 5f private_data specifier=0xaabbccdd
     - desc 64 data_broadcast broadcast_id=0x1122 component_tag=78 selector_byte="4259225445" selector_byte_txt="BY.TE" lang=eng text="Some text"
+    - desc 66 data_broadcast broadcast_id=0x1122 selector_byte="554e4958" selector_byte_txt="UNIX"
   * service sid=20300 eit_schedule eit_pf running=2 scrambled
     - desc 48 service type=0x1 provider="Test Provider Name" service="Test Service Name"
     - desc 4b nvod_reference tsid=10000 onid=40000 sid=20000
