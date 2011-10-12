@@ -273,6 +273,9 @@
 <PARENTAL_RATING_DESC country_code="FRA" rating="12" rating_txt="min 15 years"/>
 <PARENTAL_RATING_DESC country_code="BUL" rating="24" rating_txt="unknown"/>
 </DESC>
+<DESC id="0x69" length="3" value="f5d805">
+<PDC_DESC pil="0x5d805" day="11" month="11" hour="0" min="5"/>
+</DESC>
 </EVENT>
 </EIT>
 <TDT time="1234567890" time_dec="2009-02-13 23:31:30 UTC"/>

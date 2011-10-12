@@ -1091,7 +1091,16 @@ static void build_desc68(uint8_t *desc) {
     desc68_set_bytes(desc, (uint8_t *)dsng_bytes, strlen(dsng_bytes));
 }
 
-/* ---  Descriptor 0x69: PDC_descriptor */
+/* DVB  Descriptor 0x69: PDC_descriptor */
+static void build_desc69(uint8_t *desc) {
+    desc69_init(desc);
+//    desc69_set_pil(desc, 0x5d805);
+    desc69_set_day(desc, 11);
+    desc69_set_month(desc, 11);
+    desc69_set_hour(desc, 0);
+    desc69_set_minute(desc, 5);
+}
+
 /* DVB  Descriptor 0x6a: AC-3 descriptor */
 /* ---  Descriptor 0x6b: ancillary_data_descriptor */
 /* ---  Descriptor 0x6c: cell_list_descriptor */
@@ -1856,6 +1865,9 @@ static void generate_eit(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc55(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc69(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

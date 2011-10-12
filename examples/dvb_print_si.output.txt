@@ -154,6 +154,7 @@ new EIT tableid=0x4e type=actual_pf version=1 tsid=10000 onid=40000 seg_last_sec
     - desc 55 parental_rating country_code=CHI rating=15 rating_txt="min 18 years"
     - desc 55 parental_rating country_code=FRA rating=12 rating_txt="min 15 years"
     - desc 55 parental_rating country_code=BUL rating=24 rating_txt="unknown"
+    - desc 69 pdc pil="0x5d805" day="11" month="11" hour="0" min="5"
 end EIT
 new TDT time=1234567890 time_dec="2009-02-13 23:31:30 UTC"
 end TDT
