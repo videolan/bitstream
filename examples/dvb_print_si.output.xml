@@ -73,6 +73,10 @@
 <SERVICE_LIST_DESC sid="20200" type="0x01" />
 <SERVICE_LIST_DESC sid="20300" type="0x02" />
 </DESC>
+<DESC id="0x4a" length="7" value="29049e34000004">
+<LINKAGE_DESC tsid="10500" onid="40500" sid="0" linkage="0x04" linkage_txt="TS containing complete Network/Bouquet SI">
+</LINKAGE_DESC>
+</DESC>
 </TS>
 <TS tsid="10100" onid="40100">
 </TS>
@@ -82,6 +86,11 @@
 <SERVICE_LIST_DESC sid="20100" type="0x02" />
 <SERVICE_LIST_DESC sid="20200" type="0x01" />
 <SERVICE_LIST_DESC sid="20300" type="0x02" />
+</DESC>
+<DESC id="0x4a" length="12" value="29689e985078081ea0285208">
+<LINKAGE_DESC tsid="10600" onid="40600" sid="20600" linkage="0x08" linkage_txt="mobile hand-over">
+<MOBILE_HANDOVER_INFO handover_type="1" origin_type="0" nid="41000" initial_sid="21000"/>
+</LINKAGE_DESC>
 </DESC>
 </TS>
 <TS tsid="10300" onid="40300">
@@ -215,6 +224,11 @@
 </DESC>
 </EVENT>
 <EVENT id="30100" start_time="1" start_time_dec="1970-01-01 00:00:01 UTC" duration="3600" duration_dec="01:00:00" running_status="1" free_CA_mode="0">
+<DESC id="0x4a" length="10" value="29cc9efc50dc0d7918ff">
+<LINKAGE_DESC tsid="10700" onid="40700" sid="20700" linkage="0x0d" linkage_txt="event linkage">
+<EVENT_LINKAGE target_event_id="31000" target_listed="1" event_simulcast="1"/>
+</LINKAGE_DESC>
+</DESC>
 <DESC id="0x4e" length="73" value="00656e6730084469726563746f720f46616d6f7573206469726563746f720459656172043230313106526174696e67052a2a2a2b2b13576f772c207768617420616e206576656e7421">
 <EXTENDED_EVENT_DESC desc_number="0" last_desc_number="0" lang="eng" text="Wow, what an event!">
 <EXTENDED_EVENT_ITEM description="Director" text="Famous director"/>
@@ -230,6 +244,14 @@
 </DESC>
 </EVENT>
 <EVENT id="30200" start_time="999999999" start_time_dec="2001-09-09 01:46:39 UTC" duration="7200" duration_dec="02:00:00" running_status="0" free_CA_mode="0">
+<DESC id="0x4a" length="31" value="2a309f6051400e79185f1ec67d00c3a41055f080e8e732c8a7f859d884d000">
+<LINKAGE_DESC tsid="10800" onid="40800" sid="20800" linkage="0x0e" linkage_txt="extended event linkage">
+<EXTENDED_EVENT_LINKAGE target_event_id="31000" target_listed="0" event_simulcast="1" link_type="1" link_type_txt="HD" target_id_type="3" target_id_type_txt="use user_defined_id" onid_id_flag="1" service_id_flag="1" user_defined_id="7878" target_tsid="0" target_onid="0" target_service_id="0"/>
+<EXTENDED_EVENT_LINKAGE target_event_id="32000" target_listed="1" event_simulcast="1" link_type="0" link_type_txt="SD" target_id_type="0" target_id_type_txt="use tsid" onid_id_flag="1" service_id_flag="1" user_defined_id="0" target_tsid="0" target_onid="42000" target_service_id="22000"/>
+<EXTENDED_EVENT_LINKAGE target_event_id="33000" target_listed="1" event_simulcast="1" link_type="2" link_type_txt="3D" target_id_type="1" target_id_type_txt="use target_tsid" onid_id_flag="1" service_id_flag="1" user_defined_id="0" target_tsid="13000" target_onid="43000" target_service_id="23000"/>
+<EXTENDED_EVENT_LINKAGE target_event_id="34000" target_listed="0" event_simulcast="0" link_type="0" link_type_txt="SD" target_id_type="0" target_id_type_txt="use tsid" onid_id_flag="0" service_id_flag="0" user_defined_id="0" target_tsid="0" target_onid="0" target_service_id="0"/>
+</LINKAGE_DESC>
+</DESC>
 <DESC id="0x54" length="4" value="244e68b1">
 <CONTENT_DESC content_l1="2" content_l2="4" user="78"/>
 <CONTENT_DESC content_l1="6" content_l2="8" user="177"/>

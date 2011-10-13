@@ -379,7 +379,6 @@ static void build_desc41(uint8_t *desc) {
     desc_set_length(desc, service_n - desc - DESC_HEADER_SIZE);
 }
 
-/* ---  Descriptor 0x42: Stuffing descriptor */
 /* DVB  Descriptor 0x43: Satellite delivery system descriptor */
 static void build_desc43(uint8_t *desc) {
     desc43_init(desc);
@@ -536,7 +535,111 @@ static void build_desc49(uint8_t *desc, bool b_available) {
     desc_set_length(desc, code_n - desc - DESC_HEADER_SIZE);
 }
 
-/* DVB  Descriptor 0x4a: Linkage descriptor (partially implemented) */
+/* DVB  Descriptor 0x4a: Linkage descriptor */
+static void build_desc4a_std(uint8_t *desc) {
+    desc4a_init(desc);
+    desc4a_set_tsid(desc, tsid + 500);
+    desc4a_set_onid(desc, onid + 500);
+    desc4a_set_sid (desc, 0x0000);
+    desc4a_set_linkage(desc, 0x04); // new ts
+}
+
+static void build_desc4a_mobile(uint8_t *desc) {
+    desc4a_init(desc);
+    desc4a_set_tsid(desc, tsid + 600);
+    desc4a_set_onid(desc, onid + 600);
+    desc4a_set_sid (desc, sid + 600);
+    // mobile handover
+    desc4a_set_linkage(desc, DESC4A_LINKAGE_MOBILE);
+    desc4a_set_mobile_handover_type(desc, 1);
+    desc4a_set_mobile_origin_type(desc, false);
+    desc4a_set_mobile_nid(desc, onid + 1000);
+    desc4a_set_mobile_initial_sid(desc, sid + 1000);
+    desc4a_set_length(desc);
+}
+
+static void build_desc4a_event(uint8_t *desc) {
+    desc4a_init(desc);
+    desc4a_set_tsid(desc, tsid + 700);
+    desc4a_set_onid(desc, onid + 700);
+    desc4a_set_sid (desc, sid + 700);
+    // event linkage
+    desc4a_set_linkage(desc, DESC4A_LINKAGE_EVENT);
+    desc4a_set_event_target_event_id(desc, event_id + 1000);
+    desc4a_set_event_target_listed(desc, true);
+    desc4a_set_event_simulcast(desc, true);
+    desc4a_set_length(desc);
+}
+
+static void build_desc4a_extended_event(uint8_t *desc) {
+    uint8_t k = 0;
+    uint8_t *ext_n;
+
+    desc4a_init(desc);
+    desc4a_set_tsid(desc, tsid + 800);
+    desc4a_set_onid(desc, onid + 800);
+    desc4a_set_sid (desc, sid + 800);
+    // extended event linkage
+    desc4a_set_linkage(desc, DESC4A_LINKAGE_EXT_EVENT);
+
+    desc_set_length(desc, 255);
+
+    ext_n = desc4a_get_ext_event(desc, k++);
+    desc4an_set_ext_event_target_event_id(ext_n, event_id + 1000);
+    desc4an_set_ext_event_target_listed  (ext_n, false);
+    desc4an_set_ext_event_simulcast      (ext_n, true);
+    desc4an_set_ext_event_link_type      (ext_n, 1); // HD
+    desc4an_set_ext_event_target_id_type (ext_n, 3); // user defined id
+    desc4an_set_ext_event_onid_id_flag   (ext_n, true);
+    desc4an_set_ext_event_service_id_flag(ext_n, true);
+    desc4an_set_ext_event_user_defined_id(ext_n, 7878);
+    desc4an_set_ext_event_target_tsid    (ext_n, tsid + 1000);  // !!!
+    desc4an_set_ext_event_target_onid    (ext_n, onid + 1000);  // !!!
+    desc4an_set_ext_event_service_id     (ext_n, sid + 1000);   // !!!
+
+    ext_n = desc4a_get_ext_event(desc, k++);
+    desc4an_set_ext_event_target_event_id(ext_n, event_id + 2000);
+    desc4an_set_ext_event_target_listed  (ext_n, true);
+    desc4an_set_ext_event_simulcast      (ext_n, true);
+    desc4an_set_ext_event_link_type      (ext_n, 0); // SD
+    desc4an_set_ext_event_target_id_type (ext_n, 0); // onid_id_flag, target_service_id_flag
+    desc4an_set_ext_event_onid_id_flag   (ext_n, true);
+    desc4an_set_ext_event_service_id_flag(ext_n, true);
+    desc4an_set_ext_event_user_defined_id(ext_n, 8787);         // !!!
+    desc4an_set_ext_event_target_tsid    (ext_n, tsid + 2000);  // !!!
+    desc4an_set_ext_event_target_onid    (ext_n, onid + 2000);
+    desc4an_set_ext_event_service_id     (ext_n, sid + 2000);
+
+    ext_n = desc4a_get_ext_event(desc, k++);
+    desc4an_set_ext_event_target_event_id(ext_n, event_id + 3000);
+    desc4an_set_ext_event_target_listed  (ext_n, true);
+    desc4an_set_ext_event_simulcast      (ext_n, true);
+    desc4an_set_ext_event_link_type      (ext_n, 2); // 3D
+    desc4an_set_ext_event_target_id_type (ext_n, 1); // target_tsid, onid_id_flag, target_service_id_flag
+    desc4an_set_ext_event_onid_id_flag   (ext_n, true);
+    desc4an_set_ext_event_service_id_flag(ext_n, true);
+    desc4an_set_ext_event_user_defined_id(ext_n, 8787);         // !!!
+    desc4an_set_ext_event_target_tsid    (ext_n, tsid + 3000);
+    desc4an_set_ext_event_target_onid    (ext_n, onid + 3000);
+    desc4an_set_ext_event_service_id     (ext_n, sid + 3000);
+
+    ext_n = desc4a_get_ext_event(desc, k++);
+    desc4an_set_ext_event_target_event_id(ext_n, event_id + 4000);
+    desc4an_set_ext_event_target_listed  (ext_n, false);
+    desc4an_set_ext_event_simulcast      (ext_n, false);
+    desc4an_set_ext_event_link_type      (ext_n, 0); // SD
+    desc4an_set_ext_event_target_id_type (ext_n, 0); // onid_id_flag, target_service_id_flag
+    desc4an_set_ext_event_onid_id_flag   (ext_n, false);
+    desc4an_set_ext_event_service_id_flag(ext_n, false);
+    desc4an_set_ext_event_user_defined_id(ext_n, 8787);         // !!!
+    desc4an_set_ext_event_target_tsid    (ext_n, tsid + 4000);  // !!!
+    desc4an_set_ext_event_target_onid    (ext_n, onid + 4000);  // !!!
+    desc4an_set_ext_event_service_id     (ext_n, sid + 4000);   // !!!
+
+    ext_n = desc4a_get_ext_event(desc, k);
+    desc_set_length(desc, ext_n - desc - DESC_HEADER_SIZE);
+}
+
 /* DVB  Descriptor 0x4b: NVOD_reference_descriptor */
 static void build_desc4b(uint8_t *desc, bool b_available) {
     uint8_t k = 0;
@@ -1462,6 +1565,9 @@ static void generate_nit(void) {
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc41(desc);
 
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc4a_std(desc);
+
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
             descs_set_length(desc_loop, desc - desc_loop - DESCS_HEADER_SIZE);
@@ -1487,6 +1593,9 @@ static void generate_nit(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc41(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc4a_mobile(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
@@ -1861,6 +1970,9 @@ static void generate_eit(void) {
             descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
 
             desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc4a_event(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc4e(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
@@ -1886,6 +1998,9 @@ static void generate_eit(void) {
             desc_counter = 0;
             desc_loop = eitn_get_descs(eit_n);
             descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc4a_extended_event(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc54(desc);
