@@ -486,6 +486,9 @@
 <DESC id="0x2b" length="3" value="120500">
 <MPEG2_AAC_AUDIO_DESC profile="0x12" channel_config="0x05" additional_info="0x00"/>
 </DESC>
+<DESC id="0x7c" length="3" value="14ff1f">
+<AAC_DESC profile_and_level="0x14" aac_type_flag="1" aac_type="0x1f"/>
+</DESC>
 </ES>
 </PMT>
 <DIT transition_flag="1"/>

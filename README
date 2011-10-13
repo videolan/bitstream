@@ -142,6 +142,7 @@ Supported DVB descriptors
  * Descriptor 0x6a: AC-3 descriptor
  * Descriptor 0x7a: Enhanced AC-3 descriptor
  * Descriptor 0x7b: DTS descriptor
+ * Descriptor 0x7c: AAC descriptor
 
 To see what is unsupported look in the TODO file.
 

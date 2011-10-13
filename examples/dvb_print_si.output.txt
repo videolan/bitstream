@@ -268,6 +268,7 @@ new PMT program=20000 version=1 pcrpid=110
   * ES pid=127 streamtype=0x0f streamtype_txt="13818-7 Audio with ADTS transport syntax"
     - desc 42 stuffing length=4
     - desc 2b mpeg2_aac_audio profile=0x12 channel_config=0x05 additional_info=0x00
+    - desc 7c aac profile_and_level="0x14" aac_type_flag="1" aac_type="0x1f"
 end PMT
 new DIT transition_flag=1
 end DIT

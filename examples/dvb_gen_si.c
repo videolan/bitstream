@@ -1178,7 +1178,14 @@ static void build_desc7b(uint8_t *desc) {
     desc7b_set_extended_surround_flag(desc, 2);
 }
 
-/* ---  Descriptor 0x7c: AAC descriptor */
+/* DVB  Descriptor 0x7c: AAC descriptor */
+static void build_desc7c(uint8_t *desc) {
+    desc7c_init(desc);
+    desc7c_set_profile_and_level(desc, 0x14);
+    desc7c_set_aac_type_flag(desc, true);
+    desc7c_set_aac_type(desc, 0x1f);
+}
+
 /* ---  Descriptor 0x7d: XAIT location descriptor */
 /* ---  Descriptor 0x7e: FTA_content_management_descriptor */
 /* ---  Descriptor 0x7f: extension descriptor */
@@ -2359,6 +2366,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc2b(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc7c(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos
