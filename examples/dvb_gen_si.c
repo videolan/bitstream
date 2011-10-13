@@ -1166,7 +1166,18 @@ static void build_desc7a(uint8_t *desc) {
     desc7a_set_length(desc);
 }
 
-/* ---  Descriptor 0x7b: DTS descriptor */
+/* DVB  Descriptor 0x7b: DTS descriptor */
+static void build_desc7b(uint8_t *desc) {
+    desc7b_init(desc);
+    desc7b_set_sample_rate_code(desc, 8);
+    desc7b_set_bit_rate_code(desc, 11);
+    desc7b_set_nblks(desc, 5);
+    desc7b_set_fsize(desc, 95);
+    desc7b_set_surround_mode(desc, 3);
+    desc7b_set_lfe_flag(desc, true);
+    desc7b_set_extended_surround_flag(desc, 2);
+}
+
 /* ---  Descriptor 0x7c: AAC descriptor */
 /* ---  Descriptor 0x7d: XAIT location descriptor */
 /* ---  Descriptor 0x7e: FTA_content_management_descriptor */
@@ -2196,6 +2207,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc7a(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc7b(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

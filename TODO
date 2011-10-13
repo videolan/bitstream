@@ -28,8 +28,6 @@ so if you like something just do it and send a patch.
   - Descriptor 0x77: time_slice_fec_identifier_descriptor
   - Descriptor 0x78: ECM_repetition_rate_descriptor
   - Descriptor 0x79: S2_satellite_delivery_system_descriptor
-  - Descriptor 0x7a: enhanced_AC-3_descriptor
-  - Descriptor 0x7b: DTS descriptor
   - Descriptor 0x7c: AAC descriptor
   - Descriptor 0x7d: XAIT location descriptor
   - Descriptor 0x7e: FTA_content_management_descriptor
