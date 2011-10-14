@@ -2,7 +2,6 @@
  * rtp_check_seqnum.c: Prints RTP discontinuities
  *****************************************************************************
  * Copyright (C) 2011 VideoLAN
- * $Id: dvb_print_si.c 27 2011-04-10 16:57:59Z massiot $
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

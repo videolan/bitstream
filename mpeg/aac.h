@@ -2,7 +2,6 @@
  * aac.h: ISO/IEC 14496-3 Advanced Audio Coding
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

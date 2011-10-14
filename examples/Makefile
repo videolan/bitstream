@@ -1,5 +1,3 @@
-# $Id$
-
 CFLAGS = -Wall -O2 -g
 CFLAGS_LOCAL = -Wall -O2 -g -I. -I../..
 LDFLAGS = 

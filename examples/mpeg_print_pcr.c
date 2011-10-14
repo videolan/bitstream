@@ -2,7 +2,6 @@
  * mpeg_print_pcr.c: Prints PCR PID from the first program of the stream
  *****************************************************************************
  * Copyright (C) 2011 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

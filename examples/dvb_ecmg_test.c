@@ -2,7 +2,6 @@
  * dvb_ecmg_test.c: Simulation of an SCS to stress-test an ECMG
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

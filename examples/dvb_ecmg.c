@@ -2,7 +2,6 @@
  * dvb_ecmg.c: Example of a basic DVB Simulcrypt ECMG server (ETSI TS 103 197)
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

@@ -2,7 +2,6 @@
  * dvb_print_si.c: Prints tables from a TS file
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

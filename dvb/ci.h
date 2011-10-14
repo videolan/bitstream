@@ -2,7 +2,6 @@
  * ci.h: ETSI EN 50 221 Common Interface Specification
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

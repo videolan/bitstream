@@ -2,7 +2,6 @@
  * rtp.h: Real-Time Protocol
  *****************************************************************************
  * Copyright (C) 2009 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

@@ -2,7 +2,6 @@
  * sim.h: ETSI TS 103 194 DVB Simulcrypt
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

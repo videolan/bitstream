@@ -2,7 +2,6 @@
  * common.h: (Rare) common declarations for all submodules
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
- * $Id: psi.h 1 2010-08-10 19:42:50Z massiot $
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

@@ -2,7 +2,6 @@
  * ts.h: ISO/IEC 13818-1 Transport Stream
  *****************************************************************************
  * Copyright (C) 2009-2010 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *

@@ -2,7 +2,6 @@
  * pes.h: ISO/IEC 13818-1 Packetized Elementary Stream
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
- * $Id$
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *
