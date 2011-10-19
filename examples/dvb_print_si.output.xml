@@ -483,6 +483,40 @@
 <DESC id="0x20" length="2" value="1234">
 <EXTERNAL_ES_ID_DESC external_es_id="0x1234"/>
 </DESC>
+<DESC id="0x21" length="41" value="021100112203012d0a140b150c160d170e180b1e2802330010440213323c333d244650475148524953">
+<MUXCODE_DESC>
+<MUXCODE_ENTRY length="2" muxcode="1" version="1" substruct_count="0">
+</MUXCODE_ENTRY>
+<MUXCODE_ENTRY length="17" muxcode="2" version="2" substruct_count="3">
+<MUXCODE_SUBSTRUCT slot_count="0" repetition_count="1">
+</MUXCODE_SUBSTRUCT>
+<MUXCODE_SUBSTRUCT slot_count="5" repetition_count="5">
+<MUXCODE_SUBSTRUCT_ENTRY slot="0" flex_mux_channel="10" number_of_bytes="20"/>
+<MUXCODE_SUBSTRUCT_ENTRY slot="1" flex_mux_channel="11" number_of_bytes="21"/>
+<MUXCODE_SUBSTRUCT_ENTRY slot="2" flex_mux_channel="12" number_of_bytes="22"/>
+<MUXCODE_SUBSTRUCT_ENTRY slot="3" flex_mux_channel="13" number_of_bytes="23"/>
+<MUXCODE_SUBSTRUCT_ENTRY slot="4" flex_mux_channel="14" number_of_bytes="24"/>
+</MUXCODE_SUBSTRUCT>
+<MUXCODE_SUBSTRUCT slot_count="1" repetition_count="3">
+<MUXCODE_SUBSTRUCT_ENTRY slot="0" flex_mux_channel="30" number_of_bytes="40"/>
+</MUXCODE_SUBSTRUCT>
+</MUXCODE_ENTRY>
+<MUXCODE_ENTRY length="2" muxcode="3" version="3" substruct_count="0">
+</MUXCODE_ENTRY>
+<MUXCODE_ENTRY length="16" muxcode="4" version="4" substruct_count="2">
+<MUXCODE_SUBSTRUCT slot_count="2" repetition_count="3">
+<MUXCODE_SUBSTRUCT_ENTRY slot="0" flex_mux_channel="50" number_of_bytes="60"/>
+<MUXCODE_SUBSTRUCT_ENTRY slot="1" flex_mux_channel="51" number_of_bytes="61"/>
+</MUXCODE_SUBSTRUCT>
+<MUXCODE_SUBSTRUCT slot_count="4" repetition_count="4">
+<MUXCODE_SUBSTRUCT_ENTRY slot="0" flex_mux_channel="70" number_of_bytes="80"/>
+<MUXCODE_SUBSTRUCT_ENTRY slot="1" flex_mux_channel="71" number_of_bytes="81"/>
+<MUXCODE_SUBSTRUCT_ENTRY slot="2" flex_mux_channel="72" number_of_bytes="82"/>
+<MUXCODE_SUBSTRUCT_ENTRY slot="3" flex_mux_channel="73" number_of_bytes="83"/>
+</MUXCODE_SUBSTRUCT>
+</MUXCODE_ENTRY>
+</MUXCODE_DESC>
+</DESC>
 <DESC id="0x23" length="6" value="01b66906cc7e">
 <MULTIPLEX_BUFFER_DESC mb_buffer_size="112233" tb_leak_rate="445566"/>
 </DESC>

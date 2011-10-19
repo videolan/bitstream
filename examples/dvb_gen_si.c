@@ -281,6 +281,90 @@ static void build_desc20(uint8_t *desc) {
     desc20_set_external_es_id(desc, 0x1234);
 }
 
+/* MPEG Descriptor 0x21: MuxCode descriptor */
+static void build_desc21(uint8_t *desc) {
+    uint8_t n = 0, k = 0, r;
+    uint8_t *entry_n, *entry_k;
+
+    desc21_init(desc);
+    desc_set_length(desc, 255);
+
+    entry_n = desc21_get_entry(desc, n++);
+    desc21n_set_muxcode(entry_n, 1);
+    desc21n_set_version(entry_n, 1);
+    desc21n_set_length(entry_n, DESC21_ENTRY_HEADER_SIZE - 1);
+    desc21n_set_substruct_count(entry_n, 0);
+
+    entry_n = desc21_get_entry(desc, n++);
+    desc21n_set_muxcode(entry_n, 2);
+    desc21n_set_version(entry_n, 2);
+    desc21n_set_length(entry_n, 255);
+    desc21n_set_substruct_count(entry_n, 255);
+    {
+        k = 0;
+        entry_k = desc21n_get_substruct(entry_n, k++);
+        desc21k_set_repetition_count(entry_k, 1);
+        desc21k_set_slot_count(entry_k, 0);
+
+        entry_k = desc21n_get_substruct(entry_n, k++);
+        desc21k_set_repetition_count(entry_k, 5);
+        desc21k_set_slot_count(entry_k, 5);
+        for (r=0; r<desc21k_get_slot_count(entry_k); r++) {
+            desc21k_set_flex_mux_channel(entry_k, r, r + 10);
+            desc21k_set_number_of_bytes(entry_k,  r, r + 20);
+        }
+
+        entry_k = desc21n_get_substruct(entry_n, k++);
+        desc21k_set_repetition_count(entry_k, 3);
+        desc21k_set_slot_count(entry_k, 1);
+        for (r=0; r<desc21k_get_slot_count(entry_k); r++) {
+            desc21k_set_flex_mux_channel(entry_k, r, r + 30);
+            desc21k_set_number_of_bytes(entry_k,  r, r + 40);
+        }
+
+        entry_k = desc21n_get_substruct(entry_n, k);
+        desc21n_set_length(entry_n, entry_k - entry_n - 1);
+        desc21n_set_substruct_count(entry_n, k);
+    }
+
+    entry_n = desc21_get_entry(desc, n++);
+    desc21n_set_muxcode(entry_n, 3);
+    desc21n_set_version(entry_n, 3);
+    desc21n_set_length(entry_n, DESC21_ENTRY_HEADER_SIZE - 1);
+    desc21n_set_substruct_count(entry_n, 0);
+
+    entry_n = desc21_get_entry(desc, n++);
+    desc21n_set_muxcode(entry_n, 4);
+    desc21n_set_version(entry_n, 4);
+    desc21n_set_length(entry_n, 255);
+    desc21n_set_substruct_count(entry_n, 255);
+    {
+        k = 0;
+        entry_k = desc21n_get_substruct(entry_n, k++);
+        desc21k_set_repetition_count(entry_k, 3);
+        desc21k_set_slot_count(entry_k, 2);
+        for (r=0; r<desc21k_get_slot_count(entry_k); r++) {
+            desc21k_set_flex_mux_channel(entry_k, r, r + 50);
+            desc21k_set_number_of_bytes(entry_k,  r, r + 60);
+        }
+
+        entry_k = desc21n_get_substruct(entry_n, k++);
+        desc21k_set_repetition_count(entry_k, 4);
+        desc21k_set_slot_count(entry_k, 4);
+        for (r=0; r<desc21k_get_slot_count(entry_k); r++) {
+            desc21k_set_flex_mux_channel(entry_k, r, r + 70);
+            desc21k_set_number_of_bytes(entry_k,  r, r + 80);
+        }
+
+        entry_k = desc21n_get_substruct(entry_n, k);
+        desc21n_set_length(entry_n, entry_k - entry_n - 1);
+        desc21n_set_substruct_count(entry_n, k);
+    }
+
+    entry_n = desc21_get_entry(desc, n);
+    desc_set_length(desc, entry_n - desc - DESC_HEADER_SIZE);
+}
+
 /* MPEG Descriptor 0x23: MultiplexBuffer descriptor */
 static void build_desc23(uint8_t *desc) {
     desc23_init(desc);
@@ -2426,6 +2510,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc20(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc21(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc23(desc);

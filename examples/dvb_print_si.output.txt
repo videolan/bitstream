@@ -269,6 +269,28 @@ new PMT program=20000 version=1 pcrpid=110
     - desc 1f fmc es_id=0x4455 flexmux_channel=0x66
     - desc 1f fmc es_id=0x7788 flexmux_channel=0x99
     - desc 20 external_es_id external_es_id=0x1234
+    - desc 21 muxcode
+        - muxcode_entry length=2 muxcode=1 version=1 substruct_count=0
+        - muxcode_entry length=17 muxcode=2 version=2 substruct_count=3
+            - muxcode_substruct slot_count=0 repetition_count=1
+            - muxcode_substruct slot_count=5 repetition_count=5
+                - muxcode_substruct_entry slot=0 flex_mux_channel=10 number_of_bytes=20
+                - muxcode_substruct_entry slot=1 flex_mux_channel=11 number_of_bytes=21
+                - muxcode_substruct_entry slot=2 flex_mux_channel=12 number_of_bytes=22
+                - muxcode_substruct_entry slot=3 flex_mux_channel=13 number_of_bytes=23
+                - muxcode_substruct_entry slot=4 flex_mux_channel=14 number_of_bytes=24
+            - muxcode_substruct slot_count=1 repetition_count=3
+                - muxcode_substruct_entry slot=0 flex_mux_channel=30 number_of_bytes=40
+        - muxcode_entry length=2 muxcode=3 version=3 substruct_count=0
+        - muxcode_entry length=16 muxcode=4 version=4 substruct_count=2
+            - muxcode_substruct slot_count=2 repetition_count=3
+                - muxcode_substruct_entry slot=0 flex_mux_channel=50 number_of_bytes=60
+                - muxcode_substruct_entry slot=1 flex_mux_channel=51 number_of_bytes=61
+            - muxcode_substruct slot_count=4 repetition_count=4
+                - muxcode_substruct_entry slot=0 flex_mux_channel=70 number_of_bytes=80
+                - muxcode_substruct_entry slot=1 flex_mux_channel=71 number_of_bytes=81
+                - muxcode_substruct_entry slot=2 flex_mux_channel=72 number_of_bytes=82
+                - muxcode_substruct_entry slot=3 flex_mux_channel=73 number_of_bytes=83
     - desc 23 multiplex_buffer mb_buffer_size=112233 tb_leak_rate=445566
     - desc 27 metadata_std input_leak_rate=12345 buffer_size=23456 output_leak_rate=34567
     - desc 2c flexmux_timing fcr_es_id=0x1234 fcr_resolution=123456789 fcr_length=55 fmx_rate_length=66
