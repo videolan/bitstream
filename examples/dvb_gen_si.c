@@ -365,6 +365,31 @@ static void build_desc21(uint8_t *desc) {
     desc_set_length(desc, entry_n - desc - DESC_HEADER_SIZE);
 }
 
+/* MPEG Descriptor 0x22: FmxBufferSize descriptor */
+static void build_desc22(uint8_t *desc) {
+    uint8_t k = 0;
+    uint8_t *entry_n;
+
+    desc22_init(desc);
+    desc22_set_default_buffer_size(desc, 0x112233);
+
+    desc_set_length(desc, 255);
+    entry_n = desc22_get_entry(desc, k++);
+    desc22n_set_flexmux_channel(entry_n, 0x11);
+    desc22n_set_flexmux_buffer_size(entry_n, 0x223344);
+
+    entry_n = desc22_get_entry(desc, k++);
+    desc22n_set_flexmux_channel(entry_n, 0x55);
+    desc22n_set_flexmux_buffer_size(entry_n, 0x667788);
+
+    entry_n = desc22_get_entry(desc, k++);
+    desc22n_set_flexmux_channel(entry_n, 0x99);
+    desc22n_set_flexmux_buffer_size(entry_n, 0xaabbcc);
+
+    entry_n = desc22_get_entry(desc, k);
+    desc_set_length(desc, entry_n - desc - DESC_HEADER_SIZE);
+}
+
 /* MPEG Descriptor 0x23: MultiplexBuffer descriptor */
 static void build_desc23(uint8_t *desc) {
     desc23_init(desc);
@@ -2513,6 +2538,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc21(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc22(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc23(desc);

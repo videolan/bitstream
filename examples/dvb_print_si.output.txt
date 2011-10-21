@@ -291,6 +291,10 @@ new PMT program=20000 version=1 pcrpid=110
                 - muxcode_substruct_entry slot=1 flex_mux_channel=71 number_of_bytes=81
                 - muxcode_substruct_entry slot=2 flex_mux_channel=72 number_of_bytes=82
                 - muxcode_substruct_entry slot=3 flex_mux_channel=73 number_of_bytes=83
+    - desc 22 fmx_buffer_size default_buffer_size=1122867
+        - flexmux_channel=0x11 buffer_size=2241348
+        - flexmux_channel=0x55 buffer_size=6715272
+        - flexmux_channel=0x99 buffer_size=11189196
     - desc 23 multiplex_buffer mb_buffer_size=112233 tb_leak_rate=445566
     - desc 27 metadata_std input_leak_rate=12345 buffer_size=23456 output_leak_rate=34567
     - desc 2c flexmux_timing fcr_es_id=0x1234 fcr_resolution=123456789 fcr_length=55 fmx_rate_length=66

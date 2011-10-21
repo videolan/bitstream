@@ -517,6 +517,13 @@
 </MUXCODE_ENTRY>
 </MUXCODE_DESC>
 </DESC>
+<DESC id="0x22" length="15" value="112233112233445566778899aabbcc">
+<FMX_BUFFER_SIZE_DESC default_buffer_size="1122867">
+<FLEXMUX_BUFFER_DESC flexmux_channel="0x11" buffer_size="2241348"/>
+<FLEXMUX_BUFFER_DESC flexmux_channel="0x55" buffer_size="6715272"/>
+<FLEXMUX_BUFFER_DESC flexmux_channel="0x99" buffer_size="11189196"/>
+</FMX_BUFFER_SIZE_DESC>
+</DESC>
 <DESC id="0x23" length="6" value="01b66906cc7e">
 <MULTIPLEX_BUFFER_DESC mb_buffer_size="112233" tb_leak_rate="445566"/>
 </DESC>
