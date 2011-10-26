@@ -397,6 +397,55 @@ static void build_desc23(uint8_t *desc) {
     desc23_set_tb_leak_rate(desc, 445566);
 }
 
+/* MPEG Descriptor 0x24: Content labeling descriptor */
+static void build_desc24_1(uint8_t *desc) {
+    desc24_init(desc);
+
+    desc24_set_metadata_application_format(desc, 0xabcd);
+    desc24_set_content_reference_id_record_flag(desc, false);
+    desc24_set_content_time_base_indicator(desc, 0);
+
+    desc24_set_length(desc);
+}
+
+static void build_desc24_2(uint8_t *desc) {
+    desc24_init(desc);
+
+    desc24_set_metadata_application_format(desc, 0xfff0);
+
+    desc24_set_content_reference_id_record_flag(desc, false);
+
+    desc24_set_content_time_base_indicator(desc, 3);
+    desc24_set_time_base_association(desc, 3, (uint8_t *)"ABC");
+
+    desc24_set_length(desc);
+}
+
+static void build_desc24_3(uint8_t *desc) {
+    desc24_init(desc);
+
+    desc24_set_metadata_application_format(desc, 0xffff);
+    // Needs desc24_set_metadata_application_format(desc, 0xffff);
+    desc24_set_metadata_application_format_identifier(desc, 0xaabbccdd);
+
+    desc24_set_content_reference_id_record_flag(desc, true);
+    // Needs desc24_set_content_reference_id_record_flag(desc, true);
+    desc24_set_content_reference_id_record(desc, 3, (uint8_t *)"abc");
+
+    desc24_set_content_time_base_indicator(desc, 2);
+    // Needs desc24_set_content_time_base_indicator(desc, 1..2);
+    desc24_set_content_time_base_value (desc, 0x1F0F0F0F0); // 8337289456
+    desc24_set_metadata_time_base_value(desc, 0x1F1F1F1F1); // 8354132465
+
+    // Needs desc24_set_content_time_base_indicator(desc, 2);
+    desc24_set_content_id(desc, 100);
+
+    // Needs desc24_set_content_time_base_indicator(desc, 3..7);
+    desc24_set_time_base_association(desc, 3, (uint8_t *)"ABC");
+
+    desc24_set_length(desc);
+}
+
 /* MPEG Descriptor 0x27: Metadata STD descriptor */
 static void build_desc27(uint8_t *desc) {
     desc27_init(desc);
@@ -2566,6 +2615,15 @@ static void generate_pmt(void) {
             desc_counter = 0;
             desc_loop = pmtn_get_descs(pmt_n);
             descs_set_length(desc_loop, DESCS_MAX_SIZE); // This is needed so descs_get_desc(x, n) works
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc24_1(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc24_2(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc24_3(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc28(desc);
