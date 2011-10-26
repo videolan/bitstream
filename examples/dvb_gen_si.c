@@ -474,6 +474,49 @@ static void build_desc25(uint8_t *desc) {
     desc25_set_length(desc);
 }
 
+/* MPEG Descriptor 0x26: Metadata descriptor */
+static void build_desc26_1(uint8_t *desc) {
+    desc26_init(desc);
+
+    desc26_set_metadata_application_format(desc, 0xfff0);
+    desc26_set_metadata_format(desc, 0xf0);
+    desc26_set_metadata_service_id(desc, 0x88);
+    desc26_set_dsm_cc_flag(desc, false);
+    desc26_set_decoder_config_flags(desc, 0);
+
+    desc26_set_length(desc);
+}
+
+static void build_desc26_2(uint8_t *desc) {
+    desc26_init(desc);
+
+    desc26_set_metadata_application_format(desc, 0xffff);
+    // Needs desc26_set_metadata_application_format(desc, 0xffff);
+    desc26_set_metadata_application_format_identifier(desc, 0x00112233);
+
+    desc26_set_metadata_format(desc, 0xff);
+    // Needs desc26_set_metadata_format(desc, 0xff);
+    desc26_set_metadata_format_identifier(desc, 0xdeadbeaf);
+
+    desc26_set_metadata_service_id(desc, 0x88);
+
+    desc26_set_dsm_cc_flag(desc, true);
+    // Needs desc26_set_dsm_cc_flag(desc, true);
+    desc26_set_service_identification_record(desc, 3, (uint8_t *)"abc");
+
+    desc26_set_decoder_config_flags(desc, 3);
+    // Needs desc26_set_decoder_config_flags(desc, 1);
+    desc26_set_decoder_config(desc, 3, (uint8_t *)"123");
+
+    // Needs desc26_set_decoder_config_flags(desc, 3);
+    desc26_set_dec_config_identification_record(desc, 3, (uint8_t *)"ABC");
+
+    // Needs desc26_set_mpeg_carriage_flags(desc, 4);
+    desc26_set_decoder_config_metadata_service_id(desc, 100);
+
+    desc26_set_length(desc);
+}
+
 /* MPEG Descriptor 0x27: Metadata STD descriptor */
 static void build_desc27(uint8_t *desc) {
     desc27_init(desc);
@@ -2655,6 +2698,12 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc25(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc26_1(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc26_2(desc);
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc28(desc);
