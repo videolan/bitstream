@@ -89,6 +89,7 @@ Supported MPEG descriptors
  * Descriptor 0x22: FmxBufferSize descriptor
  * Descriptor 0x23: MultiplexBuffer descriptor
  * Descriptor 0x24: Content labeling descriptor
+ * Descriptor 0x25: Metadata pointer descriptor
  * Descriptor 0x27: Metadata STD descriptor
  * Descriptor 0x28: AVC video descriptor
  * Descriptor 0x2a: AVC timing and HRD descriptor

@@ -544,6 +544,9 @@
 <DESC id="0x24" length="22" value="ffffaabbccdd9703616263fff0f0f0f0fff1f1f1f1e4">
 <CONTENT_LABELING_DESC metadata_application_format="0xffff" metadata_application_format_identifier="0xaabbccdd" content_reference_id_record_flag="1" content_reference_id_record_length="3" content_reference_id_record="616263" content_time_base_indicator="2" content_time_base_value="8337289456" metadata_time_base_value="8354132465" content_id="100" time_base_association_data_length="0" time_base_association_data=""/>
 </DESC>
+<DESC id="0x25" length="23" value="ffff00112233ffdeadbeaf88bf0361626303e807d00bb8">
+<METADATA_POINTER_DESC metadata_application_format="0xffff" metadata_application_format_identifier="0x00112233" metadata_format="0xff" metadata_format_identifier="0xdeadbeaf" metadata_service_id="0x88" metadata_locator_record_flag="1" metadata_locator_record_length="3" metadata_locator_record="616263" mpeg_carriage_flags="1" program_number="1000" ts_location="2000" ts_id="3000"/>
+</DESC>
 <DESC id="0x28" length="4" value="12ca343f">
 <AVC_VIDEO_DESC profile_idc="0x12" constraint_set0_flag="1" constraint_set1_flag="1" constraint_set2_flag="0" AVC_compatible_flags="0x0a" level_idc="0x34" AVC_still_present="0" AVC_24_hour_picture_flag="0"/>
 </DESC>
