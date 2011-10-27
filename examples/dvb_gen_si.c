@@ -1452,7 +1452,18 @@ static void build_desc6a(uint8_t *desc) {
     desc6a_set_length(desc);
 }
 
-/* ---  Descriptor 0x6b: ancillary_data_descriptor */
+/* DVB  Descriptor 0x6b: Ancillary data descriptor */
+static void build_desc6b(uint8_t *desc) {
+    desc6b_init(desc);
+    desc6b_set_dvd_video_ancillary_data_flag    (desc, true);
+    desc6b_set_extended_ancillary_data_flag     (desc, false);
+    desc6b_set_announcement_switching_data_flag (desc, true);
+    desc6b_set_dab_ancillary_data_flag          (desc, false);
+    desc6b_set_scale_factor_error_check_flag    (desc, true);
+    desc6b_set_mpeg4_ancillary_data_flag        (desc, false);
+    desc6b_set_rds_via_uecp_flag                (desc, true);
+}
+
 /* ---  Descriptor 0x6c: cell_list_descriptor */
 /* ---  Descriptor 0x6d: cell_frequency_link_descriptor */
 /* ---  Descriptor 0x6e: announcement_support_descriptor */
@@ -2710,6 +2721,9 @@ static void generate_pmt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc2a(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc6b(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

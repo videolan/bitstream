@@ -559,6 +559,9 @@
 <DESC id="0x2a" length="15" value="7f7f00bc614e020f76d20006f855bf">
 <AVC_TIMING_AND_HRD_DESC hrd_management_valid_flag="0" picture_and_timing_info_present="1" flag_90khz="0" N="12345678" K="34567890" num_units_in_tick="456789" fixed_frame_rate_flag="1" temporal_poc_flag="0" picture_to_display_conversion_flag="1"/>
 </DESC>
+<DESC id="0x6b" length="1" value="ab">
+<ANCILLARY_DATA_DESC  ancillary_data_indentifier="0xab" dvd_video_ancillary_data_flag="1" extended_ancillary_data_flag="0" announcement_switching_data_flag="1" dab_ancillary_data_flag="0" scale_factor_error_check_flag="1" mpeg4_ancillary_data_flag="0" rds_via_uecp_flag="1"/>
+</DESC>
 </ES>
 <ES pid="127" streamtype="0x0f" streamtype_txt="13818-7 Audio with ADTS transport syntax">
 <DESC id="0x42" length="4" value="aabbccdd">
