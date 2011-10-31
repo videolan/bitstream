@@ -1464,7 +1464,84 @@ static void build_desc6b(uint8_t *desc) {
     desc6b_set_rds_via_uecp_flag                (desc, true);
 }
 
-/* ---  Descriptor 0x6c: cell_list_descriptor */
+/* DVB  Descriptor 0x6c: Cell list descriptor */
+static void build_desc6c(uint8_t *desc) {
+    uint8_t n = 0, k;
+    uint8_t *cell_n, *subcell_k;
+
+    desc6c_init(desc);
+    desc_set_length(desc, 255);
+
+    cell_n = desc6c_get_cell(desc, n++);
+    desc6cn_set_cell_id(cell_n, 1234);
+    desc6cn_set_cell_latitude(cell_n, 4567);
+    desc6cn_set_cell_longtitude(cell_n, 5678);
+    desc6cn_set_cell_extend_of_latitude(cell_n, 123);
+    desc6cn_set_cell_extend_of_longtitude(cell_n, 345);
+    desc6cn_set_subcell_info_loop_length(cell_n, 0);
+
+    cell_n = desc6c_get_cell(desc, n++);
+    desc6cn_set_cell_id(cell_n, 4456);
+    desc6cn_set_cell_latitude(cell_n, 5567);
+    desc6cn_set_cell_longtitude(cell_n, 6678);
+    desc6cn_set_cell_extend_of_latitude(cell_n, 1234);
+    desc6cn_set_cell_extend_of_longtitude(cell_n, 1234);
+    desc6cn_set_subcell_info_loop_length(cell_n, 0);
+    {
+        k = 0;
+        desc6cn_set_subcell_info_loop_length(cell_n, 255);
+
+        subcell_k = desc6cn_get_subcell(cell_n, k++);
+        desc6ck_set_cell_id_extension(subcell_k, 0);
+        desc6ck_set_subcell_latitude(subcell_k, 0x1122);
+        desc6ck_set_subcell_longtitude(subcell_k, 0x3344);
+        desc6ck_set_subcell_extend_of_latitude(subcell_k, 0xf567);
+        desc6ck_set_subcell_extend_of_longtitude(subcell_k, 0xf89a);
+
+        subcell_k = desc6cn_get_subcell(cell_n, k++);
+        desc6ck_set_cell_id_extension(subcell_k, 1);
+        desc6ck_set_subcell_latitude(subcell_k, 0x2233);
+        desc6ck_set_subcell_longtitude(subcell_k, 0x4455);
+        desc6ck_set_subcell_extend_of_latitude(subcell_k, 0xf678);
+        desc6ck_set_subcell_extend_of_longtitude(subcell_k, 0xf9ab);
+
+        subcell_k = desc6cn_get_subcell(cell_n, k++);
+        desc6ck_set_cell_id_extension(subcell_k, 2);
+        desc6ck_set_subcell_latitude(subcell_k, 0x2233);
+        desc6ck_set_subcell_longtitude(subcell_k, 0x4455);
+        desc6ck_set_subcell_extend_of_latitude(subcell_k, 0xf678);
+        desc6ck_set_subcell_extend_of_longtitude(subcell_k, 0xf9ab);
+
+        subcell_k = desc6cn_get_subcell(cell_n, k);
+        desc6cn_set_subcell_info_loop_length(cell_n, subcell_k - cell_n - DESC6C_DATA_SIZE);
+    }
+
+    cell_n = desc6c_get_cell(desc, n++);
+    desc6cn_set_cell_id(cell_n, 0xffff);
+    desc6cn_set_cell_latitude(cell_n, 0xeeee);
+    desc6cn_set_cell_longtitude(cell_n, 0xdddd);
+    desc6cn_set_cell_extend_of_latitude(cell_n, 0xf789);
+    desc6cn_set_cell_extend_of_longtitude(cell_n, 0xfabc);
+    desc6cn_set_subcell_info_loop_length(cell_n, 0);
+    {
+        k = 0;
+        desc6cn_set_subcell_info_loop_length(cell_n, 255);
+
+        subcell_k = desc6cn_get_subcell(cell_n, k++);
+        desc6ck_set_cell_id_extension(subcell_k, 0x00);
+        desc6ck_set_subcell_latitude(subcell_k, 0x1122);
+        desc6ck_set_subcell_longtitude(subcell_k, 0x3344);
+        desc6ck_set_subcell_extend_of_latitude(subcell_k, 0xf567);
+        desc6ck_set_subcell_extend_of_longtitude(subcell_k, 0xf89a);
+
+        subcell_k = desc6cn_get_subcell(cell_n, k);
+        desc6cn_set_subcell_info_loop_length(cell_n, subcell_k - cell_n - DESC6C_DATA_SIZE);
+    }
+
+    cell_n = desc6c_get_cell(desc, n);
+    desc_set_length(desc, cell_n - desc - DESC_HEADER_SIZE);
+}
+
 /* ---  Descriptor 0x6d: cell_frequency_link_descriptor */
 /* ---  Descriptor 0x6e: announcement_support_descriptor */
 /* ---  Descriptor 0x6f: application_signalling_descriptor */
@@ -1776,6 +1853,9 @@ static void generate_nit(void) {
 
         desc = descs_get_desc(desc_loop, desc_counter++);
         build_desc62(desc);
+
+        desc = descs_get_desc(desc_loop, desc_counter++);
+        build_desc6c(desc);
 
         // Finish descriptor generation
         desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

@@ -66,6 +66,18 @@
 <FREQUENCY_LIST_DESC coding_type="2" coding_type_txt="cable" frequency="3300000"/>
 <FREQUENCY_LIST_DESC coding_type="2" coding_type_txt="cable" frequency="3360000"/>
 </DESC>
+<DESC id="0x6c" length="62" value="04d211d7162e07b15900116815bf1a164d24d218001122334456789a01223344556789ab02223344556789abffffeeeedddd789abc08001122334456789a">
+<CELL_LIST_DESC cell_id="1234" cell_latitude="4567" cell_longtitude="5678" cell_extend_of_latitude="123" cell_extend_of_longtitude="345">
+</CELL_LIST_DESC>
+<CELL_LIST_DESC cell_id="4456" cell_latitude="5567" cell_longtitude="6678" cell_extend_of_latitude="1234" cell_extend_of_longtitude="1234">
+<CELL_LIST_SUBCELL_INFO cell_id_extension="0" subcell_latitude="4386" subcell_longtitude="13124" subcell_extend_of_latitude="1383" subcell_extend_of_longtitude="2202"/>
+<CELL_LIST_SUBCELL_INFO cell_id_extension="1" subcell_latitude="8755" subcell_longtitude="17493" subcell_extend_of_latitude="1656" subcell_extend_of_longtitude="2475"/>
+<CELL_LIST_SUBCELL_INFO cell_id_extension="2" subcell_latitude="8755" subcell_longtitude="17493" subcell_extend_of_latitude="1656" subcell_extend_of_longtitude="2475"/>
+</CELL_LIST_DESC>
+<CELL_LIST_DESC cell_id="65535" cell_latitude="61166" cell_longtitude="56797" cell_extend_of_latitude="1929" cell_extend_of_longtitude="2748">
+<CELL_LIST_SUBCELL_INFO cell_id_extension="0" subcell_latitude="4386" subcell_longtitude="13124" subcell_extend_of_latitude="1383" subcell_extend_of_longtitude="2202"/>
+</CELL_LIST_DESC>
+</DESC>
 <TS tsid="10000" onid="40000">
 <DESC id="0x41" length="12" value="4e20014e84024ee8014f4c02">
 <SERVICE_LIST_DESC sid="20000" type="0x01" />
