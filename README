@@ -147,6 +147,7 @@ Supported DVB descriptors
  * Descriptor 0x6b: Ancillary data descriptor
  * Descriptor 0x6c: Cell list descriptor
  * Descriptor 0x6d: Cell frequency link descriptor
+ * Descriptor 0x6e: Announcement support descriptor
  * Descriptor 0x7a: Enhanced AC-3 descriptor
  * Descriptor 0x7b: DTS descriptor
  * Descriptor 0x7c: AAC descriptor

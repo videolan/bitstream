@@ -1599,7 +1599,69 @@ static void build_desc6d(uint8_t *desc) {
     desc_set_length(desc, cell_n - desc - DESC_HEADER_SIZE);
 }
 
-/* ---  Descriptor 0x6e: announcement_support_descriptor */
+/* DVB  Descriptor 0x6e: Announcement support descriptor */
+static void build_desc6e(uint8_t *desc) {
+    desc6e_init(desc);
+
+    desc6e_set_emergency_alarm_flag         (desc, true);
+    desc6e_set_road_traffic_flash_flag      (desc, false);
+    desc6e_set_public_transport_flash_flag  (desc, true);
+    desc6e_set_warning_message_flag         (desc, true);
+    desc6e_set_news_flash_flag              (desc, true);
+    desc6e_set_weather_flash_flag           (desc, true);
+    desc6e_set_event_announcement_flag      (desc, false);
+    desc6e_set_personal_call_flag           (desc, false);
+
+    {
+        uint8_t n = 0;
+        uint8_t *ann_n;
+        desc_set_length(desc, 255);
+
+        ann_n = desc6e_get_announcement(desc, n++);
+        desc6en_set_announcement_type(ann_n, 0); // Emergency alarm
+        desc6en_set_reference_type(ann_n, 0);
+
+        ann_n = desc6e_get_announcement(desc, n++);
+        desc6en_set_announcement_type(ann_n, 3); // Warning alarm
+        desc6en_set_reference_type(ann_n, 1);
+
+        // The following are valid only if
+        //  reference_type == 0x01
+        //  || reference_type == 0x02
+        //  || reference_type == 0x03
+        //
+        desc6en_set_onid(ann_n, 0x1122);
+        desc6en_set_tsid(ann_n, 0x3344);
+        desc6en_set_service_id(ann_n, 0x5566);
+        desc6en_set_component_tag(ann_n, 0x77);
+
+        ann_n = desc6e_get_announcement(desc, n++);
+        desc6en_set_announcement_type(ann_n, 5); // Weather flash
+        desc6en_set_reference_type(ann_n, 0);
+
+        ann_n = desc6e_get_announcement(desc, n++);
+        desc6en_set_announcement_type(ann_n, 2); // Public Transport flash
+        desc6en_set_reference_type(ann_n, 3);
+
+        // The following are valid only if
+        //  reference_type == 0x01
+        //  || reference_type == 0x02
+        //  || reference_type == 0x03
+        //
+        desc6en_set_onid(ann_n, 0x6677);
+        desc6en_set_tsid(ann_n, 0x8899);
+        desc6en_set_service_id(ann_n, 0x4455);
+        desc6en_set_component_tag(ann_n, 0x88);
+
+        ann_n = desc6e_get_announcement(desc, n++);
+        desc6en_set_announcement_type(ann_n, 4); // News flash
+        desc6en_set_reference_type(ann_n, 0);
+
+        ann_n = desc6e_get_announcement(desc, n);
+        desc_set_length(desc, ann_n - desc - DESC_HEADER_SIZE);
+    }
+}
+
 /* ---  Descriptor 0x6f: application_signalling_descriptor */
 /* ---  Descriptor 0x70: adaptation_field_data_descriptor */
 /* ---  Descriptor 0x71: service_identifier_descriptor */
@@ -2205,6 +2267,9 @@ static void generate_sdt(void) {
 
             desc = descs_get_desc(desc_loop, desc_counter++);
             build_desc5f(desc);
+
+            desc = descs_get_desc(desc_loop, desc_counter++);
+            build_desc6e(desc);
 
             // Finish descriptor generation
             desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

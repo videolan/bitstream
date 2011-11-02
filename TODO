@@ -5,7 +5,6 @@ so if you like something just do it and send a patch.
   - Descriptor 0x29 IPMP_descriptor (defined in ISO/IEC 13818-11, MPEG-2 IPMP)
 
 - Add support (parser, generator, example) for these DVB descriptors:
-  - Descriptor 0x6e: announcement_support_descriptor
   - Descriptor 0x6f: application_signalling_descriptor
   - Descriptor 0x70: adaptation_field_data_descriptor
   - Descriptor 0x71: service_identifier_descriptor

@@ -122,6 +122,12 @@ new SDT actual tsid=10000 version=1 onid=40000
     - desc 49 country_availability available=0 country=FRA
     - desc 49 country_availability available=0 country=BUL
     - desc 5f private_data specifier=0xaabbccdd
+    - desc 6e announcement_support announcement_support_indicator=0xff3d emergency_alarm_flag=1 road_traffic_flash_flag=0 public_transport_flash_flag=1 warning_message_flag=1 news_flash_flag=1 weather_flash_flag=1 event_announcement_flag=0 personal_call_flag=0
+        - announcement type=0 type_txt="Emergency alarm" reference_type=0
+        - announcement type=3 type_txt="Warning message" reference_type=1 onid=4386 tsid=13124 service_id=21862 component_tag=119
+        - announcement type=5 type_txt="Weather flash" reference_type=0
+        - announcement type=2 type_txt="Public Transport flash" reference_type=3 onid=26231 tsid=34969 service_id=17493 component_tag=136
+        - announcement type=4 type_txt="News flash" reference_type=0
   * service sid=20200 eit_schedule eit_pf running=3
     - desc 48 service type=0x1 provider="Test Provider Name" service="Test Service Name"
     - desc 4c time_shifted_service reference_sid=21000
