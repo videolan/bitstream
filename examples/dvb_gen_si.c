@@ -1542,7 +1542,63 @@ static void build_desc6c(uint8_t *desc) {
     desc_set_length(desc, cell_n - desc - DESC_HEADER_SIZE);
 }
 
-/* ---  Descriptor 0x6d: cell_frequency_link_descriptor */
+/* DVB  Descriptor 0x6d: Cell frequency link descriptor */
+static void build_desc6d(uint8_t *desc) {
+    uint8_t n = 0, k;
+    uint8_t *cell_n, *subcell_k;
+
+    desc6d_init(desc);
+    desc_set_length(desc, 255);
+
+    cell_n = desc6d_get_cell(desc, n++);
+    desc6dn_set_cell_id(cell_n, 1234);
+    desc6dn_set_frequency(cell_n, 4567);
+    desc6dn_set_subcell_info_loop_length(cell_n, 0);
+
+    cell_n = desc6d_get_cell(desc, n++);
+    desc6dn_set_cell_id(cell_n, 4456);
+    desc6dn_set_frequency(cell_n, 5567);
+    desc6dn_set_subcell_info_loop_length(cell_n, 0);
+    {
+        k = 0;
+        desc6dn_set_subcell_info_loop_length(cell_n, 255);
+
+        subcell_k = desc6dn_get_subcell(cell_n, k++);
+        desc6dk_set_cell_id_extension(subcell_k, 0);
+        desc6dk_set_transponder_frequency(subcell_k, 1122);
+
+        subcell_k = desc6dn_get_subcell(cell_n, k++);
+        desc6dk_set_cell_id_extension(subcell_k, 1);
+        desc6dk_set_transponder_frequency(subcell_k, 2233);
+
+        subcell_k = desc6dn_get_subcell(cell_n, k++);
+        desc6dk_set_cell_id_extension(subcell_k, 2);
+        desc6dk_set_transponder_frequency(subcell_k, 3344);
+
+        subcell_k = desc6dn_get_subcell(cell_n, k);
+        desc6dn_set_subcell_info_loop_length(cell_n, subcell_k - cell_n - DESC6D_DATA_SIZE);
+    }
+
+    cell_n = desc6d_get_cell(desc, n++);
+    desc6dn_set_cell_id(cell_n, 7890);
+    desc6dn_set_frequency(cell_n, 56789);
+    desc6dn_set_subcell_info_loop_length(cell_n, 0);
+    {
+        k = 0;
+        desc6dn_set_subcell_info_loop_length(cell_n, 255);
+
+        subcell_k = desc6dn_get_subcell(cell_n, k++);
+        desc6dk_set_cell_id_extension(subcell_k, 0);
+        desc6dk_set_transponder_frequency(subcell_k, 889911);
+
+        subcell_k = desc6dn_get_subcell(cell_n, k);
+        desc6dn_set_subcell_info_loop_length(cell_n, subcell_k - cell_n - DESC6D_DATA_SIZE);
+    }
+
+    cell_n = desc6d_get_cell(desc, n);
+    desc_set_length(desc, cell_n - desc - DESC_HEADER_SIZE);
+}
+
 /* ---  Descriptor 0x6e: announcement_support_descriptor */
 /* ---  Descriptor 0x6f: application_signalling_descriptor */
 /* ---  Descriptor 0x70: adaptation_field_data_descriptor */
@@ -1856,6 +1912,9 @@ static void generate_nit(void) {
 
         desc = descs_get_desc(desc_loop, desc_counter++);
         build_desc6c(desc);
+
+        desc = descs_get_desc(desc_loop, desc_counter++);
+        build_desc6d(desc);
 
         // Finish descriptor generation
         desc = descs_get_desc(desc_loop, desc_counter); // Get next descriptor pos

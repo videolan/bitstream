@@ -47,6 +47,13 @@ new NIT actual networkid=40000 version=1
         - cell_list_subcell_info cell_id_extension=2 subcell_latitude=8755 subcell_longtitude=17493 subcell_extend_of_latitude=1656 subcell_extend_of_longtitude=2475
     - desc 6c cell_list cell_id=65535 cell_latitude=61166 cell_longtitude=56797 cell_extend_of_latitude=1929 cell_extend_of_longtitude=2748
         - cell_list_subcell_info cell_id_extension=0 subcell_latitude=4386 subcell_longtitude=13124 subcell_extend_of_latitude=1383 subcell_extend_of_longtitude=2202
+    - desc 6d cell_frequency_link cell_id=1234 frequency=4567
+    - desc 6d cell_frequency_link cell_id=4456 frequency=5567
+        - subcell_frequency_link cell_id_extension=0 transponder_frequency=1122
+        - subcell_frequency_link cell_id_extension=1 transponder_frequency=2233
+        - subcell_frequency_link cell_id_extension=2 transponder_frequency=3344
+    - desc 6d cell_frequency_link cell_id=7890 frequency=56789
+        - subcell_frequency_link cell_id_extension=0 transponder_frequency=889911
   * ts tsid=10000 onid=40000
     - desc 41 service_list sid=20000 type=0x01
     - desc 41 service_list sid=20100 type=0x02

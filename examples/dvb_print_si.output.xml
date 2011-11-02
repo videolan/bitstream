@@ -78,6 +78,18 @@
 <CELL_LIST_SUBCELL_INFO cell_id_extension="0" subcell_latitude="4386" subcell_longtitude="13124" subcell_extend_of_latitude="1383" subcell_extend_of_longtitude="2202"/>
 </CELL_LIST_DESC>
 </DESC>
+<DESC id="0x6d" length="41" value="04d2000011d7001168000015bf0f000000046201000008b90200000d101ed20000ddd50500000d9437">
+<CELL_FREQUENCY_LINK_DESC cell_id="1234" frequency="4567">
+</CELL_FREQUENCY_LINK_DESC>
+<CELL_FREQUENCY_LINK_DESC cell_id="4456" frequency="5567">
+<SUBCELL_FREQUENCY_LINK_INFO cell_id_extension="0" transponder_frequency="1122"/>
+<SUBCELL_FREQUENCY_LINK_INFO cell_id_extension="1" transponder_frequency="2233"/>
+<SUBCELL_FREQUENCY_LINK_INFO cell_id_extension="2" transponder_frequency="3344"/>
+</CELL_FREQUENCY_LINK_DESC>
+<CELL_FREQUENCY_LINK_DESC cell_id="7890" frequency="56789">
+<SUBCELL_FREQUENCY_LINK_INFO cell_id_extension="0" transponder_frequency="889911"/>
+</CELL_FREQUENCY_LINK_DESC>
+</DESC>
 <TS tsid="10000" onid="40000">
 <DESC id="0x41" length="12" value="4e20014e84024ee8014f4c02">
 <SERVICE_LIST_DESC sid="20000" type="0x01" />
