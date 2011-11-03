@@ -566,7 +566,7 @@ static void build_desc2c(uint8_t *desc) {
     desc2c_set_fcr_es_id(desc, 0x1234);
     desc2c_set_fcr_resolution(desc, 123456789);
     desc2c_set_fcr_length(desc, 55);
-    desc2c_set_fmx_rate_length(desc, 66);
+    desc2c_set_fmx_rate_length(desc, 32);
 }
 
 /* =========================================================================

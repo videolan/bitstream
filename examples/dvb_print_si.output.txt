@@ -317,7 +317,7 @@ new PMT program=20000 version=1 pcrpid=110
         - flexmux_channel=0x99 buffer_size=11189196
     - desc 23 multiplex_buffer mb_buffer_size=112233 tb_leak_rate=445566
     - desc 27 metadata_std input_leak_rate=12345 buffer_size=23456 output_leak_rate=34567
-    - desc 2c flexmux_timing fcr_es_id=0x1234 fcr_resolution=123456789 fcr_length=55 fmx_rate_length=66
+    - desc 2c flexmux_timing fcr_es_id=0x1234 fcr_resolution=123456789 fcr_length=55 fmx_rate_length=32
   * ES pid=126 streamtype=0x1b streamtype_txt="H.264/14496-10 video (MPEG-4/AVC)"
     - desc 24 content_labeling metadata_application_format=0xabcd metadata_application_format_identifier=0x00000000 content_reference_id_record_flag=0 content_reference_id_record_length=0 content_reference_id_record="" content_time_base_indicator=0 content_time_base_value="0" metadata_time_base_value="0" content_id=0 time_base_association_data_length=0 time_base_association_data=""
     - desc 24 content_labeling metadata_application_format=0xfff0 metadata_application_format_identifier=0x00000000 content_reference_id_record_flag=0 content_reference_id_record_length=0 content_reference_id_record="" content_time_base_indicator=3 content_time_base_value="0" metadata_time_base_value="0" content_id=0 time_base_association_data_length=3 time_base_association_data="414243"

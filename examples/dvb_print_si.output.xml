@@ -563,8 +563,8 @@
 <DESC id="0x27" length="9" value="c03039c05ba0c08707">
 <METADATA_STD_DESC input_leak_rate="12345" buffer_size="23456" output_leak_rate="34567"/>
 </DESC>
-<DESC id="0x2c" length="8" value="1234075bcd153742">
-<FLEXMUX_TIMING_DESC fcr_es_id="0x1234" fcr_resolution="123456789" fcr_length="55" fmx_rate_length="66"/>
+<DESC id="0x2c" length="8" value="1234075bcd153720">
+<FLEXMUX_TIMING_DESC fcr_es_id="0x1234" fcr_resolution="123456789" fcr_length="55" fmx_rate_length="32"/>
 </DESC>
 </ES>
 <ES pid="126" streamtype="0x1b" streamtype_txt="H.264/14496-10 video (MPEG-4/AVC)">
