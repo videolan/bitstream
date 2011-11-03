@@ -50,7 +50,7 @@ static inline void desc6b_init(uint8_t *p_desc)
 {
     desc_set_tag(p_desc, 0x6b);
     desc_set_length(p_desc, (DESC6B_HEADER_SIZE - DESC_HEADER_SIZE));
-    p_desc[2] = 0x01;
+    p_desc[2] = 0x80;
 }
 
 static inline uint8_t desc6b_get_ancillary_data_indentifier(const uint8_t *p_desc)
@@ -60,7 +60,7 @@ static inline uint8_t desc6b_get_ancillary_data_indentifier(const uint8_t *p_des
 
 static inline void desc6b_set_ancillary_data_indentifier(uint8_t *p_desc, uint8_t i_data)
 {
-    p_desc[2] = i_data | 0x01;
+    p_desc[2] = i_data | 0x80;
 }
 
 #define __DEFINE_FLAG(FLAGNAME, bit) \
@@ -74,13 +74,13 @@ static inline void desc6b_set_ancillary_data_indentifier(uint8_t *p_desc, uint8_
         p_desc[2] = b_##FLAGNAME ? (p_desc[2] | bit) : (p_desc[2] &~ bit); \
     }
 
-__DEFINE_FLAG (dvd_video_ancillary_data     , 0x80)
-__DEFINE_FLAG (extended_ancillary_data      , 0x40)
-__DEFINE_FLAG (announcement_switching_data  , 0x20)
-__DEFINE_FLAG (dab_ancillary_data           , 0x10)
-__DEFINE_FLAG (scale_factor_error_check     , 0x08)
-__DEFINE_FLAG (mpeg4_ancillary_data         , 0x04)
-__DEFINE_FLAG (rds_via_uecp                 , 0x02)
+__DEFINE_FLAG (dvd_video_ancillary_data     , 0x01)
+__DEFINE_FLAG (extended_ancillary_data      , 0x02)
+__DEFINE_FLAG (announcement_switching_data  , 0x04)
+__DEFINE_FLAG (dab_ancillary_data           , 0x08)
+__DEFINE_FLAG (scale_factor_error_check     , 0x10)
+__DEFINE_FLAG (mpeg4_ancillary_data         , 0x20)
+__DEFINE_FLAG (rds_via_uecp                 , 0x40)
 
 #undef __DEFINE_FLAG
 
@@ -95,7 +95,7 @@ static inline void desc6b_print(const uint8_t *p_desc, f_print pf_print,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque,
-                 "<ANCILLARY_DATA_DESC "
+                 "<ANCILLARY_DATA_DESC"
                  " ancillary_data_indentifier=\"0x%02x\""
                  " dvd_video_ancillary_data_flag=\"%u\""
                  " extended_ancillary_data_flag=\"%u\""
