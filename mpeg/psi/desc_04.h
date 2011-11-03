@@ -95,13 +95,14 @@ static inline void desc04_set_channel(uint8_t *p_desc, uint8_t i_channel)
 static inline char *desc04_get_type_txt(uint8_t i_type)
 {
     return i_type == 0 ? "reserved" :
-           i_type == 1 ? "ITU-T Rec.H.262.0 | ISO/IEC 13818-2 Spatial Scalability" :
-           i_type == 2 ? "ITU-T Rec.H.262.0 | ISO/IEC 13818-2 SNR Scalability" :
-           i_type == 3 ? "ITU-T Rec.H.262.0 | ISO/IEC 13818-2 Temporal Scalability" :
-           i_type == 4 ? "ITU-T Rec.H.262.0 | ISO/IEC 13818-2 Data paritioning" :
-           i_type == 5 ? "ISO/IEC 13818-3 Extension bitstream" :
-           i_type == 6 ? "ITU-T Rec.H.222.0 | ISO/IEC 13818-1 PrivateStream" :
-           i_type >= 7 && i_type <= 14 ? "reserved" :
+           i_type == 1 ? "Spatial Scalability" :
+           i_type == 2 ? "SNR Scalability" :
+           i_type == 3 ? "Temporal Scalability" :
+           i_type == 4 ? "Data paritioning" :
+           i_type == 5 ? "Extension bitstream" :
+           i_type == 6 ? "Private Stream" :
+           i_type == 7 ? "Multi-view Profile" :
+           i_type >= 8 && i_type <= 14 ? "reserved" :
            i_type == 15 ? "base layer" : "unknown";
 }
 

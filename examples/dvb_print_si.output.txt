@@ -222,7 +222,7 @@ new PMT program=20000 version=1 pcrpid=110
   * ES pid=120 streamtype=0x02 streamtype_txt="13818-2 video (MPEG-2)"
     - desc 02 video_stream multiple_frame_rate=1 frame_rate_code=3 frame_rate_txt="25.00" mpeg1_only=1 constraint_parameter=1 still_picture=1
     - desc 02 video_stream multiple_frame_rate=1 frame_rate_code=4 frame_rate_txt="29.97" mpeg1_only=0 constraint_parameter=1 still_picture=1 profile=4 profile_txt="Main" level=8 level_txt="Main" chroma_format=2 chroma_format_txt="4:2:2" frame_rate_extension=0
-    - desc 04 hierarchy type=1 type_txt="ITU-T Rec.H.262.0 | ISO/IEC 13818-2 Spatial Scalability" layer_index=6 embedded_layer_index=7 channel=8
+    - desc 04 hierarchy type=1 type_txt="Spatial Scalability" layer_index=6 embedded_layer_index=7 channel=8
     - desc 05 registration identifier=TEST
     - desc 06 data_stream_alignment alignment=2 alignment_txt="Video access unit"
     - desc 07 target_background_grid horizontal_size=720 vertical_size=576 aspect_ratio_info=7

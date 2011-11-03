@@ -386,7 +386,7 @@
 <VIDEO_STREAM_DESC multiple_frame_rate="1" frame_rate_code="4" frame_rate_txt="29.97" mpeg1_only="0" constraint_parameter="1" still_picture="1" profile="4" profile_txt="Main" level="8" level_txt="Main" chroma_format="2" chroma_format_txt="4:2:2" frame_rate_extension="0"/>
 </DESC>
 <DESC id="0x04" length="4" value="f1c6c7c8">
-<HIERARCHY_DESC type="1" type_txt="ITU-T Rec.H.262.0 | ISO/IEC 13818-2 Spatial Scalability" layer_index="6" embedded_layer_index="7" channel="8"/>
+<HIERARCHY_DESC type="1" type_txt="Spatial Scalability" layer_index="6" embedded_layer_index="7" channel="8"/>
 </DESC>
 <DESC id="0x05" length="4" value="54455354">
 <REGISTRATION_DESC identifier="TEST"/>
