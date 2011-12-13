@@ -1,7 +1,7 @@
 /*****************************************************************************
  * dvb_print_si.c: Prints tables from a TS file
  *****************************************************************************
- * Copyright (C) 2010 VideoLAN
+ * Copyright (C) 2010-2011 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *
@@ -31,7 +31,9 @@
 #include <inttypes.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <stdarg.h>
+#include <getopt.h>
 #include <iconv.h>
 
 #include <bitstream/mpeg/ts.h>
@@ -81,6 +83,29 @@ static const char *psz_native_encoding = "UTF-8";
 static const char *psz_current_encoding = "";
 static iconv_t iconv_handle = (iconv_t)-1;
 static print_type_t i_print_type = PRINT_TEXT;
+
+/* Please keep those two in sync */
+enum tables_t {
+    TABLE_PAT = 0,
+    TABLE_CAT,
+    TABLE_TSDT,
+    TABLE_NIT,
+    TABLE_BAT,
+    TABLE_SDT,
+    TABLE_EIT,
+    TABLE_TOT,
+    TABLE_TDT,
+    TABLE_RST,
+    TABLE_DIT,
+    TABLE_SIT,
+    TABLE_PMT,
+    TABLE_END
+};
+static const char * const ppsz_all_tables[TABLE_END] = {
+    "pat", "cat", "tsdt", "nit", "bat", "sdt", "eit", "tot", "tdt", "rst",
+    "dit", "sit", "pmt"
+};
+static bool pb_print_table[TABLE_END];
 
 /*****************************************************************************
  * print_wrapper
@@ -262,7 +287,9 @@ static void handle_pat(void)
         psi_table_free(pp_old_pat_sections);
     }
 
-    pat_table_print(pp_current_pat_sections, print_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_PAT])
+        pat_table_print(pp_current_pat_sections, print_wrapper, NULL,
+                        i_print_type);
 }
 
 static void handle_pat_section(uint16_t i_pid, uint8_t *p_section)
@@ -321,7 +348,9 @@ static void handle_cat(void)
     if (psi_table_validate(pp_old_cat_sections))
         psi_table_free(pp_old_cat_sections);
 
-    cat_table_print(pp_current_cat_sections, print_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_CAT])
+        cat_table_print(pp_current_cat_sections, print_wrapper, NULL,
+                        i_print_type);
 }
 
 static void handle_cat_section(uint16_t i_pid, uint8_t *p_section)
@@ -380,7 +409,9 @@ static void handle_tsdt(void)
     if (psi_table_validate(pp_old_tsdt_sections))
         psi_table_free(pp_old_tsdt_sections);
 
-    tsdt_table_print(pp_current_tsdt_sections, print_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_TSDT])
+        tsdt_table_print(pp_current_tsdt_sections, print_wrapper, NULL,
+                         i_print_type);
 }
 
 static void handle_tsdt_section(uint16_t i_pid, uint8_t *p_section)
@@ -471,7 +502,9 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
     free(p_sid->p_current_pmt);
     p_sid->p_current_pmt = p_pmt;
 
-    pmt_print(p_pmt, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_PMT])
+        pmt_print(p_pmt, print_wrapper, NULL, iconv_wrapper, NULL,
+                  i_print_type);
 }
 
 /*****************************************************************************
@@ -505,8 +538,9 @@ static void handle_nit(void)
     psi_table_copy(pp_current_nit_sections, pp_next_nit_sections);
     psi_table_init(pp_next_nit_sections);
 
-    nit_table_print(pp_current_nit_sections, print_wrapper, NULL,
-                    iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_NIT])
+        nit_table_print(pp_current_nit_sections, print_wrapper, NULL,
+                        iconv_wrapper, NULL, i_print_type);
 }
 
 static void handle_nit_section(uint16_t i_pid, uint8_t *p_section)
@@ -561,8 +595,9 @@ static void handle_bat(void)
     psi_table_copy(pp_current_bat_sections, pp_next_bat_sections);
     psi_table_init(pp_next_bat_sections);
 
-    bat_table_print(pp_current_bat_sections, print_wrapper, NULL,
-                    iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_BAT])
+        bat_table_print(pp_current_bat_sections, print_wrapper, NULL,
+                        iconv_wrapper, NULL, i_print_type);
 }
 
 static void handle_bat_section(uint16_t i_pid, uint8_t *p_section)
@@ -617,8 +652,9 @@ static void handle_sdt(void)
     psi_table_copy(pp_current_sdt_sections, pp_next_sdt_sections);
     psi_table_init(pp_next_sdt_sections);
 
-    sdt_table_print(pp_current_sdt_sections, print_wrapper, NULL,
-                    iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_SDT])
+        sdt_table_print(pp_current_sdt_sections, print_wrapper, NULL,
+                        iconv_wrapper, NULL, i_print_type);
 }
 
 static void handle_sdt_section(uint16_t i_pid, uint8_t *p_section)
@@ -660,7 +696,9 @@ static void handle_eit_section(uint16_t i_pid, uint8_t *p_eit)
         return;
     }
 
-    eit_print(p_eit, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_EIT])
+        eit_print(p_eit, print_wrapper, NULL, iconv_wrapper, NULL,
+                  i_print_type);
 
     free(p_eit);
 }
@@ -683,7 +721,9 @@ static void handle_tdt_section(uint16_t i_pid, uint8_t *p_tdt)
         return;
     }
 
-    tdt_print(p_tdt, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_TDT])
+        tdt_print(p_tdt, print_wrapper, NULL, iconv_wrapper, NULL,
+                  i_print_type);
 
     free(p_tdt);
 }
@@ -706,7 +746,9 @@ static void handle_tot_section(uint16_t i_pid, uint8_t *p_tot)
         return;
     }
 
-    tot_print(p_tot, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_TOT])
+        tot_print(p_tot, print_wrapper, NULL, iconv_wrapper, NULL,
+                  i_print_type);
 
     free(p_tot);
 }
@@ -729,7 +771,9 @@ static void handle_dit_section(uint16_t i_pid, uint8_t *p_dit)
         return;
     }
 
-    dit_print(p_dit, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_DIT])
+        dit_print(p_dit, print_wrapper, NULL, iconv_wrapper, NULL,
+                  i_print_type);
 
     free(p_dit);
 }
@@ -752,7 +796,9 @@ static void handle_rst_section(uint16_t i_pid, uint8_t *p_rst)
         return;
     }
 
-    rst_print(p_rst, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_RST])
+        rst_print(p_rst, print_wrapper, NULL, iconv_wrapper, NULL,
+                  i_print_type);
 
     free(p_rst);
 }
@@ -775,7 +821,9 @@ static void handle_sit_section(uint16_t i_pid, uint8_t *p_sit)
         return;
     }
 
-    sit_print(p_sit, print_wrapper, NULL, iconv_wrapper, NULL, i_print_type);
+    if (pb_print_table[TABLE_SIT])
+        sit_print(p_sit, print_wrapper, NULL, iconv_wrapper, NULL,
+                  i_print_type);
 
     free(p_sit);
 }
@@ -907,29 +955,53 @@ static void handle_psi_packet(uint8_t *p_ts)
  *****************************************************************************/
 static void usage(const char *psz)
 {
-    fprintf(stderr, "usage: %s [-x xml] < <input file> [> <output>]\n", psz);
+    fprintf(stderr, "usage: %s [-x xml] [-T <tables>] < <input file> [> <output>]\n", psz);
     exit(EXIT_FAILURE);
 }
 
 int main(int i_argc, char **ppsz_argv)
 {
-    int i;
+    int i, c;
+    char *psz_tables = NULL;
 
-    if (ppsz_argv[1] != NULL &&
-        (!strcmp(ppsz_argv[1], "-h") || !strcmp(ppsz_argv[1], "--help")))
-        usage(ppsz_argv[0]);
+    static const struct option long_options[] = {
+        { "print",           required_argument, NULL, 'x' },
+        { "help",            no_argument,       NULL, 'h' },
+        { "version",         no_argument,       NULL, 'V' },
+        { "tables",          no_argument,       NULL, 'T' },
+        { 0, 0, 0, 0 }
+    };
 
-    if (ppsz_argv[1] != NULL &&
-        (!strcmp(ppsz_argv[1], "-x") || !strcmp(ppsz_argv[1], "--print"))) {
-        if (ppsz_argv[2] == NULL)
+    while ((c = getopt_long(i_argc, ppsz_argv, "x:hVT:", long_options, NULL)) != -1)
+    {
+        switch (c) {
+        case 'x':
+            if (!strcmp(optarg, "text"))
+                i_print_type = PRINT_TEXT;
+            else if (!strcmp(optarg, "xml"))
+                i_print_type = PRINT_XML;
+            else
+                fprintf(stderr, "unrecognized print type %s\n", optarg);
+            break;
+
+        case 'T':
+            psz_tables = strdup(optarg);
+            break;
+
+        case 'V':
+            fprintf(stderr, "biTStream %d.%d.%d\n", BITSTREAM_VERSION_MAJOR,
+                    BITSTREAM_VERSION_MINOR, BITSTREAM_VERSION_REVISION);
+            exit(0);
+            break;
+
+
+        case 'h':
+        default:
             usage(ppsz_argv[0]);
-        if (!strcmp(ppsz_argv[2], "text"))
-            i_print_type = PRINT_TEXT;
-        else if (!strcmp(ppsz_argv[2], "xml"))
-            i_print_type = PRINT_XML;
-        else
-            usage(ppsz_argv[0]);
+        }
     }
+    if (optind < i_argc)
+        usage(ppsz_argv[0]);
 
     setvbuf(stdout, NULL, _IOLBF, 0);
 
@@ -952,6 +1024,27 @@ int main(int i_argc, char **ppsz_argv)
     p_pids[RST_PID].i_psi_refcount++;
     p_pids[DIT_PID].i_psi_refcount++;
     p_pids[SIT_PID].i_psi_refcount++;
+
+    if (psz_tables != NULL) {
+        char *psz_table = psz_tables;
+        for (i = 0; i < TABLE_END; i++)
+            pb_print_table[i] = false;
+
+        do {
+            char *psz_next = strpbrk(psz_table, ",");
+            if (psz_next != NULL) *psz_next++ = '\0';
+
+            for (i = 0; i < TABLE_END; i++)
+                if (!strcasecmp(psz_table, ppsz_all_tables[i]))
+                    pb_print_table[i] = true;
+
+            psz_table = psz_next;
+        } while (psz_table != NULL);
+
+        free(psz_tables);
+    } else
+        for (i = 0; i < TABLE_END; i++)
+            pb_print_table[i] = true;
 
     switch (i_print_type) {
     case PRINT_XML:
