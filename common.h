@@ -32,6 +32,10 @@
 #include <stdbool.h>  /* bool */
 #include <string.h>   /* memset, memcpy */
 
+#define BITSTREAM_VERSION_MAJOR 1
+#define BITSTREAM_VERSION_MINOR 0
+#define BITSTREAM_VERSION_REVISION 0
+
 #ifdef __cplusplus
 extern "C"
 {
