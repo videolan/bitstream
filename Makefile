@@ -1,5 +1,6 @@
 PREFIX ?= /usr/local
 INCLUDE = $(subst //,/,$(DESTDIR)/$(PREFIX)/include/bitstream)
+VERSION = 1.0
 
 all:
 	@echo "Run \"make install\" to install biTStream into $(INCLUDE)"
@@ -23,4 +24,7 @@ uninstall:
 	@echo "REMOVE   $(INCLUDE)"
 	@rm -rf $(INCLUDE)
 
-.PHONY: install uninstall
+distcheck:
+	git archive --format=tar --prefix=bitstream-$(VERSION)/ master | bzip2 -9 > bitstream-$(VERSION).tar.bz2
+
+.PHONY: install uninstall distcheck
