@@ -248,9 +248,9 @@
 </DESC>
 </SERVICE>
 </SDT>
-<EIT tableid="0x4e" type="actual_pf" version="0" current_next="1" tsid="10000" onid="40000" seg_last_sec_number="0" last_table_id="0x00">
+<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="0" current_next="1" tsid="10000" onid="40000" seg_last_sec_number="0" last_table_id="0x00">
 </EIT>
-<EIT tableid="0x4e" type="actual_pf" version="1" current_next="1" tsid="10000" onid="40000" seg_last_sec_number="0" last_table_id="0x00">
+<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="1" current_next="1" tsid="10000" onid="40000" seg_last_sec_number="0" last_table_id="0x00">
 <EVENT id="30000" start_time="1234567890" start_time_dec="2009-02-13 23:31:30 UTC" duration="86399" duration_dec="23:59:59" running_status="2" free_CA_mode="0">
 <DESC id="0x4d" length="44" value="656e670e4d616a6f72205456206576656e7419546865206576656e74206f66207468652063656e7475727921">
 <SHORT_EVENT_DESC lang="eng" event_name="Major TV event" text="The event of the century!"/>

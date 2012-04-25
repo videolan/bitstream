@@ -64,10 +64,11 @@ static inline void eit_print(uint8_t *p_eit,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(print_opaque,
-                "<EIT tableid=\"0x%02x\" type=\"%s\" version=\"%u\""
+                "<EIT tableid=\"0x%02x\" type=\"%s\" service_id=\"%u\" version=\"%u\""
                 " current_next=\"%u\" tsid=\"%u\" onid=\"%u\""
                 " seg_last_sec_number=\"%u\" last_table_id=\"0x%02x\">",
                  i_tid, psz_tid,
+                 eit_get_sid(p_eit),
                  psi_get_version(p_eit),
                  !psi_get_current(p_eit) ? 0 : 1,
                  eit_get_tsid(p_eit),

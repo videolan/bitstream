@@ -2359,6 +2359,7 @@ static void generate_eit(void) {
     psi_set_current(eit);
 
     eit_set_length(eit, 0);
+    eit_set_sid(eit, sid);
     eit_set_tsid(eit, tsid);
     eit_set_onid(eit, onid);
     eit_set_segment_last_sec_number(eit, 0);
