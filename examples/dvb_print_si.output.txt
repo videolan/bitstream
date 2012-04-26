@@ -141,9 +141,9 @@ new SDT actual tsid=10000 version=1 onid=40000
     - desc 4b nvod_reference tsid=10200 onid=40200 sid=20200
     - desc 5f private_data specifier=0xaabbccdd
 end SDT
-new EIT tableid=0x4e type=actual_pf version=0 tsid=10000 onid=40000 seg_last_sec_number=0 last_table_id=0x00
+new EIT tableid=0x4e type=actual_pf service_id=20000 version=0 tsid=10000 onid=40000 seg_last_sec_number=0 last_table_id=0x00
 end EIT
-new EIT tableid=0x4e type=actual_pf version=1 tsid=10000 onid=40000 seg_last_sec_number=0 last_table_id=0x00
+new EIT tableid=0x4e type=actual_pf service_id=20000 version=1 tsid=10000 onid=40000 seg_last_sec_number=0 last_table_id=0x00
   * EVENT id=30000 start_time=1234567890 start_time_dec="2009-02-13 23:31:30 UTC" duration=86399 duration_dec=23:59:59 running_status=2 free_CA_mode=0
     - desc 4d short_event lang=eng event_name="Major TV event" text="The event of the century!"
   * EVENT id=30100 start_time=1 start_time_dec="1970-01-01 00:00:01 UTC" duration=3600 duration_dec=01:00:00 running_status=1 free_CA_mode=0

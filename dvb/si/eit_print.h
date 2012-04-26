@@ -79,9 +79,10 @@ static inline void eit_print(uint8_t *p_eit,
         break;
     default:
         pf_print(print_opaque,
-                 "new EIT tableid=0x%02x type=%s version=%u%s tsid=%u"
+                 "new EIT tableid=0x%02x type=%s service_id=%u version=%u%s tsid=%u"
                  " onid=%u seg_last_sec_number=%u last_table_id=0x%02x",
                  i_tid, psz_tid,
+                 eit_get_sid(p_eit),
                  psi_get_version(p_eit),
                  !psi_get_current(p_eit) ? " (next)" : "",
                  eit_get_tsid(p_eit),
