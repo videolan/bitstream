@@ -250,7 +250,7 @@ static inline bool tsaf_has_pcr(const uint8_t *p_ts)
 
 static inline uint64_t tsaf_get_pcr(const uint8_t *p_ts)
 {
-    return (p_ts[6] << 25) | (p_ts[7] << 17) | (p_ts[8] << 9) | (p_ts[9] << 1) |
+    return ((uint64_t) p_ts[6] << 25) | (p_ts[7] << 17) | (p_ts[8] << 9) | (p_ts[9] << 1) |
            (p_ts[10] >> 7);
 }
 
