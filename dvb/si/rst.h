@@ -110,12 +110,12 @@ static inline void rstn_set_event_id(uint8_t *p_rst_n, uint16_t i_event_id)
     p_rst_n[7] = i_event_id & 0xff;
 }
 
-static inline uint8_t rstn_get_running_status(const uint8_t *p_rst_n)
+static inline uint8_t rstn_get_running(const uint8_t *p_rst_n)
 {
     return p_rst_n[8] & 0x07;
 }
 
-static inline void rstn_set_running_status(uint8_t *p_rst_n, uint8_t i_running_status)
+static inline void rstn_set_running(uint8_t *p_rst_n, uint8_t i_running_status)
 {
     p_rst_n[8] = 0xf8 | (i_running_status & 0x07);
 }

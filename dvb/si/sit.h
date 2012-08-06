@@ -99,12 +99,12 @@ static inline void sitn_set_sid(uint8_t *p_sit_n, uint16_t i_sid)
     p_sit_n[1] =  i_sid       & 0xff;
 }
 
-static inline uint8_t sitn_get_running_status(const uint8_t *p_sit_n)
+static inline uint8_t sitn_get_running(const uint8_t *p_sit_n)
 {
     return (p_sit_n[2] & 0x70) >> 4;
 }
 
-static inline void sitn_set_running_status(uint8_t *p_sit_n, uint8_t i_running_status)
+static inline void sitn_set_running(uint8_t *p_sit_n, uint8_t i_running_status)
 {
     p_sit_n[2] = (p_sit_n[2] &~ 0x70) | ((i_running_status & 0x07) << 4);
 }

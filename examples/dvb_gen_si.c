@@ -2384,8 +2384,8 @@ static void generate_eit(void) {
         eitn_set_event_id(eit_n, event_id);
         eitn_set_start_time(eit_n, dvb_time_encode_UTC(ts_0));
         eitn_set_duration_bcd(eit_n, dvb_time_encode_duration(86399));
-        eitn_set_running_status(eit_n, 2);
-        eitn_set_free_CA_mode(eit_n, false);
+        eitn_set_running(eit_n, 2);
+        eitn_set_ca(eit_n, false);
         eitn_set_desclength(eit_n, 0);
         {
             // Add descriptors to transport_stream_n
@@ -2405,8 +2405,8 @@ static void generate_eit(void) {
         eitn_set_event_id(eit_n, event_id + 100);
         eitn_set_start_time(eit_n, dvb_time_encode_UTC(ts_1));
         eitn_set_duration_bcd(eit_n, dvb_time_encode_duration(3600));
-        eitn_set_running_status(eit_n, 1);
-        eitn_set_free_CA_mode(eit_n, false);
+        eitn_set_running(eit_n, 1);
+        eitn_set_ca(eit_n, false);
         eitn_set_desclength(eit_n, 0);
         {
             // Add descriptors to transport_stream_n
@@ -2435,8 +2435,8 @@ static void generate_eit(void) {
         eitn_set_event_id(eit_n, event_id + 200);
         eitn_set_start_time(eit_n, dvb_time_encode_UTC(ts_2));
         eitn_set_duration_bcd(eit_n, dvb_time_encode_duration(7200));
-        eitn_set_running_status(eit_n, 0);
-        eitn_set_free_CA_mode(eit_n, false);
+        eitn_set_running(eit_n, 0);
+        eitn_set_ca(eit_n, false);
         eitn_set_desclength(eit_n, 0);
         {
             // Add descriptors to transport_stream_n
@@ -2471,8 +2471,8 @@ static void generate_eit(void) {
         eitn_set_event_id(eit_n, event_id + 300);
         eitn_set_start_time(eit_n, dvb_time_encode_UTC(ts_2));
         eitn_set_duration_bcd(eit_n, dvb_time_encode_duration(7200));
-        eitn_set_running_status(eit_n, 4);
-        eitn_set_free_CA_mode(eit_n, true);
+        eitn_set_running(eit_n, 4);
+        eitn_set_ca(eit_n, true);
         eitn_set_desclength(eit_n, 0);
         {
             // Add descriptors to transport_stream_n
@@ -2602,7 +2602,7 @@ static void generate_rst(void) {
     rstn_set_onid(rst_n, onid);
     rstn_set_service_id(rst_n, sid);
     rstn_set_event_id(rst_n, event_id);
-    rstn_set_running_status(rst_n, 1);
+    rstn_set_running(rst_n, 1);
 
     rst_n = rst_get_status(rst, j++);
     rstn_init(rst_n);
@@ -2610,7 +2610,7 @@ static void generate_rst(void) {
     rstn_set_onid(rst_n, onid + 100);
     rstn_set_service_id(rst_n, sid + 100);
     rstn_set_event_id(rst_n, event_id + 100);
-    rstn_set_running_status(rst_n, 2);
+    rstn_set_running(rst_n, 2);
 
     rst_n = rst_get_status(rst, j++);
     rstn_init(rst_n);
@@ -2618,7 +2618,7 @@ static void generate_rst(void) {
     rstn_set_onid(rst_n, onid + 200);
     rstn_set_service_id(rst_n, sid + 200);
     rstn_set_event_id(rst_n, event_id + 200);
-    rstn_set_running_status(rst_n, 3);
+    rstn_set_running(rst_n, 3);
 
     // Set correct rst length
     rst_n = rst_get_status(rst, j); // Get offset of the end of last status
@@ -3037,7 +3037,7 @@ static void generate_sit(void) {
         sit_n = sit_get_service(sit, sit_n_counter++);
         sitn_init(sit_n);
         sitn_set_sid(sit_n, sid);
-        sitn_set_running_status(sit_n, 1);
+        sitn_set_running(sit_n, 1);
         sitn_set_desclength(sit_n, 0);
         {
             // Add descriptors to transport_stream_n
@@ -3062,7 +3062,7 @@ static void generate_sit(void) {
         sit_n = sit_get_service(sit, sit_n_counter++);
         sitn_init(sit_n);
         sitn_set_sid(sit_n, sid + 1000);
-        sitn_set_running_status(sit_n, 3);
+        sitn_set_running(sit_n, 3);
         sitn_set_desclength(sit_n, 0);
 
         // Set transport_stream_loop length

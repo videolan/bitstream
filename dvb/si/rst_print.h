@@ -60,23 +60,23 @@ static inline void rst_print(uint8_t *p_rst,
         case PRINT_XML:
             pf_print(print_opaque,
                      "<STATUS tsid=\"%hu\" onid=\"%hu\" service_id=\"%hu\""
-                     " event_id=\"%hu\" running_status=\"%hu\"/>",
+                     " event_id=\"%hu\" running=\"%hu\"/>",
                      rstn_get_tsid(p_rst_n),
                      rstn_get_onid(p_rst_n),
                      rstn_get_service_id(p_rst_n),
                      rstn_get_event_id(p_rst_n),
-                     rstn_get_running_status(p_rst_n)
+                     rstn_get_running(p_rst_n)
                     );
             break;
         default:
             pf_print(print_opaque,
                      "  * status tsid=\"%hu\" onid=\"%hu\" service_id=\"%hu\""
-                     " event_id=\"%hu\" running_status=\"%hu\"",
+                     " event_id=\"%hu\" running=\"%hu\"",
                      rstn_get_tsid(p_rst_n),
                      rstn_get_onid(p_rst_n),
                      rstn_get_service_id(p_rst_n),
                      rstn_get_event_id(p_rst_n),
-                     rstn_get_running_status(p_rst_n)
+                     rstn_get_running(p_rst_n)
                     );
         }
     }

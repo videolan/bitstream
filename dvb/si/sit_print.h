@@ -66,15 +66,15 @@ static inline void sit_print(uint8_t *p_sit,
         j++;
         switch (i_print_type) {
         case PRINT_XML:
-            pf_print(print_opaque, "<SERVICE sid=\"%hu\" running_status=\"%u\">",
+            pf_print(print_opaque, "<SERVICE sid=\"%hu\" running=\"%u\">",
                      sitn_get_sid(p_service),
-                     sitn_get_running_status(p_service)
+                     sitn_get_running(p_service)
                     );
             break;
         default:
-            pf_print(print_opaque, "  * SERVICE sid=%hu running_status=%u",
+            pf_print(print_opaque, "  * SERVICE sid=%hu running=%u",
                      sitn_get_sid(p_service),
-                     sitn_get_running_status(p_service)
+                     sitn_get_running(p_service)
                     );
         }
 

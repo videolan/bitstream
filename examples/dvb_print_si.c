@@ -57,14 +57,25 @@ typedef struct ts_pid_t {
     uint16_t i_psi_buffer_used;
 } ts_pid_t;
 
+static ts_pid_t p_pids[MAX_PIDS];
+
 typedef struct sid_t {
     uint16_t i_sid, i_pmt_pid;
     uint8_t *p_current_pmt;
+    PSI_TABLE_DECLARE(pp_eit_sections);
 } sid_t;
 
-ts_pid_t p_pids[MAX_PIDS];
 static sid_t **pp_sids = NULL;
 static int i_nb_sids = 0;
+
+typedef struct bouquet_t {
+    uint16_t i_bouquet;
+    PSI_TABLE_DECLARE(pp_current_bat_sections);
+    PSI_TABLE_DECLARE(pp_next_bat_sections);
+} bouquet_t;
+
+static bouquet_t **pp_bouquets = NULL;
+static int i_nb_bouquets = 0;
 
 static PSI_TABLE_DECLARE(pp_current_pat_sections);
 static PSI_TABLE_DECLARE(pp_next_pat_sections);
@@ -74,8 +85,6 @@ static PSI_TABLE_DECLARE(pp_current_tsdt_sections);
 static PSI_TABLE_DECLARE(pp_next_tsdt_sections);
 static PSI_TABLE_DECLARE(pp_current_nit_sections);
 static PSI_TABLE_DECLARE(pp_next_nit_sections);
-static PSI_TABLE_DECLARE(pp_current_bat_sections);
-static PSI_TABLE_DECLARE(pp_next_bat_sections);
 static PSI_TABLE_DECLARE(pp_current_sdt_sections);
 static PSI_TABLE_DECLARE(pp_next_sdt_sections);
 
@@ -246,6 +255,7 @@ static void handle_pat(void)
                     pp_sids = realloc(pp_sids, ++i_nb_sids * sizeof(sid_t *));
                     pp_sids[i_pmt] = p_sid;
                     p_sid->p_current_pmt = NULL;
+                    psi_table_init(p_sid->pp_eit_sections);
                 }
                 else
                     p_sid = pp_sids[i_pmt];
@@ -278,6 +288,8 @@ static void handle_pat(void)
                             pp_sids[i_pmt]->i_sid = 0;
                             free(pp_sids[i_pmt]->p_current_pmt);
                             pp_sids[i_pmt]->p_current_pmt = NULL;
+                            psi_table_free(pp_sids[i]->pp_eit_sections);
+                            psi_table_init(pp_sids[i]->pp_eit_sections);
                             break;
                         }
                 }
@@ -477,6 +489,7 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
         p_sid->i_sid = i_sid;
         p_sid->i_pmt_pid = i_pid;
         p_sid->p_current_pmt = NULL;
+        psi_table_init(p_sid->pp_eit_sections);
     } else {
         p_sid = pp_sids[i];
         if (i_pid != p_sid->i_pmt_pid) {
@@ -528,8 +541,8 @@ static void handle_nit(void)
         default:
             printf("invalid NIT received\n");
         }
-        psi_table_free( pp_next_nit_sections );
-        psi_table_init( pp_next_nit_sections );
+        psi_table_free(pp_next_nit_sections);
+        psi_table_init(pp_next_nit_sections);
         return;
     }
 
@@ -567,17 +580,18 @@ static void handle_nit_section(uint16_t i_pid, uint8_t *p_section)
 /*****************************************************************************
  * handle_bat
  *****************************************************************************/
-static void handle_bat(void)
+static void handle_bat(bouquet_t *p_bouquet)
 {
-    if (psi_table_validate(pp_current_bat_sections) &&
-        psi_table_compare(pp_current_bat_sections, pp_next_bat_sections)) {
+    if (psi_table_validate(p_bouquet->pp_current_bat_sections) &&
+        psi_table_compare(p_bouquet->pp_current_bat_sections,
+                          p_bouquet->pp_next_bat_sections)) {
         /* Same version BAT. Shortcut. */
-        psi_table_free(pp_next_bat_sections);
-        psi_table_init(pp_next_bat_sections);
+        psi_table_free(p_bouquet->pp_next_bat_sections);
+        psi_table_init(p_bouquet->pp_next_bat_sections);
         return;
     }
 
-    if (!bat_table_validate(pp_next_bat_sections)) {
+    if (!bat_table_validate(p_bouquet->pp_next_bat_sections)) {
         switch (i_print_type) {
         case PRINT_XML:
             printf("<ERROR type=\"invalid_bat\"/>\n");
@@ -585,23 +599,28 @@ static void handle_bat(void)
         default:
             printf("invalid BAT received\n");
         }
-        psi_table_free( pp_next_bat_sections );
-        psi_table_init( pp_next_bat_sections );
+        psi_table_free(p_bouquet->pp_next_bat_sections);
+        psi_table_init(p_bouquet->pp_next_bat_sections);
         return;
     }
 
     /* Switch tables. */
-    psi_table_free(pp_current_bat_sections);
-    psi_table_copy(pp_current_bat_sections, pp_next_bat_sections);
-    psi_table_init(pp_next_bat_sections);
+    psi_table_free(p_bouquet->pp_current_bat_sections);
+    psi_table_copy(p_bouquet->pp_current_bat_sections,
+                   p_bouquet->pp_next_bat_sections);
+    psi_table_init(p_bouquet->pp_next_bat_sections);
 
     if (pb_print_table[TABLE_BAT])
-        bat_table_print(pp_current_bat_sections, print_wrapper, NULL,
+        bat_table_print(p_bouquet->pp_current_bat_sections, print_wrapper, NULL,
                         iconv_wrapper, NULL, i_print_type);
 }
 
 static void handle_bat_section(uint16_t i_pid, uint8_t *p_section)
 {
+    uint16_t i_bouquet;
+    bouquet_t *p_bouquet;
+    int i;
+
     if (i_pid != BAT_PID || !bat_validate(p_section)) {
         switch (i_print_type) {
         case PRINT_XML:
@@ -615,10 +634,24 @@ static void handle_bat_section(uint16_t i_pid, uint8_t *p_section)
         return;
     }
 
-    if (!psi_table_section(pp_next_bat_sections, p_section))
+    i_bouquet = psi_get_tableidext(p_section);
+    for (i = 0; i < i_nb_bouquets; i++)
+        if (pp_bouquets[i]->i_bouquet && pp_bouquets[i]->i_bouquet == i_bouquet)
+            break;
+    if (i == i_nb_bouquets) {
+        p_bouquet = malloc(sizeof(bouquet_t));
+        pp_bouquets = realloc(pp_bouquets, ++i_nb_bouquets * sizeof(bouquet_t *));
+        pp_bouquets[i] = p_bouquet;
+        p_bouquet->i_bouquet = i_bouquet;
+        psi_table_init(p_bouquet->pp_current_bat_sections);
+        psi_table_init(p_bouquet->pp_next_bat_sections);
+    } else
+        p_bouquet = pp_bouquets[i];
+
+    if (!psi_table_section(p_bouquet->pp_next_bat_sections, p_section))
         return;
 
-    handle_bat();
+    handle_bat(p_bouquet);
 }
 
 /*****************************************************************************
@@ -681,9 +714,14 @@ static void handle_sdt_section(uint16_t i_pid, uint8_t *p_section)
 /*****************************************************************************
  * handle_eit
  *****************************************************************************/
-static void handle_eit_section(uint16_t i_pid, uint8_t *p_eit)
+static void handle_eit_section(uint16_t i_pid, uint8_t *p_section)
 {
-    if (i_pid != EIT_PID || !eit_validate(p_eit)) {
+    uint16_t i_sid;
+    uint8_t i_section;
+    sid_t *p_sid;
+    int i;
+
+    if (i_pid != EIT_PID || !eit_validate(p_section)) {
         switch (i_print_type) {
         case PRINT_XML:
             printf("<ERROR type=\"invalid_eit_section\" pid=\"%hu\"/>\n",
@@ -692,15 +730,49 @@ static void handle_eit_section(uint16_t i_pid, uint8_t *p_eit)
         default:
             printf("invalid EIT section received on PID %hu\n", i_pid);
         }
-        free(p_eit);
+        free(p_section);
         return;
     }
 
-    if (pb_print_table[TABLE_EIT])
-        eit_print(p_eit, print_wrapper, NULL, iconv_wrapper, NULL,
-                  i_print_type);
+    i_sid = psi_get_tableidext(p_section);
+    for (i = 0; i < i_nb_sids; i++)
+        if (pp_sids[i]->i_sid && pp_sids[i]->i_sid == i_sid)
+            break;
+    if (i == i_nb_sids) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"ghost_eit\" sid=\"%hu\"/>\n", i_sid);
+            break;
+        default:
+            printf("ghost EIT for service %hu\n", i_sid);
+        }
+        p_sid = malloc(sizeof(sid_t));
+        pp_sids = realloc(pp_sids, ++i_nb_sids * sizeof(sid_t *));
+        pp_sids[i] = p_sid;
+        p_sid->i_sid = i_sid;
+        p_sid->i_pmt_pid = 0;
+        p_sid->p_current_pmt = NULL;
+        psi_table_init(p_sid->pp_eit_sections);
+    } else
+        p_sid = pp_sids[i];
 
-    free(p_eit);
+    /* We do not use psi_table_* primitives as the spec allows for holes in
+     * section numbering, and there is no sure way to know whether you have
+     * gathered all sections. */
+    i_section = psi_get_section(p_section);
+    if (p_sid->pp_eit_sections[i_section] != NULL &&
+        psi_compare(p_sid->pp_eit_sections[i_section], p_section)) {
+        /* Identical section. Shortcut. */
+        free(p_section);
+        return;
+    }
+
+    free(p_sid->pp_eit_sections[i_section]);
+    p_sid->pp_eit_sections[i_section] = p_section;
+
+    if (pb_print_table[TABLE_EIT])
+        eit_print(p_section, print_wrapper, NULL, iconv_wrapper, NULL,
+                  i_print_type);
 }
 
 /*****************************************************************************
@@ -896,14 +968,11 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
         handle_sit_section(i_pid, p_section);
         break;
 
-    default:
-        if (i_table_id == EIT_TABLE_ID_PF_ACTUAL ||
-           (i_table_id >= EIT_TABLE_ID_SCHED_ACTUAL_FIRST &&
-            i_table_id <= EIT_TABLE_ID_SCHED_ACTUAL_LAST)) {
-            handle_eit_section(i_pid, p_section);
-            break;
-        }
+    case EIT_TABLE_ID_PF_ACTUAL:
+        handle_eit_section(i_pid, p_section);
+        break;
 
+    default:
         free( p_section );
         break;
     }
@@ -1009,8 +1078,8 @@ int main(int i_argc, char **ppsz_argv)
 
     for (i = 0; i < 8192; i++) {
         p_pids[i].i_last_cc = -1;
-        psi_assemble_init( &p_pids[i].p_psi_buffer,
-                           &p_pids[i].i_psi_buffer_used );
+        psi_assemble_init(&p_pids[i].p_psi_buffer,
+                          &p_pids[i].i_psi_buffer_used);
     }
 
     p_pids[PAT_PID].i_psi_refcount++;
@@ -1024,6 +1093,17 @@ int main(int i_argc, char **ppsz_argv)
     p_pids[RST_PID].i_psi_refcount++;
     p_pids[DIT_PID].i_psi_refcount++;
     p_pids[SIT_PID].i_psi_refcount++;
+
+    psi_table_init(pp_current_pat_sections);
+    psi_table_init(pp_next_pat_sections);
+    psi_table_init(pp_current_cat_sections);
+    psi_table_init(pp_next_cat_sections);
+    psi_table_init(pp_current_tsdt_sections);
+    psi_table_init(pp_next_tsdt_sections);
+    psi_table_init(pp_current_nit_sections);
+    psi_table_init(pp_next_nit_sections);
+    psi_table_init(pp_current_sdt_sections);
+    psi_table_init(pp_next_sdt_sections);
 
     if (psz_tables != NULL) {
         char *psz_table = psz_tables;
@@ -1083,6 +1163,38 @@ int main(int i_argc, char **ppsz_argv)
     default:
         break;
     }
+
+    if (iconv_handle != (iconv_t)-1)
+        iconv_close(iconv_handle);
+
+    psi_table_free(pp_current_pat_sections);
+    psi_table_free(pp_next_pat_sections);
+    psi_table_free(pp_current_cat_sections);
+    psi_table_free(pp_next_cat_sections);
+    psi_table_free(pp_current_tsdt_sections);
+    psi_table_free(pp_next_tsdt_sections);
+    psi_table_free(pp_current_nit_sections);
+    psi_table_free(pp_next_nit_sections);
+    psi_table_free(pp_current_sdt_sections);
+    psi_table_free(pp_next_sdt_sections);
+
+    for (i = 0; i < i_nb_bouquets; i++) {
+        psi_table_free(pp_bouquets[i]->pp_current_bat_sections);
+        psi_table_free(pp_bouquets[i]->pp_next_bat_sections);
+        free(pp_bouquets[i]);
+    }
+    free(pp_bouquets);
+
+    for (i = 0; i < i_nb_sids; i++) {
+        psi_table_free(pp_sids[i]->pp_eit_sections);
+        free(pp_sids[i]->p_current_pmt);
+        free(pp_sids[i]);
+    }
+    free(pp_sids);
+
+    for (i = 0; i < 8192; i++)
+        psi_assemble_reset(&p_pids[i].p_psi_buffer,
+                           &p_pids[i].i_psi_buffer_used);
 
     return EXIT_SUCCESS;
 }

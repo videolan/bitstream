@@ -52,14 +52,14 @@ static inline void bat_table_print(uint8_t **pp_sections,
 
     switch (i_print_type) {
     case PRINT_XML:
-        pf_print(print_opaque, "<BAT tid=\"%hhu\" networkid=\"%hu\" version=\"%hhu\" current_next=\"%d\">",
+        pf_print(print_opaque, "<BAT tid=\"%hhu\" bouquetid=\"%hu\" version=\"%hhu\" current_next=\"%d\">",
                  psi_table_get_tableid(pp_sections),
                  psi_table_get_tableidext(pp_sections),
                  psi_table_get_version(pp_sections),
                  !psi_table_get_current(pp_sections) ? 0 : 1);
         break;
     default:
-        pf_print(print_opaque, "new BAT networkid=%hu version=%hhu%s",
+        pf_print(print_opaque, "new BAT bouquetid=%hu version=%hhu%s",
                  psi_table_get_tableidext(pp_sections),
                  psi_table_get_version(pp_sections),
                  !psi_table_get_current(pp_sections) ? " (next)" : "");

@@ -152,22 +152,22 @@ static inline void eitn_set_duration_bcd(uint8_t *p_eit_n, uint32_t i_duration_b
     p_eit_n[9] = i_duration_bcd         & 0xff;
 }
 
-static inline uint8_t eitn_get_running_status(const uint8_t *p_eit_n)
+static inline uint8_t eitn_get_running(const uint8_t *p_eit_n)
 {
     return p_eit_n[10] >> 5;
 }
 
-static inline void eitn_set_running_status(uint8_t *p_eit_n, uint8_t i_running_status)
+static inline void eitn_set_running(uint8_t *p_eit_n, uint8_t i_running_status)
 {
     p_eit_n[10] = (p_eit_n[10] & 0x1f) | (i_running_status << 5);
 }
 
-static inline bool eitn_get_free_CA_mode(const uint8_t *p_eit_n)
+static inline bool eitn_get_ca(const uint8_t *p_eit_n)
 {
     return (p_eit_n[10] & 0x10) == 0x10;
 }
 
-static inline void eitn_set_free_CA_mode(uint8_t *p_eit_n, bool b_free_CA_mode)
+static inline void eitn_set_ca(uint8_t *p_eit_n, bool b_free_CA_mode)
 {
     p_eit_n[10] = b_free_CA_mode ? (p_eit_n[10] | 0x10) : (p_eit_n[10] &~ 0x10);
 }

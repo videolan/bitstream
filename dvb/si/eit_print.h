@@ -65,30 +65,25 @@ static inline void eit_print(uint8_t *p_eit,
     case PRINT_XML:
         pf_print(print_opaque,
                 "<EIT tableid=\"0x%02x\" type=\"%s\" service_id=\"%u\" version=\"%u\""
-                " current_next=\"%u\" tsid=\"%u\" onid=\"%u\""
-                " seg_last_sec_number=\"%u\" last_table_id=\"0x%02x\">",
+                " current_next=\"%u\" tsid=\"%u\" onid=\"%u\">",
                  i_tid, psz_tid,
                  eit_get_sid(p_eit),
                  psi_get_version(p_eit),
                  !psi_get_current(p_eit) ? 0 : 1,
                  eit_get_tsid(p_eit),
-                 eit_get_onid(p_eit),
-                 eit_get_segment_last_sec_number(p_eit),
-                 eit_get_last_table_id(p_eit)
+                 eit_get_onid(p_eit)
                 );
         break;
     default:
         pf_print(print_opaque,
                  "new EIT tableid=0x%02x type=%s service_id=%u version=%u%s tsid=%u"
-                 " onid=%u seg_last_sec_number=%u last_table_id=0x%02x",
+                 " onid=%u",
                  i_tid, psz_tid,
                  eit_get_sid(p_eit),
                  psi_get_version(p_eit),
                  !psi_get_current(p_eit) ? " (next)" : "",
                  eit_get_tsid(p_eit),
-                 eit_get_onid(p_eit),
-                 eit_get_segment_last_sec_number(p_eit),
-                 eit_get_last_table_id(p_eit)
+                 eit_get_onid(p_eit)
                 );
     }
 
@@ -107,21 +102,21 @@ static inline void eit_print(uint8_t *p_eit,
         case PRINT_XML:
             pf_print(print_opaque, "<EVENT id=\"%u\" start_time=\"%ld\" start_time_dec=\"%s\""
                                    " duration=\"%u\" duration_dec=\"%s\""
-                                   " running_status=\"%d\" free_CA_mode=\"%d\">",
+                                   " running=\"%d\" free_CA=\"%d\">",
                      eitn_get_event_id(p_event),
                      start_ts, start_str,
                      duration, duration_str,
-                     eitn_get_running_status(p_event),
-                     eitn_get_free_CA_mode(p_event)
+                     eitn_get_running(p_event),
+                     eitn_get_ca(p_event)
                     );
             break;
         default:
-            pf_print(print_opaque, "  * EVENT id=%u start_time=%ld start_time_dec=\"%s\" duration=%u duration_dec=%s running_status=%d free_CA_mode=%d",
+            pf_print(print_opaque, "  * EVENT id=%u start_time=%ld start_time_dec=\"%s\" duration=%u duration_dec=%s running=%d free_CA=%d",
                      eitn_get_event_id(p_event),
                      start_ts, start_str,
                      duration, duration_str,
-                     eitn_get_running_status(p_event),
-                     eitn_get_free_CA_mode(p_event)
+                     eitn_get_running(p_event),
+                     eitn_get_ca(p_event)
                     );
         }
 
