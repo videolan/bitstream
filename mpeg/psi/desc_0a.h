@@ -107,7 +107,7 @@ static inline void desc0a_print(uint8_t *p_desc, f_print pf_print,
         j++;
         switch (i_print_type) {
         case PRINT_XML:
-            pf_print(opaque, "<AUDIO_LANGUAGE_DESC language=\"%3.3s\" audiotype=\"%u\" autiotype_txt=\"%s\"/>",
+            pf_print(opaque, "<AUDIO_LANGUAGE_DESC language=\"%3.3s\" audiotype=\"%u\" audiotype_txt=\"%s\"/>",
                      (const char *)desc0an_get_code(p_desc_n),
                      desc0an_get_audiotype(p_desc_n),
                      desc0a_get_audiotype_txt(desc0an_get_audiotype(p_desc_n))

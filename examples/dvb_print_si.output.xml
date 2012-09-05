@@ -412,12 +412,12 @@
 <AUDIO_STREAM_DESC free_format_tag="1" ID="1" layer="2" ID_txt="MPEG Audio" layer_txt="Layer II" vbr_audio_flag="1"/>
 </DESC>
 <DESC id="0x0a" length="24" value="656e6700656e6701656e6702656e670362756c0462756c00">
-<AUDIO_LANGUAGE_DESC language="eng" audiotype="0" autiotype_txt="undefined"/>
-<AUDIO_LANGUAGE_DESC language="eng" audiotype="1" autiotype_txt="clean effects"/>
-<AUDIO_LANGUAGE_DESC language="eng" audiotype="2" autiotype_txt="hearing impaired"/>
-<AUDIO_LANGUAGE_DESC language="eng" audiotype="3" autiotype_txt="visual impaired commentary"/>
-<AUDIO_LANGUAGE_DESC language="bul" audiotype="4" autiotype_txt="reserved"/>
-<AUDIO_LANGUAGE_DESC language="bul" audiotype="0" autiotype_txt="undefined"/>
+<AUDIO_LANGUAGE_DESC language="eng" audiotype="0" audiotype_txt="undefined"/>
+<AUDIO_LANGUAGE_DESC language="eng" audiotype="1" audiotype_txt="clean effects"/>
+<AUDIO_LANGUAGE_DESC language="eng" audiotype="2" audiotype_txt="hearing impaired"/>
+<AUDIO_LANGUAGE_DESC language="eng" audiotype="3" audiotype_txt="visual impaired commentary"/>
+<AUDIO_LANGUAGE_DESC language="bul" audiotype="4" audiotype_txt="reserved"/>
+<AUDIO_LANGUAGE_DESC language="bul" audiotype="0" audiotype_txt="undefined"/>
 </DESC>
 <DESC id="0x52" length="1" value="2e">
 <STREAM_IDENTIFIER_DESC component_tag="46"/>
