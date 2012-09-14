@@ -49,6 +49,7 @@ extern "C"
 #define PES_HEADER_SIZE_NOPTS   9
 #define PES_HEADER_SIZE_PTS     14
 #define PES_HEADER_SIZE_PTSDTS  19
+#define PES_HEADER_OPTIONAL_SIZE   3
 
 #define PES_STREAM_ID_MIN           0xbc
 #define PES_STREAM_ID_PRIVATE_1     0xbd
@@ -131,7 +132,7 @@ static inline bool pes_validate(const uint8_t *p_pes)
  *****************************************************************************/
 static inline uint8_t *pes_payload(uint8_t *p_pes)
 {
-    return p_pes + PES_HEADER_SIZE + pes_get_headerlength(p_pes);
+    return p_pes + PES_HEADER_SIZE + PES_HEADER_OPTIONAL_SIZE + pes_get_headerlength(p_pes);
 }
 
 #ifdef __cplusplus
