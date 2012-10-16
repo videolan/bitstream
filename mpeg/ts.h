@@ -67,6 +67,11 @@ static inline void ts_init(uint8_t *p_ts)
     p_ts[3] = 0x0;
 }
 
+static inline void ts_set_transporterror(uint8_t *p_ts)
+{
+    p_ts[1] |= 0x80;
+}
+
 static inline bool ts_get_transporterror(const uint8_t *p_ts)
 {
     return !!(p_ts[1] & 0x80);
@@ -209,6 +214,11 @@ static inline uint8_t *ts_next_section(uint8_t *p_ts)
 static inline void tsaf_set_discontinuity(uint8_t *p_ts)
 {
     p_ts[5] |= 0x80;
+}
+
+static inline bool tsaf_has_discontinuity(const uint8_t *p_ts)
+{
+    return !!(p_ts[5] & 0x80);
 }
 
 static inline void tsaf_set_randomaccess(uint8_t *p_ts)
