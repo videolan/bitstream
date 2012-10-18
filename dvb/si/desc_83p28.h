@@ -103,7 +103,7 @@ static inline void desc83p28_print(uint8_t *p_desc, f_print pf_print,
             break;
         default:
             pf_print(opaque,
-            "    - desc %hhu lcn sid=%hu%s lcn=%hu", desc_get_tag(p_desc),
+            "    - desc %hhx lcn sid=%hu%s lcn=%hu", desc_get_tag(p_desc),
             desc83p28n_get_sid(p_desc_n),
             desc83p28n_get_visible(p_desc_n) ? " visible" : "",
             desc83p28n_get_lcn(p_desc_n));
