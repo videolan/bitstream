@@ -69,6 +69,12 @@ static inline void mp2vstart_init(uint8_t *p_mp2vstart, uint8_t startcode)
 #define MP2VX_ID_PICTSCALX          10
 
 /*****************************************************************************
+ * MP2V user data
+ *****************************************************************************/
+#define MP2VUSR_HEADER_SIZE         4
+#define MP2VUSR_START_CODE          0xb2
+
+/*****************************************************************************
  * MP2V sequence header
  *****************************************************************************/
 #define MP2VSEQ_HEADER_SIZE         12
