@@ -153,6 +153,16 @@ static inline uint8_t h264nalst_get_type(uint8_t start)
 #define H264SEI_BASE_VIEW_TEMP_HRD  44
 #define H264SEI_FRAME_PACK_ARRANG   45
 
+#define H264SEI_STRUCT_FRAME        0
+#define H264SEI_STRUCT_TOP          1
+#define H264SEI_STRUCT_BOT          2
+#define H264SEI_STRUCT_TOP_BOT      3
+#define H264SEI_STRUCT_BOT_TOP      4
+#define H264SEI_STRUCT_TOP_BOT_TOP  5
+#define H264SEI_STRUCT_BOT_TOP_BOT  6
+#define H264SEI_STRUCT_DOUBLE       7
+#define H264SEI_STRUCT_TRIPLE       8
+
 static inline void h264sei_init(uint8_t *p_h264sei)
 {
     h264nal_init(p_h264sei);
