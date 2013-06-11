@@ -86,7 +86,7 @@ static inline void rtp_set_seqnum(uint8_t *p_rtp, uint16_t i_seqnum)
     p_rtp[3] = i_seqnum & 0xff;
 }
 
-static inline uint16_t rtp_get_seqnum(uint8_t *p_rtp)
+static inline uint16_t rtp_get_seqnum(const uint8_t *p_rtp)
 {
     return (p_rtp[2] << 8) | p_rtp[3];
 }
@@ -99,7 +99,7 @@ static inline void rtp_set_timestamp(uint8_t *p_rtp, uint32_t i_timestamp)
     p_rtp[7] = i_timestamp & 0xff;
 }
 
-static inline uint32_t rtp_get_timestamp(uint8_t *p_rtp)
+static inline uint32_t rtp_get_timestamp(const uint8_t *p_rtp)
 {
     return (p_rtp[4] << 24) | (p_rtp[5] << 16) | (p_rtp[6] << 8) | p_rtp[7];
 }
@@ -112,7 +112,7 @@ static inline void rtp_set_ssrc(uint8_t *p_rtp, const uint8_t pi_ssrc[4])
     p_rtp[11] = pi_ssrc[3];
 }
 
-static inline void rtp_get_ssrc(uint8_t *p_rtp, uint8_t pi_ssrc[4])
+static inline void rtp_get_ssrc(const uint8_t *p_rtp, uint8_t pi_ssrc[4])
 {
     pi_ssrc[0] = p_rtp[8];
     pi_ssrc[1] = p_rtp[9];
