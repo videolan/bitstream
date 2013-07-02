@@ -68,6 +68,22 @@ static inline void mp2vstart_init(uint8_t *p_mp2vstart, uint8_t startcode)
 #define MP2VX_ID_PICSSCALX          9
 #define MP2VX_ID_PICTSCALX          10
 
+static inline uint8_t mp2vx_get_id(const uint8_t *p_mp2vx)
+{
+    return p_mp2vx[4] >> 4;
+}
+
+static inline void mp2vx_set_id(uint8_t *p_mp2vx, uint8_t id)
+{
+    p_mp2vx[4] &= 0xf;
+    p_mp2vx[4] |= id << 4;
+}
+
+static inline uint8_t mp2vxst_get_id(uint8_t start)
+{
+    return start >> 4;
+}
+
 /*****************************************************************************
  * MP2V user data
  *****************************************************************************/
