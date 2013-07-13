@@ -83,7 +83,7 @@ static inline void desc7c_set_aac_type_flag(uint8_t *p_desc, bool b_aac_type_fla
         desc_set_length(p_desc, i_desc_len);
     }
     if (i_desc_len > 1)
-        p_desc[3] = b_aac_type_flag ? 0xff : 0x7f;
+        p_desc[3] = b_aac_type_flag ? 0x80 : 0;
 }
 
 static inline uint8_t desc7c_get_aac_type(const uint8_t *p_desc)
