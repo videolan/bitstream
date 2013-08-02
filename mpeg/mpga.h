@@ -203,6 +203,14 @@ static inline void mpga_set_emphasis(uint8_t *p_mpga, uint8_t i_emphasis)
     p_mpga[3] |= i_emphasis & 0x03;
 }
 
+static inline bool mpga_sync_compare(const uint8_t *p_mpga1, const uint8_t *p_mpga2)
+{
+    return p_mpga1[0] == p_mpga2[0] &&
+           p_mpga1[1] == p_mpga2[1] &&
+           (p_mpga1[2] & 0xfc) == (p_mpga2[2] & 0xfc) &&
+           p_mpga1[3] == p_mpga2[3];
+}
+
 #ifdef __cplusplus
 }
 #endif

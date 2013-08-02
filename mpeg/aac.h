@@ -180,6 +180,14 @@ static inline void adts_set_num_blocks(uint8_t *p_adts, uint8_t i_blocks_min1)
     p_adts[6] |= i_blocks_min1 & 0x03;
 }
 
+static inline bool adts_sync_compare(const uint8_t *p_adts1, const uint8_t *p_adts2)
+{
+    return p_adts1[0] == p_adts2[0] &&
+           p_adts1[1] == p_adts2[1] &&
+           p_adts1[2] == p_adts2[2] &&
+           (p_adts1[3] & 0xfc) == (p_adts2[3] & 0xfc);
+}
+
 #ifdef __cplusplus
 }
 #endif
