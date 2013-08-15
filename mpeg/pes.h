@@ -71,9 +71,6 @@ static inline void pes_init(uint8_t *p_pes)
     p_pes[0] = 0x0;
     p_pes[1] = 0x0;
     p_pes[2] = 0x1;
-    p_pes[6] = 0x80;
-    p_pes[7] = 0x0;
-    p_pes[8] = 0x0;
 }
 
 static inline void pes_set_streamid(uint8_t *p_pes, uint8_t i_stream_id)
