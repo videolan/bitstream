@@ -52,6 +52,19 @@ extern "C"
 #define pmt_set_program psi_set_tableidext
 #define pmt_get_program psi_get_tableidext
 
+#define PMT_STREAMTYPE_VIDEO_MPEG1  0x1
+#define PMT_STREAMTYPE_VIDEO_MPEG2  0x2
+#define PMT_STREAMTYPE_AUDIO_MPEG1  0x3
+#define PMT_STREAMTYPE_AUDIO_MPEG2  0x4
+#define PMT_STREAMTYPE_PRIVATE_PSI  0x5
+#define PMT_STREAMTYPE_PRIVATE_PES  0x6
+#define PMT_STREAMTYPE_MHEG         0x7
+#define PMT_STREAMTYPE_DSM_CC       0x8
+#define PMT_STREAMTYPE_AUDIO_ADTS   0xf
+#define PMT_STREAMTYPE_VIDEO_MPEG4  0x10
+#define PMT_STREAMTYPE_AUDIO_LATM   0x11
+#define PMT_STREAMTYPE_VIDEO_AVC    0x1b
+
 static inline void pmt_init(uint8_t *p_pmt)
 {
     psi_init(p_pmt, true);
