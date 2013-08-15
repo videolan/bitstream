@@ -48,6 +48,10 @@ extern "C"
 #define DESC0A_HEADER_SIZE      DESC_HEADER_SIZE
 #define DESC0A_LANGUAGE_SIZE    4
 
+#define DESC0A_TYPE_CLEAN       0x1
+#define DESC0A_TYPE_HEARING_IMP 0x2
+#define DESC0A_TYPE_VISUAL_IMP  0x3
+
 static inline void desc0a_init(uint8_t *p_desc)
 {
     desc_set_tag(p_desc, 0x0a);
