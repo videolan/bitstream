@@ -188,6 +188,15 @@ static inline bool adts_sync_compare(const uint8_t *p_adts1, const uint8_t *p_ad
            (p_adts1[3] & 0xfc) == (p_adts2[3] & 0xfc);
 }
 
+/* same but only takes into account meaningful fields */
+static inline bool adts_sync_compare_formats(const uint8_t *p_adts1, const uint8_t *p_adts2)
+{
+    return p_adts1[0] == p_adts2[0] &&
+           (p_adts1[1] & 0xfe) == (p_adts2[1] & 0xfe) &&
+           p_adts1[2] == p_adts2[2] &&
+           (p_adts1[3] & 0xc0) == (p_adts2[3] & 0xc0);
+}
+
 #ifdef __cplusplus
 }
 #endif
