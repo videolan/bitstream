@@ -217,7 +217,7 @@ static inline bool mpga_sync_compare_formats(const uint8_t *p_mpga1, const uint8
     return p_mpga1[0] == p_mpga2[0] &&
            (p_mpga1[1] & 0xfe) == (p_mpga2[1] & 0xfe) &&
            (p_mpga1[2] & 0xfc) == (p_mpga2[2] & 0xfc) &&
-           (p_mpga1[3] & 0xf0) == (p_mpga2[3] & 0xf0);
+           (p_mpga1[3] & 0xc0) == (p_mpga2[3] & 0xc0);
 }
 
 #ifdef __cplusplus
