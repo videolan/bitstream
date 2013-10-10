@@ -220,7 +220,7 @@ static inline void psi_set_version(uint8_t *p_section, uint8_t i_version)
 
 static inline uint8_t psi_get_version(const uint8_t *p_section)
 {
-    return (p_section[5] & 0x1e) >> 1;
+    return (p_section[5] & 0x3e) >> 1;
 }
 
 static inline void psi_set_current(uint8_t *p_section)
