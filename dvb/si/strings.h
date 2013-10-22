@@ -47,19 +47,19 @@ extern "C"
  *****************************************************************************/
 static const char *ppsz_dvb_encodings[] = {
     /* 0x00 - 0x0f */
-    "", "ISO_8859-5", "ISO_8859-6", "ISO_8859-7", "ISO_8859-8",
-    "ISO_8859-9", "ISO_8859-10", "ISO_8859-11", "", "ISO_8859-13",
-    "ISO_8859-14", "ISO_8859-15", "", "", "", "",
+    "", "ISO-8859-5", "ISO-8859-6", "ISO-8859-7", "ISO-8859-8",
+    "ISO-8859-9", "ISO-8859-10", "ISO-8859-11", "", "ISO-8859-13",
+    "ISO-8859-14", "ISO-8859-15", "", "", "", "",
 
     /* 0x10 - 0x1f */
     "", "UTF-16", "KSC5601-1987", "GB2312", "BIG-5", "UTF-8",
     "", "", "", "", "", "", "", "", "", "", NULL
 };
 static const char *ppsz_dvb_encodings10[] = {
-    "", "ISO_8859-1", "ISO_8859-2", "ISO_8859-3", "ISO_8859-4",
-    "ISO_8859-5", "ISO_8859-6", "ISO_8859-7", "ISO_8859-8", "ISO_8859-9",
-    "ISO_8859-10", "ISO_8859-11", "", "ISO_8859-13", "ISO_8859-14",
-    "ISO_8859-15", NULL
+    "", "ISO-8859-1", "ISO-8859-2", "ISO-8859-3", "ISO-8859-4",
+    "ISO-8859-5", "ISO-8859-6", "ISO-8859-7", "ISO-8859-8", "ISO-8859-9",
+    "ISO-8859-10", "ISO-8859-11", "", "ISO-8859-13", "ISO-8859-14",
+    "ISO-8859-15", NULL
 };
 
 static inline const char *dvb_string_get_encoding(const uint8_t **pp_string,
@@ -71,7 +71,7 @@ static inline const char *dvb_string_get_encoding(const uint8_t **pp_string,
     i_first = (*pp_string)[0];
 
     if (!i_first) return NULL;
-    if (i_first >= 0x20) return "ISO_8859-1";
+    if (i_first >= 0x20) return "ISO-8859-1";
     (*pp_string)++;
     (*pi_length)--;
 
@@ -102,7 +102,7 @@ static inline uint8_t *dvb_string_set(const uint8_t *p_string, size_t i_length,
 {
     int i;
 
-    if (!strcmp(psz_encoding, "ISO_8859-9")) {
+    if (!strcmp(psz_encoding, "ISO-8859-9")) {
         *pi_out_length = i_length;
         return (uint8_t *)strdup((const char *)p_string);
     }
