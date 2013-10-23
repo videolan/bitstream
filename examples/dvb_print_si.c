@@ -127,6 +127,7 @@ static void print_wrapper(void *_unused, const char *psz_format, ...)
     strcpy(psz_fmt, psz_format);
     strcat(psz_fmt, "\n");
     vprintf(psz_fmt, args);
+    va_end(args);
 }
 
 /*****************************************************************************
