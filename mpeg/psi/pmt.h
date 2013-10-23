@@ -129,7 +129,7 @@ static inline uint8_t pmtn_get_streamtype(const uint8_t *p_pmt_n)
 
 static inline const char *pmt_get_streamtype_txt(uint8_t i_stream_type) {
     /* ISO/IEC 13818-1 | Table 2-36 - Stream type assignments */
-    if (i_stream_type == 0 || (i_stream_type > 0x1c && i_stream_type < 0x7e))
+    if (i_stream_type == 0)
         return "Reserved";
     switch (i_stream_type) {
         case 0x01: return "11172-2 video (MPEG-1)";
