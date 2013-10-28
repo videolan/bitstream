@@ -216,6 +216,11 @@ static inline void tsaf_set_discontinuity(uint8_t *p_ts)
     p_ts[5] |= 0x80;
 }
 
+static inline void tsaf_clear_discontinuity(uint8_t *p_ts)
+{
+    p_ts[5] &= ~0x80;
+}
+
 static inline bool tsaf_has_discontinuity(const uint8_t *p_ts)
 {
     return !!(p_ts[5] & 0x80);

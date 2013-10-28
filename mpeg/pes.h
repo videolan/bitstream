@@ -123,7 +123,8 @@ static inline void pes_set_pts(uint8_t *p_pes, uint64_t i_pts)
     p_pes[7] |= 0x80;
     if (p_pes[8] < 5)
         p_pes[8] = 5;
-    p_pes[9] = 0x21 | ((i_pts >> 29) & 0xe);
+    p_pes[9] &= 0x10;
+    p_pes[9] |= 0x21 | ((i_pts >> 29) & 0xe);
     p_pes[10] = (i_pts >> 22) & 0xff;
     p_pes[11] = 0x1 | ((i_pts >> 14) & 0xfe);
     p_pes[12] = (i_pts >> 7) & 0xff;
