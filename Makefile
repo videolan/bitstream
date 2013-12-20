@@ -9,6 +9,8 @@ install:
 	@echo "INSTALL  $(INCLUDE)"
 	@install -d $(INCLUDE)
 	@install -m 644 common.h $(INCLUDE)/
+	@install -d $(INCLUDE)/atsc
+	@install -m 644 atsc/*.h $(INCLUDE)/atsc
 	@install -d $(INCLUDE)/dvb
 	@install -m 644 dvb/*.h $(INCLUDE)/dvb
 	@install -d $(INCLUDE)/dvb/si
