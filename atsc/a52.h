@@ -1,7 +1,7 @@
 /*****************************************************************************
  * a52.h: ATSC A/52:2012 Digital Audio Compression Standard
  *****************************************************************************
- * Copyright (C) 2013 VideoLAN
+ * Copyright (C) 2013-2014 VideoLAN
  *
  * Authors: Benjamin Cohen <bencoh@notk.org>
  *
@@ -34,6 +34,7 @@
 #define __BITSTREAM_ATSC_A52_H__
 
 #include <stdint.h>   /* uint8_t, uint16_t, etc... */
+#include <string.h>   /* memcmp */
 #include <stdbool.h>  /* bool */
 
 #ifdef __cplusplus
