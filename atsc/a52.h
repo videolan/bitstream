@@ -49,6 +49,7 @@ extern "C"
 #define A52_FSCOD_441KHZ        1
 #define A52_FSCOD_32KHZ         2
 #define A52_FSCOD_RESERVED      3
+#define A52_FRAME_SAMPLES       1536
 
 /*****************************************************************************
  * A/52 syncinfo (A/52:2012 Table 5.1)
@@ -57,6 +58,7 @@ extern "C"
  * - fscod          2
  * - frmsizecod     6
  *****************************************************************************/
+#define A52_SYNCINFO_SIZE       5
 
 /* A/52 Frame Size Code Table (A/52:2012 Table 5.18) */
 static const uint16_t a52_frame_size_code_tab[38][3] = {
@@ -176,6 +178,12 @@ static inline uint16_t a52_get_frame_size(uint8_t i_fscod, uint8_t i_frmsizecod)
     return a52_frame_size_code_tab[i_frmsizecod][i_fscod] * 2;
 }
 
+static inline bool a52_sync_compare_formats(const uint8_t *p_a521, const uint8_t *p_a522)
+{
+    return p_a521[0] == p_a522[0] && p_a521[1] == p_a522[1] &&
+           p_a521[4] == p_a522[1];
+}
+
 /*****************************************************************************
  * A/52 bsi (Bit Stream Information)
  *****************************************************************************/
@@ -227,6 +235,11 @@ static inline void a52_set_cmixlev(uint8_t *p_a52, uint8_t i_cmixlev)
 /*****************************************************************************
  * A/52 Annex E 
  *****************************************************************************/
+#define A52E_FSCOD2_24KHZ       0
+#define A52E_FSCOD2_2205KHZ     1
+#define A52E_FSCOD2_16KHZ       2
+#define A52E_FSCOD2_RESERVED    3
+
 static inline uint8_t a52e_get_strmtyp(const uint8_t *p_a52)
 {
     return (p_a52[2] & 0xc0) >> 5;
@@ -275,6 +288,22 @@ static inline void a52e_set_fscod(uint8_t *p_a52, uint8_t i_fscod)
 {
     p_a52[4] &= ~0xc0;
     p_a52[4] |= (i_fscod & 0x3) << 6;
+}
+
+static inline uint8_t a52e_get_fscod2(const uint8_t *p_a52)
+{
+    return (p_a52[4] & 0x30) >> 4;
+}
+
+static inline void a52e_set_fscod2(uint8_t *p_a52, uint8_t i_fscod)
+{
+    p_a52[4] &= ~0x30;
+    p_a52[4] |= (i_fscod & 0x3) << 4;
+}
+
+static inline bool a52e_sync_compare_formats(const uint8_t *p_a521, const uint8_t *p_a522)
+{
+    return !memcmp(p_a521, p_a522, A52_SYNCINFO_SIZE);
 }
 
 #ifdef __cplusplus
