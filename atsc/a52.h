@@ -182,7 +182,7 @@ static inline uint16_t a52_get_frame_size(uint8_t i_fscod, uint8_t i_frmsizecod)
 static inline bool a52_sync_compare_formats(const uint8_t *p_a521, const uint8_t *p_a522)
 {
     return p_a521[0] == p_a522[0] && p_a521[1] == p_a522[1] &&
-           p_a521[4] == p_a522[1];
+           p_a521[4] == p_a522[4];
 }
 
 /*****************************************************************************
