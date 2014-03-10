@@ -1,7 +1,7 @@
 /*****************************************************************************
- * desc_56.h: ETSI EN 300 468 Descriptor 0x56: Teletext descriptor
+ * sub.h: ETSI EN 300 743 Subtitling Systems
  *****************************************************************************
- * Copyright (C) 2009-2010 VideoLAN
+ * Copyright (C) 2014 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *
@@ -27,15 +27,11 @@
 
 /*
  * Normative references:
- *  - ETSI EN 300 468 V1.11.1 (2010-04) (SI in DVB systems)
+ *  - ETSI EN 300 743 V1.5.1 (2014-01) (Subtitling Systems)
  */
 
-#ifndef __BITSTREAM_DVB_DESC_56_H__
-#define __BITSTREAM_DVB_DESC_56_H__
-
-#include <bitstream/common.h>
-#include <bitstream/mpeg/psi/descriptors.h>
-#include <bitstream/dvb/si/desc_46.h>
+#ifndef __BITSTREAM_DVB_SUB_H__
+#define __BITSTREAM_DVB_SUB_H__
 
 #ifdef __cplusplus
 extern "C"
@@ -43,33 +39,39 @@ extern "C"
 #endif
 
 /*****************************************************************************
- * Descriptor 0x56: Teletext descriptor
+ * PES data field
  *****************************************************************************/
-#define DESC56_HEADER_SIZE      DESC46_HEADER_SIZE
-#define DESC56_LANGUAGE_SIZE    DESC46_LANGUAGE_SIZE
+#define DVBSUB_HEADER_SIZE      2
+#define DVBSUB_DATA_IDENTIFIER  0x20
 
-#define DESC56_TELETEXTTYPE_INITIAL     DESC46_TELETEXTTYPE_INITIAL
-#define DESC56_TELETEXTTYPE_SUBTITLE    DESC46_TELETEXTTYPE_SUBTITLE
-#define DESC56_TELETEXTTYPE_INFORMATION DESC46_TELETEXTTYPE_INFORMATION
-#define DESC56_TELETEXTTYPE_SCHEDULE    DESC46_TELETEXTTYPE_SCHEDULE
-#define DESC56_TELETEXTTYPE_SUBTITLE_H  DESC46_TELETEXTTYPE_SUBTITLE_H
+/*****************************************************************************
+ * Subtitling segment
+ *****************************************************************************/
+#define DVBSUBS_HEADER_SIZE     6
+#define DVBSUBS_SYNC            0xf
 
-static inline void desc56_init(uint8_t *p_desc)
+#define DVBSUBS_PAGE_COMPOSITION        0x10
+#define DVBSUBS_REGION_COMPOSITION      0x11
+#define DVBSUBS_CLUT_DEFINITION         0x12
+#define DVBSUBS_OBJECT_DATA             0x13
+#define DVBSUBS_DISPLAY_DEFINITION      0x14
+#define DVBSUBS_DISPARITY_SIGNALLING    0x15
+#define DVBSUBS_END_OF_DISPLAY_SET      0x80
+
+static inline uint8_t dvbsubs_get_type(const uint8_t *p_dvbsubs)
 {
-    desc_set_tag(p_desc, 0x56);
+    return p_dvbsubs[1];
 }
 
-#define desc56_get_language desc46_get_language
-#define desc56n_set_code desc46n_set_code
-#define desc56n_get_code desc46n_get_code
-#define desc56n_set_teletexttype desc46n_set_teletexttype
-#define desc56n_get_teletexttype desc46n_get_teletexttype
-#define desc56n_set_teletextmagazine desc46n_set_teletextmagazine
-#define desc56n_get_teletextmagazine desc46n_get_teletextmagazine
-#define desc56n_set_teletextpage desc46n_set_teletextpage
-#define desc56n_get_teletextpage desc46n_get_teletextpage
-#define desc56_validate desc46_validate
-#define desc56_print desc46_print
+static inline uint16_t dvbsubs_get_page(const uint8_t *p_dvbsubs)
+{
+    return (p_dvbsubs[2] << 8) | p_dvbsubs[3];
+}
+
+static inline uint16_t dvbsubs_get_length(const uint8_t *p_dvbsubs)
+{
+    return (p_dvbsubs[4] << 8) | p_dvbsubs[5];
+}
 
 #ifdef __cplusplus
 }

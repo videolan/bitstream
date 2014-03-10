@@ -49,6 +49,12 @@ extern "C"
 #define DESC46_HEADER_SIZE      DESC_HEADER_SIZE
 #define DESC46_LANGUAGE_SIZE    5
 
+#define DESC46_TELETEXTTYPE_INITIAL     1
+#define DESC46_TELETEXTTYPE_SUBTITLE    2
+#define DESC46_TELETEXTTYPE_INFORMATION 3
+#define DESC46_TELETEXTTYPE_SCHEDULE    4
+#define DESC46_TELETEXTTYPE_SUBTITLE_H  5
+
 static inline void desc46_init(uint8_t *p_desc)
 {
     desc_set_tag(p_desc, 0x46);

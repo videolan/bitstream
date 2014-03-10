@@ -1,5 +1,5 @@
 /*****************************************************************************
- * ci.h: ETSI EN 50 221 Common Interface Specification
+ * ci.h: CENELEC EN 50 221 Common Interface Specification
  *****************************************************************************
  * Copyright (C) 2010 VideoLAN
  *
@@ -27,7 +27,7 @@
 
 /*
  * Normative references:
- *  - ETSI EN 50 221 (1997) (Common Interface Specification)
+ *  - CENELEC EN 50 221 (1997) (Common Interface Specification)
  */
 
 #ifndef __BITSTREAM_DVB_CI_H__
