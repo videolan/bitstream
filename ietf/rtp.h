@@ -1,7 +1,7 @@
 /*****************************************************************************
  * rtp.h: Real-time Transport Protocol
  *****************************************************************************
- * Copyright (C) 2009 VideoLAN
+ * Copyright (C) 2009, 2014 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *
@@ -42,6 +42,7 @@ extern "C"
 #endif
 
 #define RTP_HEADER_SIZE     12
+#define RTP_EXTENSION_SIZE  4
 #define RTP_TYPE_TS         33
 
 /*
@@ -70,9 +71,40 @@ static inline bool rtp_check_hdr(const uint8_t *p_rtp)
     return (p_rtp[0] & 0xc0) == 0x80;
 }
 
+static inline void rtp_set_extension(uint8_t *p_rtp)
+{
+    p_rtp[0] |= 0x10;
+}
+
+static inline bool rtp_check_extension(const uint8_t *p_rtp)
+{
+    return !!(p_rtp[0] & 0x10);
+}
+
+static inline void rtp_set_cc(uint8_t *p_rtp, uint8_t i_cc)
+{
+    p_rtp[0] &= 0xf0;
+    p_rtp[0] |= i_cc & 0xf;
+}
+
+static inline uint8_t rtp_get_cc(const uint8_t *p_rtp)
+{
+    return p_rtp[0] & 0xf;
+}
+
+static inline void rtp_set_marker(uint8_t *p_rtp)
+{
+    p_rtp[1] |= 0x80;
+}
+
+static inline bool rtp_check_marker(const uint8_t *p_rtp)
+{
+    return !!(p_rtp[1] & 0x80);
+}
+
 static inline void rtp_set_type(uint8_t *p_rtp, uint8_t i_type)
 {
-    p_rtp[1] = i_type;
+    p_rtp[1] = i_type & 0x7f;
 }
 
 static inline uint8_t rtp_get_type(const uint8_t *p_rtp)
@@ -120,12 +152,39 @@ static inline void rtp_get_ssrc(const uint8_t *p_rtp, uint8_t pi_ssrc[4])
     pi_ssrc[3] = p_rtp[11];
 }
 
+static inline uint8_t *rtp_extension(uint8_t *p_rtp)
+{
+    return p_rtp + RTP_HEADER_SIZE + 4 * rtp_get_cc(p_rtp);
+}
+
+static inline void rtpx_set_header(uint8_t *p_rtpx, uint16_t i_header)
+{
+    p_rtpx[0] = (i_header >> 8) & 0xff;
+    p_rtpx[1] = i_header & 0xff;
+}
+
+static inline uint16_t rtpx_get_header(const uint8_t *p_rtpx)
+{
+    return (p_rtpx[0] << 8) | p_rtpx[1];
+}
+
+static inline void rtpx_set_length(uint8_t *p_rtpx, uint16_t i_length)
+{
+    p_rtpx[2] = (i_length >> 8) & 0xff;
+    p_rtpx[3] = i_length & 0xff;
+}
+
+static inline uint16_t rtpx_get_length(const uint8_t *p_rtpx)
+{
+    return (p_rtpx[2] << 8) | p_rtpx[3];
+}
+
 static inline uint8_t *rtp_payload(uint8_t *p_rtp)
 {
     unsigned int i_size = RTP_HEADER_SIZE;
-    i_size += 4 * (p_rtp[0] & 0xf);
-    if (p_rtp[0] & 0x10) /* header extension */
-        i_size += 4 * (1 + (p_rtp[i_size + 2] << 8) + p_rtp[i_size + 3]);
+    i_size += 4 * rtp_get_cc(p_rtp);
+    if (rtp_check_extension(p_rtp))
+        i_size += 4 * (1 + rtpx_get_length(rtp_extension(p_rtp)));
     return p_rtp + i_size;
 }
 
