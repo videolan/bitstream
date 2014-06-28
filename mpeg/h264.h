@@ -296,6 +296,15 @@ static inline void h264ssps_init(uint8_t *p_h264ssps)
  *****************************************************************************/
 #define H264VUI_AR_EXTENDED         255
 
+/*****************************************************************************
+ * H264 slices
+ *****************************************************************************/
+#define H264SLI_TYPE_P              0
+#define H264SLI_TYPE_B              1
+#define H264SLI_TYPE_I              2
+#define H264SLI_TYPE_SP             3
+#define H264SLI_TYPE_SI             4
+
 #ifdef __cplusplus
 }
 #endif
