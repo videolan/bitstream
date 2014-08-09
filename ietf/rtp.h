@@ -97,6 +97,11 @@ static inline void rtp_set_marker(uint8_t *p_rtp)
     p_rtp[1] |= 0x80;
 }
 
+static inline void rtp_clear_marker(uint8_t *p_rtp)
+{
+    p_rtp[1] &= ~0x80;
+}
+
 static inline bool rtp_check_marker(const uint8_t *p_rtp)
 {
     return !!(p_rtp[1] & 0x80);
