@@ -272,7 +272,7 @@ static inline void a52e_set_frmsiz(uint8_t *p_a52, uint16_t i_frmsiz)
 {
     p_a52[2] &= ~0x7;
     p_a52[2] |= (i_frmsiz >> 8) & 0x7;
-    p_a52[3] |= i_frmsiz & 0xff;
+    p_a52[3] = i_frmsiz & 0xff;
 }
 
 static inline uint16_t a52e_get_frame_size(uint16_t i_frmsiz)
