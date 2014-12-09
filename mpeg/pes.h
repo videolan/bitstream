@@ -118,22 +118,27 @@ static inline bool pes_get_dataalignment(const uint8_t *p_pes)
     return !!(p_pes[6] & 0x4);
 }
 
+static inline bool pes_has_pts(const uint8_t *p_pes)
+{
+    return !!(p_pes[7] & 0x80);
+}
+
+static inline bool pes_has_dts(const uint8_t *p_pes)
+{
+    return (p_pes[7] & 0xc0) == 0xc0;
+}
+
 static inline void pes_set_pts(uint8_t *p_pes, uint64_t i_pts)
 {
     p_pes[7] |= 0x80;
     if (p_pes[8] < 5)
         p_pes[8] = 5;
-    p_pes[9] &= 0x10;
-    p_pes[9] |= 0x21 | ((i_pts >> 29) & 0xe);
+    uint8_t marker = pes_has_dts(p_pes) ? 0x30 : 0x20;
+    p_pes[9] = marker | 0x1 | ((i_pts >> 29) & 0xe);
     p_pes[10] = (i_pts >> 22) & 0xff;
     p_pes[11] = 0x1 | ((i_pts >> 14) & 0xfe);
     p_pes[12] = (i_pts >> 7) & 0xff;
     p_pes[13] = 0x1 | ((i_pts << 1) & 0xfe);
-}
-
-static inline bool pes_has_pts(const uint8_t *p_pes)
-{
-    return !!(p_pes[7] & 0x80);
 }
 
 static inline bool pes_validate_pts(const uint8_t *p_pes)
@@ -154,17 +159,13 @@ static inline void pes_set_dts(uint8_t *p_pes, uint64_t i_dts)
     p_pes[7] |= 0x40;
     if (p_pes[8] < 10)
         p_pes[8] = 10;
-    p_pes[9] |= 0x10;
+    p_pes[9] &= 0x0f;
+    p_pes[9] |= 0x30;
     p_pes[14] = 0x11 | ((i_dts >> 29) & 0xe);
     p_pes[15] = (i_dts >> 22) & 0xff;
     p_pes[16] = 0x1 | ((i_dts >> 14) & 0xfe);
     p_pes[17] = (i_dts >> 7) & 0xff;
     p_pes[18] = 0x1 | ((i_dts << 1) & 0xfe);
-}
-
-static inline bool pes_has_dts(const uint8_t *p_pes)
-{
-    return (p_pes[7] & 0xc0) == 0xc0;
 }
 
 static inline bool pes_validate_dts(const uint8_t *p_pes)
