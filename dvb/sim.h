@@ -449,6 +449,180 @@ static inline bool ecmg_validate(uint8_t *p_tlv)
     return true;
 }
 
+/*****************************************************************************
+ * EMMG
+ *****************************************************************************/
+/* message types */
+#define EMMG_TYPE_CHANNEL_SETUP     0x0011
+#define EMMG_TYPE_CHANNEL_TEST      0x0012
+#define EMMG_TYPE_CHANNEL_STATUS    0x0013
+#define EMMG_TYPE_CHANNEL_CLOSE     0x0014
+#define EMMG_TYPE_CHANNEL_ERROR     0x0015
+#define EMMG_TYPE_STREAM_SETUP      0x0111
+#define EMMG_TYPE_STREAM_TEST       0x0112
+#define EMMG_TYPE_STREAM_STATUS     0x0113
+#define EMMG_TYPE_STREAM_CLOSEREQ   0x0114
+#define EMMG_TYPE_STREAM_CLOSERESP  0x0115
+#define EMMG_TYPE_STREAM_ERROR      0x0116
+#define EMMG_TYPE_BW_REQ            0x0117
+#define EMMG_TYPE_BW_ALLOC          0x0118
+#define EMMG_TYPE_DATA_PROVISION    0x0211
+
+/* parameter types */
+#define EMMG_PARAM_CLIENTID         0x0001
+#define EMMG_PARAM_SECTIONTSPKT     0x0002
+#define EMMG_PARAM_DATACHANNELID    0x0003
+#define EMMG_PARAM_DATASTREAMID     0x0004
+#define EMMG_PARAM_DATAGRAM         0x0005
+#define EMMG_PARAM_BANDWIDTH        0x0006
+#define EMMG_PARAM_DATATYPE         0x0007
+#define EMMG_PARAM_DATAID           0x0008
+#define EMMG_PARAM_ERRORSTATUS      0x7000
+#define EMMG_PARAM_ERRORINFO        0x7001
+
+static inline void emmg_init(uint8_t *p_tlv)
+{
+    tlv_empty(p_tlv);
+}
+
+TLV_DECLARE_PARAM(emmg, clientid, EMMG_PARAM_CLIENTID, uint32_t, uint32_t)
+TLV_DECLARE_PARAM(emmg, sectiontspkt, EMMG_PARAM_SECTIONTSPKT, uint8_t, uint8_t)
+TLV_DECLARE_PARAM(emmg, datachannelid, EMMG_PARAM_DATACHANNELID, uint16_t, int16_t)
+TLV_DECLARE_PARAM(emmg, datastreamid, EMMG_PARAM_DATASTREAMID, uint16_t, int16_t)
+TLV_DECLARE_PARAM(emmg, bandwidth, EMMG_PARAM_BANDWIDTH, uint16_t, int16_t)
+TLV_DECLARE_PARAM(emmg, datatype, EMMG_PARAM_DATATYPE, uint8_t, int8_t)
+TLV_DECLARE_PARAM(emmg, dataid, EMMG_PARAM_DATAID, uint16_t, uint16_t)
+TLV_DECLARE_PARAM(emmg, errorstatus, EMMG_PARAM_ERRORSTATUS, uint16_t, uint16_t)
+
+static inline bool emmg_validate_param(const uint8_t *p_tlv_n)
+{
+    static const uint16_t pi_emmg_params_minlength[] = {
+        0, 4, 1, 2, 2, 1, 2, 1, 2
+    };
+    static const uint16_t pi_emmg_params_manlength[] = {
+        0, 4, 1, 2, 2, 1, 2, 1, 2
+    };
+
+    uint16_t i_type = tlv_get_type(p_tlv_n);
+    uint16_t i_length = tlv_get_length(p_tlv_n);
+
+    if (i_type <= EMMG_PARAM_DATAID && i_type != EMMG_PARAM_DATAGRAM) {
+        if (i_length < pi_emmg_params_minlength[i_type] ||
+            i_length > pi_emmg_params_manlength[i_type])
+          return false;
+
+    } else if (i_type == EMMG_PARAM_ERRORSTATUS) {
+        if (i_length < 2) return false;
+    }
+
+    return true;
+}
+
+static inline bool emmg_validate(uint8_t *p_tlv)
+{
+    static const tlv_param_count_t p_emmg_params_channel_setup[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_SECTIONTSPKT, 1, 1}, {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_channel_test[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_channel_status[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_SECTIONTSPKT, 1, 1}, {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_channel_close[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_channel_error[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_ERRORSTATUS, 1, UINT16_MAX}, {0, 0, 0}
+    };
+
+    static const tlv_param_count_t p_emmg_params_stream_setup[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_DATASTREAMID, 1, 1}, {EMMG_PARAM_DATAID, 1, 1},
+        {EMMG_PARAM_DATATYPE, 1, 1}, {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_stream_test[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_DATASTREAMID, 1, 1}, {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_stream_status[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_DATASTREAMID, 1, 1}, {EMMG_PARAM_DATAID, 1, 1},
+        {EMMG_PARAM_DATATYPE, 1, 1}, {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_stream_close[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_DATASTREAMID, 1, 1}, {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_stream_error[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_DATASTREAMID, 1, 1}, {EMMG_PARAM_ERRORSTATUS, 1, UINT16_MAX},
+        {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_bandwidth[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 1, 1},
+        {EMMG_PARAM_DATASTREAMID, 1, 1}, {EMMG_PARAM_BANDWIDTH, 0, 1},
+        {0, 0, 0}
+    };
+    static const tlv_param_count_t p_emmg_params_data_provision[] = {
+        {EMMG_PARAM_CLIENTID, 1, 1}, {EMMG_PARAM_DATACHANNELID, 0, 1},
+        {EMMG_PARAM_DATASTREAMID, 0, 1}, {EMMG_PARAM_DATAID, 1, 1},
+        {EMMG_PARAM_DATAGRAM, 1, UINT16_MAX}, {0, 0, 0}
+    };
+
+    const tlv_param_count_t null_param = {0, 0, 0};
+    const tlv_param_count_t *p_param = &null_param;
+    uint8_t *p_tlv_n;
+    int j = 0;
+
+    switch (tlv_get_type(p_tlv)) {
+        case EMMG_TYPE_CHANNEL_SETUP:
+            p_param = p_emmg_params_channel_setup; break;
+        case EMMG_TYPE_CHANNEL_TEST:
+            p_param = p_emmg_params_channel_test; break;
+        case EMMG_TYPE_CHANNEL_STATUS:
+            p_param = p_emmg_params_channel_status; break;
+        case EMMG_TYPE_CHANNEL_CLOSE:
+            p_param = p_emmg_params_channel_close; break;
+        case EMMG_TYPE_CHANNEL_ERROR:
+            p_param = p_emmg_params_channel_error; break;
+        case EMMG_TYPE_STREAM_SETUP:
+            p_param = p_emmg_params_stream_setup; break;
+        case EMMG_TYPE_STREAM_TEST:
+            p_param = p_emmg_params_stream_test; break;
+        case EMMG_TYPE_STREAM_STATUS:
+            p_param = p_emmg_params_stream_status; break;
+        case EMMG_TYPE_STREAM_CLOSEREQ:
+        case EMMG_TYPE_STREAM_CLOSERESP:
+            p_param = p_emmg_params_stream_close; break;
+        case EMMG_TYPE_STREAM_ERROR:
+            p_param = p_emmg_params_stream_error; break;
+        case EMMG_TYPE_BW_ALLOC:
+        case EMMG_TYPE_BW_REQ:
+            p_param = p_emmg_params_bandwidth; break;
+        case EMMG_TYPE_DATA_PROVISION:
+            p_param = p_emmg_params_data_provision; break;
+        default:
+            break;
+    }
+
+    while (p_param->i_type)
+        if (!tlv_validate_count_param(p_tlv, p_param++))
+            return false;
+
+    while ((p_tlv_n = tlv_get_param(p_tlv, j)) != NULL) {
+        j++;
+        if (!emmg_validate_param(p_tlv_n)) return false;
+    }
+
+    return true;
+}
+
 #ifdef __cplusplus
 }
 #endif
