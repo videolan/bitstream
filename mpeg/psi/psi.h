@@ -151,12 +151,12 @@ static const uint32_t p_psi_crc_table[256] = {
 
 static inline uint8_t *psi_allocate(void)
 {
-    return malloc((PSI_MAX_SIZE + PSI_HEADER_SIZE) * sizeof(uint8_t));
+    return (uint8_t *)malloc((PSI_MAX_SIZE + PSI_HEADER_SIZE) * sizeof(uint8_t));
 }
 
 static inline uint8_t *psi_private_allocate(void)
 {
-    return malloc((PSI_PRIVATE_MAX_SIZE + PSI_HEADER_SIZE) * sizeof(uint8_t));
+    return (uint8_t *)malloc((PSI_PRIVATE_MAX_SIZE + PSI_HEADER_SIZE) * sizeof(uint8_t));
 }
 
 static inline void psi_set_tableid(uint8_t *p_section, uint8_t i_table_id)
@@ -438,7 +438,7 @@ static inline void psi_split_section(uint8_t *p_ts, uint8_t *pi_ts_offset,
 
 static inline uint8_t **psi_table_allocate(void)
 {
-    return malloc(PSI_TABLE_MAX_SECTIONS * sizeof(uint8_t *));
+    return (uint8_t *)malloc(PSI_TABLE_MAX_SECTIONS * sizeof(uint8_t *));
 }
 
 static inline void psi_table_init(uint8_t **pp_sections)

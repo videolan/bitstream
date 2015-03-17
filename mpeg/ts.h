@@ -56,7 +56,7 @@ extern "C"
 
 static inline uint8_t *ts_allocate(void)
 {
-    return malloc(TS_SIZE * sizeof(uint8_t));
+    return (uint8_t *)malloc(TS_SIZE * sizeof(uint8_t));
 }
 
 static inline void ts_init(uint8_t *p_ts)

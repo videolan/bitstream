@@ -109,7 +109,7 @@ static inline uint8_t *dvb_string_set(const uint8_t *p_string, size_t i_length,
 
     for (i = 0; ppsz_dvb_encodings[i] != NULL; i++) {
         if (!strcasecmp(psz_encoding, ppsz_dvb_encodings[i])) {
-            uint8_t *p_encoded = malloc(i_length + 1);
+            uint8_t *p_encoded = (uint8_t *)malloc(i_length + 1);
             *pi_out_length = i_length + 1;
             p_encoded[0] = i;
             memcpy(p_encoded + 1, p_string, i_length);
@@ -119,7 +119,7 @@ static inline uint8_t *dvb_string_set(const uint8_t *p_string, size_t i_length,
 
     for (i = 0; ppsz_dvb_encodings10[i] != NULL; i++) {
         if (!strcasecmp(psz_encoding, ppsz_dvb_encodings10[i])) {
-            uint8_t *p_encoded = malloc(i_length + 3);
+            uint8_t *p_encoded = (uint8_t *)malloc(i_length + 3);
             *pi_out_length = i_length + 3;
             p_encoded[0] = 0x10;
             p_encoded[1] = 0x0;
@@ -142,7 +142,7 @@ static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
                                                            &i_length);
         if (psz_encoding == NULL || !i_length) {
             /* try one-byte charset */
-            char *psz_string = malloc(i_length + 1);
+            char *psz_string = (uint8_t *)malloc(i_length + 1);
             memcpy(psz_string, p_string, i_length);
             psz_string[i_length] = '\0';
             return psz_string;
@@ -180,7 +180,7 @@ static inline char *dvb_string_xml_escape(char *psz_input)
         psz1++;
     }
 
-    psz2 = psz_output = malloc(i_output_size + 1);
+    psz2 = psz_output = (uint8_t *)malloc(i_output_size + 1);
     psz1 = psz_input;
     while (*psz1) {
         switch (*psz1) {
