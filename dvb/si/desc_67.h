@@ -71,6 +71,8 @@ static inline void desc67_set_bytes(uint8_t *p_desc, const uint8_t *p_bytes, uin
 
 static inline bool desc67_validate(const uint8_t *p_desc)
 {
+  (void) p_desc;
+
     return true;
 }
 

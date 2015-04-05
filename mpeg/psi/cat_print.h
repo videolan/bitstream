@@ -45,7 +45,7 @@ static inline void cat_table_print(uint8_t **pp_sections, f_print pf_print,
 {
     uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
     uint8_t i;
-    char *psz_table_name = "CAT";
+    const char *psz_table_name = "CAT";
 
     if (psi_get_tableid(psi_table_get_section(pp_sections, 0)) == TSDT_TABLE_ID)
         psz_table_name = "TSDT";

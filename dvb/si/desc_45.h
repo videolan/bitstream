@@ -72,7 +72,7 @@ static inline uint8_t desc45n_get_data_length(const uint8_t *p_desc_n)
     return p_desc_n[1];
 }
 
-static inline char *desc45_get_service_id_txt(uint8_t i_service_id)
+static inline const char *desc45_get_service_id_txt(uint8_t i_service_id)
 {
     return i_service_id == 0x00 ? "reserved" :
            i_service_id == 0x01 ? "EBU teletext" :

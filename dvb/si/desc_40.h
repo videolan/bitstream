@@ -70,6 +70,8 @@ static inline const uint8_t *desc40_get_networkname(const uint8_t *p_desc,
 
 static inline bool desc40_validate(const uint8_t *p_desc)
 {
+    (void) p_desc;
+
     return true;
 }
 

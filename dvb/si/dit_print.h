@@ -44,6 +44,9 @@ static inline void dit_print(uint8_t *p_dit,
                              f_iconv pf_iconv, void *iconv_opaque,
                              print_type_t i_print_type)
 {
+    (void) pf_iconv;
+    (void) iconv_opaque;
+
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(print_opaque, "<DIT transition_flag=\"%u\"/>",

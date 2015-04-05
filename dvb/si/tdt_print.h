@@ -45,6 +45,9 @@ static inline void tdt_print(uint8_t *p_tdt,
                              f_iconv pf_iconv, void *iconv_opaque,
                              print_type_t i_print_type)
 {
+    (void) pf_iconv;
+    (void) iconv_opaque;
+
     time_t ts;
     char ts_str[24];
 

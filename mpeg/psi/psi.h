@@ -330,6 +330,8 @@ static inline void psi_assemble_reset(uint8_t **pp_psi_buffer,
 static inline bool psi_assemble_empty(uint8_t **pp_psi_buffer,
                                       uint16_t *pi_psi_buffer_used)
 {
+    (void) pi_psi_buffer_used;
+
     return *pp_psi_buffer == NULL;
 }
 

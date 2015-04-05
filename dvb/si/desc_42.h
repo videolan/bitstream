@@ -53,6 +53,8 @@ static inline void desc42_init(uint8_t *p_desc)
 
 static inline bool desc42_validate(const uint8_t *p_desc)
 {
+    (void) p_desc;
+
     return true;
 }
 

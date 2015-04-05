@@ -142,7 +142,7 @@ static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
                                                            &i_length);
         if (psz_encoding == NULL || !i_length) {
             /* try one-byte charset */
-            char *psz_string = (uint8_t *)malloc(i_length + 1);
+            char *psz_string = (char *)malloc(i_length + 1);
             memcpy(psz_string, p_string, i_length);
             psz_string[i_length] = '\0';
             return psz_string;
@@ -180,7 +180,7 @@ static inline char *dvb_string_xml_escape(char *psz_input)
         psz1++;
     }
 
-    psz2 = psz_output = (uint8_t *)malloc(i_output_size + 1);
+    psz2 = psz_output = (char *)malloc(i_output_size + 1);
     psz1 = psz_input;
     while (*psz1) {
         switch (*psz1) {

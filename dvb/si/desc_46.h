@@ -83,7 +83,7 @@ static inline uint8_t desc46n_get_teletexttype(const uint8_t *p_desc_n)
     return p_desc_n[3] >> 3;
 }
 
-static inline char *desc46_get_teletexttype_txt(uint8_t i_type)
+static inline const char *desc46_get_teletexttype_txt(uint8_t i_type)
 {
     return i_type == 0x00 ? "Reserved" :
            i_type == 0x01 ? "Initial teletext page" :

@@ -105,7 +105,7 @@ static inline void desc51n_set_logical_cell_presentation_info(uint8_t *p_desc_n,
     p_desc_n[1] = (i_lc_presentation_info & 0x07) | 0xf8;
 }
 
-static inline char *desc51_get_logical_cell_presentation_info_txt(uint8_t i_lcp_info)
+static inline const char *desc51_get_logical_cell_presentation_info_txt(uint8_t i_lcp_info)
 {
     return i_lcp_info == 0x00 ? "undefined" :
            i_lcp_info == 0x01 ? "video" :
@@ -143,7 +143,7 @@ static inline void desc51n_set_cell_linkage_info(uint8_t *p_desc_n, uint8_t i_ce
     p_desc_n[3 + desc51n_get_elementary_cell_field_length(p_desc_n)] = i_cell_linkage_info;
 }
 
-static inline char *desc51_get_cell_linkage_info_txt(uint8_t i_icl_info)
+static inline const char *desc51_get_cell_linkage_info_txt(uint8_t i_icl_info)
 {
     return i_icl_info == 0x00 ? "undefined" :
            i_icl_info == 0x01 ? "bouquet related" :

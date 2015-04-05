@@ -44,6 +44,9 @@ static inline void rst_print(uint8_t *p_rst,
                              f_iconv pf_iconv, void *iconv_opaque,
                              print_type_t i_print_type)
 {
+    (void) pf_iconv;
+    (void) iconv_opaque;
+
     uint8_t j = 0;
     uint8_t *p_rst_n;
 

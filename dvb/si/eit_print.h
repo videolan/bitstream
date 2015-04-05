@@ -50,7 +50,7 @@ static inline void eit_print(uint8_t *p_eit,
     uint8_t *p_event;
     uint8_t j = 0;
     uint8_t i_tid = psi_get_tableid(p_eit);
-    char *psz_tid = "unknown";
+    const char *psz_tid = "unknown";
 
     if (i_tid == EIT_TABLE_ID_PF_ACTUAL)
         psz_tid = "actual_pf";

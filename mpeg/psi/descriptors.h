@@ -93,6 +93,8 @@ static inline void desc_print_begin(const uint8_t *p_desc, f_print pf_print,
 static inline void desc_print_end(const uint8_t *p_desc, f_print pf_print,
                                   void *opaque, print_type_t i_print_type)
 {
+    (void) p_desc;
+
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque, "</DESC>");

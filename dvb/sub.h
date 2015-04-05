@@ -33,6 +33,8 @@
 #ifndef __BITSTREAM_DVB_SUB_H__
 #define __BITSTREAM_DVB_SUB_H__
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C"
 {
