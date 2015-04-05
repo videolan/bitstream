@@ -15,8 +15,8 @@ for HDR in $HEADER_LIST
 do
     test_file=$(echo $HDR | sed -e 's|/|_|g;s|\.h$||')
     echo "Testing: $HDR"
-    printf "#include \"$HDR\"\n\nint main(void) { return 0; }\n" > $test_file.c
-    gcc -I.. -Werror -Wall -Wextra -Wno-unused -Wno-sign-compare -Wformat-security $test_file.c -o $test_file
+    printf "#include \"$HDR\"\n\nint main(void) { return 0; }\n" > $test_file.cpp
+    gcc -I.. -Werror -Wall -Wextra -Wno-unused -Wno-sign-compare -Wformat-security $test_file.cpp -o $test_file
     [ $? != 0 ] && exit 1
-    rm $test_file $test_file.c
+    rm $test_file $test_file.cpp
 done
