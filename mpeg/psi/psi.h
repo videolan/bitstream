@@ -438,7 +438,7 @@ static inline void psi_split_section(uint8_t *p_ts, uint8_t *pi_ts_offset,
 
 static inline uint8_t **psi_table_allocate(void)
 {
-    return (uint8_t *)malloc(PSI_TABLE_MAX_SECTIONS * sizeof(uint8_t *));
+    return (uint8_t **)malloc(PSI_TABLE_MAX_SECTIONS * sizeof(uint8_t *));
 }
 
 static inline void psi_table_init(uint8_t **pp_sections)

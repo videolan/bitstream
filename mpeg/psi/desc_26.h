@@ -235,7 +235,7 @@ static inline void desc26_print(const uint8_t *p_desc, f_print pf_print,
     uint8_t i, i_service_identification_record_length;
     const uint8_t *p_service_identification_record = desc26_get_service_identification_record(p_desc, &i_service_identification_record_length);
     char psz_service_identification_record[2 * 256 + 1];
-    char *extra_str = "decoder_config";
+    const char *extra_str = "decoder_config";
     const uint8_t *p_extra = NULL;
     uint8_t i_extra_length = 0;
     char psz_extra[2 * 256 + 1];

@@ -92,7 +92,7 @@ static inline void desc04_set_channel(uint8_t *p_desc, uint8_t i_channel)
     p_desc[5] = i_channel | 0xc0;
 }
 
-static inline char *desc04_get_type_txt(uint8_t i_type)
+static inline const char *desc04_get_type_txt(uint8_t i_type)
 {
     return i_type == 0 ? "reserved" :
            i_type == 1 ? "Spatial Scalability" :

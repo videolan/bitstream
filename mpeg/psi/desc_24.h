@@ -310,8 +310,8 @@ static inline void desc24_print(const uint8_t *p_desc, f_print pf_print,
                  " content_reference_id_record_length=\"%u\""
                  " content_reference_id_record=\"%s\""
                  " content_time_base_indicator=\"%u\""
-                 " content_time_base_value=\"%"PRIu64"\""
-                 " metadata_time_base_value=\"%"PRIu64"\""
+                 " content_time_base_value=\"%" PRIu64 "\""
+                 " metadata_time_base_value=\"%" PRIu64 "\""
                  " content_id=\"%u\""
                  " time_base_association_data_length=\"%u\""
                  " time_base_association_data=\"%s\"/>",
@@ -336,8 +336,8 @@ static inline void desc24_print(const uint8_t *p_desc, f_print pf_print,
                  " content_reference_id_record_length=%u"
                  " content_reference_id_record=\"%s\""
                  " content_time_base_indicator=%u"
-                 " content_time_base_value=\"%"PRIu64"\""
-                 " metadata_time_base_value=\"%"PRIu64"\""
+                 " content_time_base_value=\"%" PRIu64 "\""
+                 " metadata_time_base_value=\"%" PRIu64 "\""
                  " content_id=%u"
                  " time_base_association_data_length=%u"
                  " time_base_association_data=\"%s\"",
