@@ -228,6 +228,7 @@ static inline bool sdt_table_validate(uint8_t **pp_sections)
 {
     uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
     uint8_t i;
+    uint16_t i_onid;
 
     for (i = 0; i <= i_last_section; i++) {
         uint8_t *p_section = psi_table_get_section(pp_sections, i);
@@ -235,6 +236,11 @@ static inline bool sdt_table_validate(uint8_t **pp_sections)
         int j = 0;
 
         if (!psi_check_crc(p_section))
+            return false;
+
+        if (!j)
+            i_onid = sdt_get_onid(p_section);
+        else if (sdt_get_onid(p_section) != i_onid)
             return false;
 
         while ((p_service = sdt_get_service(p_section, j)) != NULL) {
