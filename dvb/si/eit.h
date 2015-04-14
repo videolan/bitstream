@@ -114,6 +114,11 @@ static inline uint8_t eit_get_last_table_id(const uint8_t *p_eit)
     return p_eit[13];
 }
 
+static inline void eitn_init(uint8_t *p_eit_n)
+{
+    p_eit_n[10] = 0;
+}
+
 static inline uint16_t eitn_get_event_id(const uint8_t *p_eit_n)
 {
     return (p_eit_n[0] << 8) | p_eit_n[1];
@@ -167,9 +172,9 @@ static inline bool eitn_get_ca(const uint8_t *p_eit_n)
     return (p_eit_n[10] & 0x10) == 0x10;
 }
 
-static inline void eitn_set_ca(uint8_t *p_eit_n, bool b_free_CA_mode)
+static inline void eitn_set_ca(uint8_t *p_eit_n)
 {
-    p_eit_n[10] = b_free_CA_mode ? (p_eit_n[10] | 0x10) : (p_eit_n[10] &~ 0x10);
+    p_eit_n[10] |= 0x10;
 }
 
 static inline uint16_t eitn_get_desclength(const uint8_t *p_eit_n)
