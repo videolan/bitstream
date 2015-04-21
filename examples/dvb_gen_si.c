@@ -2385,7 +2385,6 @@ static void generate_eit(void) {
         eitn_set_start_time(eit_n, dvb_time_encode_UTC(ts_0));
         eitn_set_duration_bcd(eit_n, dvb_time_encode_duration(86399));
         eitn_set_running(eit_n, 2);
-        eitn_set_ca(eit_n, false);
         eitn_set_desclength(eit_n, 0);
         {
             // Add descriptors to transport_stream_n
@@ -2406,7 +2405,6 @@ static void generate_eit(void) {
         eitn_set_start_time(eit_n, dvb_time_encode_UTC(ts_1));
         eitn_set_duration_bcd(eit_n, dvb_time_encode_duration(3600));
         eitn_set_running(eit_n, 1);
-        eitn_set_ca(eit_n, false);
         eitn_set_desclength(eit_n, 0);
         {
             // Add descriptors to transport_stream_n
@@ -2436,7 +2434,6 @@ static void generate_eit(void) {
         eitn_set_start_time(eit_n, dvb_time_encode_UTC(ts_2));
         eitn_set_duration_bcd(eit_n, dvb_time_encode_duration(7200));
         eitn_set_running(eit_n, 0);
-        eitn_set_ca(eit_n, false);
         eitn_set_desclength(eit_n, 0);
         {
             // Add descriptors to transport_stream_n
@@ -2472,7 +2469,7 @@ static void generate_eit(void) {
         eitn_set_start_time(eit_n, dvb_time_encode_UTC(ts_2));
         eitn_set_duration_bcd(eit_n, dvb_time_encode_duration(7200));
         eitn_set_running(eit_n, 4);
-        eitn_set_ca(eit_n, true);
+        eitn_set_ca(eit_n);
         eitn_set_desclength(eit_n, 0);
         {
             // Add descriptors to transport_stream_n
