@@ -11,12 +11,23 @@ HEADER_LIST="dvb/sim.h ietf/rtp.h"
 # If you want to test only particular headers comment the line bellow
 HEADER_LIST=$(find * | grep \\.h$ | sort | sed -e 's|^\./||')
 
-for HDR in $HEADER_LIST
+for suffix in "c" "cpp"
 do
-    test_file=$(echo $HDR | sed -e 's|/|_|g;s|\.h$||')
-    echo "Testing: $HDR"
-    printf "#include \"$HDR\"\n\nint main(void) { return 0; }\n" > $test_file.cpp
-    gcc -I.. -Werror -Wall -Wextra -Wno-unused -Wno-sign-compare -Wformat-security $test_file.cpp -o $test_file
-    [ $? != 0 ] && exit 1
-    rm $test_file $test_file.cpp
+    case $suffix in
+        "cpp")
+            compiler="g++"
+            ;;
+        *)
+            compiler="gcc"
+            ;;
+    esac
+    for HDR in $HEADER_LIST
+    do
+        test_file=$(echo $HDR | sed -e 's|/|_|g;s|\.h$||')
+        echo "Testing ($compiler): $HDR"
+        printf "#include \"$HDR\"\n\nint main(void) { return 0; }\n" > $test_file.$suffix
+        $compiler -I.. -Werror -Wall -Wextra -Wno-unused -Wno-sign-compare -Wformat-security $test_file.$suffix -o $test_file
+        [ $? != 0 ] && exit 1
+        rm $test_file $test_file.$suffix
+    done
 done
