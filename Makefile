@@ -17,6 +17,8 @@ install:
 	@install -m 644 dvb/si/*.h $(INCLUDE)/dvb/si
 	@install -d $(INCLUDE)/ietf
 	@install -m 644 ietf/* $(INCLUDE)/ietf
+	@install -d $(INCLUDE)/ieee
+	@install -m 644 ieee/* $(INCLUDE)/ieee
 	@install -d $(INCLUDE)/mpeg
 	@install -m 644 mpeg/*.h $(INCLUDE)/mpeg
 	@install -d $(INCLUDE)/mpeg/psi
