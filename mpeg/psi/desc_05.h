@@ -52,7 +52,7 @@ static inline void desc05_init(uint8_t *p_desc)
     desc_set_length(p_desc, DESC05_HEADER_SIZE - DESC_HEADER_SIZE);
 }
 
-static inline void desc05_set_identifier(uint8_t *p_desc, uint8_t p_id[4])
+static inline void desc05_set_identifier(uint8_t *p_desc, const uint8_t p_id[4])
 {
     p_desc[2] = p_id[0];
     p_desc[3] = p_id[1];
