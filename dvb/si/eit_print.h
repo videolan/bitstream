@@ -76,12 +76,14 @@ static inline void eit_print(uint8_t *p_eit,
         break;
     default:
         pf_print(print_opaque,
-                 "new EIT tableid=0x%02x type=%s service_id=%u version=%u%s tsid=%u"
+                 "new EIT tableid=0x%02x type=%s service_id=%u version=%u%s section=%u/%u tsid=%u"
                  " onid=%u",
                  i_tid, psz_tid,
                  eit_get_sid(p_eit),
                  psi_get_version(p_eit),
                  !psi_get_current(p_eit) ? " (next)" : "",
+                 psi_get_section(p_eit),
+                 psi_get_lastsection(p_eit),
                  eit_get_tsid(p_eit),
                  eit_get_onid(p_eit)
                 );
