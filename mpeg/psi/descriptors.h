@@ -189,6 +189,14 @@ static inline uint8_t *descs_get_desc(uint8_t *p_descs, uint16_t n)
                           descs_get_length(p_descs), n);
 }
 
+static inline bool descs_validate_desc(const uint8_t *p_descs,
+                                       const uint8_t *p_desc,
+                                       uint8_t i_desclength)
+{
+    uint16_t i_descs_length = descs_get_length(p_descs);
+    return (p_desc + i_desclength <= p_descs + i_descs_length);
+}
+
 static inline bool descs_validate(const uint8_t *p_descs)
 {
     return descl_validate(p_descs + DESCS_HEADER_SIZE,
