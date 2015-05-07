@@ -1,5 +1,5 @@
-#ifndef RTCP_H_
-# define RTCP_H_
+#ifndef __BITSTREAM_IETF_RTCP_H__
+# define __BITSTREAM_IETF_RTCP_H__
 
 # include <inttypes.h>
 
@@ -68,5 +68,4 @@ static inline void rtcp_sr_set_octet_count(uint8_t *p_rtcp_sr,
     p_rtcp_sr[27] = octet_count & 0xff;
 }
 
-
-#endif /* !RTCP_H_ */
+#endif /* !__BITSTREAM_IETF_RTCP_H__ */
