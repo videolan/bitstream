@@ -147,7 +147,7 @@ static inline void mp2vseq_set_vertical(uint8_t *p_mp2vseq, uint16_t i_vertical)
 
 static inline uint16_t mp2vseq_get_vertical(const uint8_t *p_mp2vseq)
 {
-    return ((p_mp2vseq[5] & 0xf) << 8) | p_mp2vseq[6] >> 4;
+    return ((p_mp2vseq[5] & 0xf) << 8) | p_mp2vseq[6];
 }
 
 static inline void mp2vseq_set_aspect(uint8_t *p_mp2vseq, uint8_t i_aspect)
