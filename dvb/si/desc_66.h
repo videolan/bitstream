@@ -97,7 +97,7 @@ static inline void desc66_print(const uint8_t *p_desc, f_print pf_print,
 
     for (i = 0; i < i_selector_byte_length; i++) {
         sprintf(psz_selector_byte + 2 * i, "%02x", p_selector_byte[i]);
-        if (p_selector_byte[i] >= 32 && p_selector_byte[i] <= 127 && p_selector_byte[i] != '"')
+        if (p_selector_byte[i] >= 48 && p_selector_byte[i] <= 127 && p_selector_byte[i] != '"')
             psz_selector_byte_txt[i] = p_selector_byte[i];
         else
             psz_selector_byte_txt[i] = '.';
