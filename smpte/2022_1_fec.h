@@ -41,6 +41,8 @@ extern "C"
 {
 #endif
 
+#define SMPTE_2022_FEC_HEADER_SIZE 16
+
 /*
  * Reminder : FEC Header
     0               1               2               3
@@ -99,10 +101,10 @@ static inline uint8_t smpte_fec_get_pt_recovery(const uint8_t *p_fec)
 
 static inline void smpte_fec_set_ts_recovery(uint8_t *p_fec, uint32_t snbase)
 {
-    p_fec[8] =  snbase >> 24;
-    p_fec[9] =  snbase >> 16;
-    p_fec[10] = snbase >> 8;
-    p_fec[11] = snbase & 0xff;
+    p_fec[8] =  (snbase >> 24) & 0xff;
+    p_fec[9] =  (snbase >> 16) & 0xff;
+    p_fec[10] = (snbase >> 8)  & 0xff;
+    p_fec[11] = (snbase >> 0)  & 0xff;
 }
 
 static inline uint32_t smpte_fec_get_ts_recovery(const uint8_t *p_fec)
