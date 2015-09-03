@@ -52,18 +52,37 @@ extern "C"
 #define pmt_set_program psi_set_tableidext
 #define pmt_get_program psi_get_tableidext
 
-#define PMT_STREAMTYPE_VIDEO_MPEG1  0x1
-#define PMT_STREAMTYPE_VIDEO_MPEG2  0x2
-#define PMT_STREAMTYPE_AUDIO_MPEG1  0x3
-#define PMT_STREAMTYPE_AUDIO_MPEG2  0x4
-#define PMT_STREAMTYPE_PRIVATE_PSI  0x5
-#define PMT_STREAMTYPE_PRIVATE_PES  0x6
-#define PMT_STREAMTYPE_MHEG         0x7
-#define PMT_STREAMTYPE_DSM_CC       0x8
-#define PMT_STREAMTYPE_AUDIO_ADTS   0xf
-#define PMT_STREAMTYPE_VIDEO_MPEG4  0x10
-#define PMT_STREAMTYPE_AUDIO_LATM   0x11
-#define PMT_STREAMTYPE_VIDEO_AVC    0x1b
+#define PMT_STREAMTYPE_VIDEO_MPEG1      0x1
+#define PMT_STREAMTYPE_VIDEO_MPEG2      0x2
+#define PMT_STREAMTYPE_AUDIO_MPEG1      0x3
+#define PMT_STREAMTYPE_AUDIO_MPEG2      0x4
+#define PMT_STREAMTYPE_PRIVATE_PSI      0x5
+#define PMT_STREAMTYPE_PRIVATE_PES      0x6
+#define PMT_STREAMTYPE_MHEG             0x7
+#define PMT_STREAMTYPE_DSM_CC           0x8
+#define PMT_STREAMTYPE_H222_1           0x9
+#define PMT_STREAMTYPE_13818_6_A        0xa
+#define PMT_STREAMTYPE_13818_6_B        0xb
+#define PMT_STREAMTYPE_13818_6_C        0xc
+#define PMT_STREAMTYPE_13818_6_D        0xd
+#define PMT_STREAMTYPE_H222_0_AUX       0xe
+#define PMT_STREAMTYPE_AUDIO_ADTS       0xf
+#define PMT_STREAMTYPE_VIDEO_MPEG4      0x10
+#define PMT_STREAMTYPE_AUDIO_LATM       0x11
+#define PMT_STREAMTYPE_SL_PES           0x12
+#define PMT_STREAMTYPE_SL_14496         0x13
+#define PMT_STREAMTYPE_SDP              0x14
+#define PMT_STREAMTYPE_META_PES         0x15
+#define PMT_STREAMTYPE_META_PSI         0x16
+#define PMT_STREAMTYPE_META_DC          0x17
+#define PMT_STREAMTYPE_META_OC          0x18
+#define PMT_STREAMTYPE_META_SDP         0x19
+#define PMT_STREAMTYPE_IPMP_13818_11    0x1a
+#define PMT_STREAMTYPE_VIDEO_AVC        0x1b
+#define PMT_STREAMTYPE_VIDEO_AVS        0x42
+#define PMT_STREAMTYPE_IPMP             0x7f
+#define PMT_STREAMTYPE_ATSC_A52         0x81
+#define PMT_STREAMTYPE_SCTE_35          0x86
 
 static inline void pmt_init(uint8_t *p_pmt)
 {
@@ -161,6 +180,8 @@ static inline const char *pmt_get_streamtype_txt(uint8_t i_stream_type) {
         case 0x1B: return "H.264/14496-10 video (MPEG-4/AVC)";
         case 0x42: return "AVS Video";
         case 0x7F: return "IPMP stream";
+        case 0x81: return "ATSC A/52";
+        case 0x86: return "SCTE 35 Splice Information Table";
         default  : return "Unknown";
     }
 }
