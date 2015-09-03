@@ -68,7 +68,7 @@ static inline void desc69_set_pil(uint8_t *p_desc, uint32_t i_pil)
 static inline uint8_t desc69_get_day(const uint8_t *p_desc)
 {
     uint8_t i_day = ((p_desc[2] & 0x0f) << 1) | ((p_desc[3] & 0x80) >> 7); // rrrr1111 1xxxxxxx
-    return i_day + 1;
+    return i_day;
 }
 
 static inline void desc69_set_day(uint8_t *p_desc, uint8_t i_day)
