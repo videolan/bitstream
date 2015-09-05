@@ -1,7 +1,7 @@
 /*****************************************************************************
  * dvb_print_si.c: Prints tables from a TS file
  *****************************************************************************
- * Copyright (C) 2010-2011 VideoLAN
+ * Copyright (C) 2010-2015 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *
@@ -41,6 +41,8 @@
 #include <bitstream/dvb/si.h>
 #include <bitstream/dvb/si_print.h>
 #include <bitstream/mpeg/psi_print.h>
+#include <bitstream/scte/35.h>
+#include <bitstream/scte/35_print.h>
 
 /*****************************************************************************
  * Local declarations
@@ -108,13 +110,16 @@ enum tables_t {
     TABLE_DIT,
     TABLE_SIT,
     TABLE_PMT,
+    TABLE_SCTE35,
     TABLE_END
 };
 static const char * const ppsz_all_tables[TABLE_END] = {
     "pat", "cat", "tsdt", "nit", "bat", "sdt", "eit", "tot", "tdt", "rst",
-    "dit", "sit", "pmt"
+    "dit", "sit", "pmt", "scte35"
 };
 static bool pb_print_table[TABLE_END];
+
+static void handle_pmt_es(uint8_t *p_pmt, bool b_select);
 
 /*****************************************************************************
  * print_wrapper
@@ -288,6 +293,7 @@ static void handle_pat(void)
                     for (i_pmt = 0; i_pmt < i_nb_sids; i_pmt++)
                         if (pp_sids[i_pmt]->i_sid == i_sid) {
                             pp_sids[i_pmt]->i_sid = 0;
+                            handle_pmt_es(pp_sids[i_pmt]->p_current_pmt, false);
                             free(pp_sids[i_pmt]->p_current_pmt);
                             pp_sids[i_pmt]->p_current_pmt = NULL;
                             psi_table_free(pp_sids[i]->pp_eit_sections);
@@ -451,6 +457,28 @@ static void handle_tsdt_section(uint16_t i_pid, uint8_t *p_section)
 /*****************************************************************************
  * handle_pmt
  *****************************************************************************/
+static void handle_pmt_es(uint8_t *p_pmt, bool b_select)
+{
+    int j = 0;
+    uint8_t *p_es;
+    while ((p_es = pmt_get_es(p_pmt, j)) != NULL) {
+        uint16_t i_pid = pmtn_get_pid(p_es);
+        uint8_t i_type = pmtn_get_streamtype(p_es);
+        j++;
+
+        switch (i_type) {
+            case PMT_STREAMTYPE_SCTE_35:
+                if (b_select)
+                    p_pids[i_pid].i_psi_refcount++;
+                else
+                    p_pids[i_pid].i_psi_refcount--;
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
 {
     uint16_t i_sid = pmt_get_program(p_pmt);
@@ -514,8 +542,12 @@ static void handle_pmt(uint16_t i_pid, uint8_t *p_pmt)
         return;
     }
 
+    if (p_sid->p_current_pmt)
+        handle_pmt_es(p_sid->p_current_pmt, false);
+
     free(p_sid->p_current_pmt);
     p_sid->p_current_pmt = p_pmt;
+    handle_pmt_es(p_pmt, true);
 
     if (pb_print_table[TABLE_PMT])
         pmt_print(p_pmt, print_wrapper, NULL, iconv_wrapper, NULL,
@@ -903,6 +935,31 @@ static void handle_sit_section(uint16_t i_pid, uint8_t *p_sit)
 }
 
 /*****************************************************************************
+ * handle_scte35
+ *****************************************************************************/
+static void handle_scte35_section(uint16_t i_pid, uint8_t *p_scte35)
+{
+    if (!scte35_validate(p_scte35)) {
+        switch (i_print_type) {
+        case PRINT_XML:
+            printf("<ERROR type=\"invalid_scte35_section\" pid=\"%hu\"/>\n",
+                   i_pid);
+            break;
+        default:
+            printf("invalid SCTE35 section received on PID %hu\n", i_pid);
+        }
+        free(p_scte35);
+        return;
+    }
+
+    if (pb_print_table[TABLE_SCTE35] &&
+        scte35_get_command_type(p_scte35) != SCTE35_NULL_COMMAND)
+        scte35_print(p_scte35, print_wrapper, NULL, i_print_type);
+
+    free(p_scte35);
+}
+
+/*****************************************************************************
  * handle_section
  *****************************************************************************/
 static void handle_section(uint16_t i_pid, uint8_t *p_section)
@@ -972,6 +1029,10 @@ static void handle_section(uint16_t i_pid, uint8_t *p_section)
 
     case EIT_TABLE_ID_PF_ACTUAL:
         handle_eit_section(i_pid, p_section);
+        break;
+
+    case SCTE35_TABLE_ID:
+        handle_scte35_section(i_pid, p_section);
         break;
 
     default:

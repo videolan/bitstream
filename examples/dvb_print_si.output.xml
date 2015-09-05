@@ -120,9 +120,9 @@
 <TS tsid="10300" onid="40300">
 </TS>
 </NIT>
-<BAT tid="74" networkid="40000" version="0" current_next="1">
+<BAT tid="74" bouquetid="40000" version="0" current_next="1">
 </BAT>
-<BAT tid="74" networkid="40000" version="1" current_next="1">
+<BAT tid="74" bouquetid="40000" version="1" current_next="1">
 <DESC id="0x47" length="17" value="5465737420426f7571756574204e616d65">
 <BOUQUET_NAME_DESC bouquetname="Test Bouquet Name"/>
 </DESC>
@@ -248,15 +248,15 @@
 </DESC>
 </SERVICE>
 </SDT>
-<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="0" current_next="1" tsid="10000" onid="40000" seg_last_sec_number="0" last_table_id="0x00">
+<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="0" current_next="1" tsid="10000" onid="40000">
 </EIT>
-<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="1" current_next="1" tsid="10000" onid="40000" seg_last_sec_number="0" last_table_id="0x00">
-<EVENT id="30000" start_time="1234567890" start_time_dec="2009-02-13 23:31:30 UTC" duration="86399" duration_dec="23:59:59" running_status="2" free_CA_mode="0">
+<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="1" current_next="1" tsid="10000" onid="40000">
+<EVENT id="30000" start_time="1234567890" start_time_dec="2009-02-13 23:31:30 UTC" duration="86399" duration_dec="23:59:59" running="2" free_CA="0">
 <DESC id="0x4d" length="44" value="656e670e4d616a6f72205456206576656e7419546865206576656e74206f66207468652063656e7475727921">
 <SHORT_EVENT_DESC lang="eng" event_name="Major TV event" text="The event of the century!"/>
 </DESC>
 </EVENT>
-<EVENT id="30100" start_time="1" start_time_dec="1970-01-01 00:00:01 UTC" duration="3600" duration_dec="01:00:00" running_status="1" free_CA_mode="0">
+<EVENT id="30100" start_time="1" start_time_dec="1970-01-01 00:00:01 UTC" duration="3600" duration_dec="01:00:00" running="1" free_CA="0">
 <DESC id="0x4a" length="10" value="29cc9efc50dc0d7918ff">
 <LINKAGE_DESC tsid="10700" onid="40700" sid="20700" linkage="0x0d" linkage_txt="event linkage">
 <EVENT_LINKAGE target_event_id="31000" target_listed="1" event_simulcast="1"/>
@@ -276,7 +276,7 @@
 <SHORT_SMOOTHING_BUFFER_DESC sb_size="1" sb_leak_rate="10"/>
 </DESC>
 </EVENT>
-<EVENT id="30200" start_time="999999999" start_time_dec="2001-09-09 01:46:39 UTC" duration="7200" duration_dec="02:00:00" running_status="0" free_CA_mode="0">
+<EVENT id="30200" start_time="999999999" start_time_dec="2001-09-09 01:46:39 UTC" duration="7200" duration_dec="02:00:00" running="0" free_CA="0">
 <DESC id="0x4a" length="31" value="2a309f6051400e79185f1ec67d00c3a41055f080e8e732c8a7f859d884d000">
 <LINKAGE_DESC tsid="10800" onid="40800" sid="20800" linkage="0x0e" linkage_txt="extended event linkage">
 <EXTENDED_EVENT_LINKAGE target_event_id="31000" target_listed="0" event_simulcast="1" link_type="1" link_type_txt="HD" target_id_type="3" target_id_type_txt="use user_defined_id" onid_id_flag="1" service_id_flag="1" user_defined_id="7878" target_tsid="0" target_onid="0" target_service_id="0"/>
@@ -307,7 +307,7 @@
 <TIME_SHIFTED_EVENT_DESC reference_sid="22000" reference_event_id="32000"/>
 </DESC>
 </EVENT>
-<EVENT id="30300" start_time="999999999" start_time_dec="2001-09-09 01:46:39 UTC" duration="7200" duration_dec="02:00:00" running_status="4" free_CA_mode="1">
+<EVENT id="30300" start_time="999999999" start_time_dec="2001-09-09 01:46:39 UTC" duration="7200" duration_dec="02:00:00" running="4" free_CA="1">
 <DESC id="0x54" length="4" value="244e68b1">
 <CONTENT_DESC content_l1="2" content_l2="4" user="78"/>
 <CONTENT_DESC content_l1="6" content_l2="8" user="177"/>
@@ -350,9 +350,9 @@
 <RST>
 </RST>
 <RST>
-<STATUS tsid="10000" onid="40000" service_id="20000" event_id="30000" running_status="1"/>
-<STATUS tsid="10100" onid="40100" service_id="20100" event_id="30100" running_status="2"/>
-<STATUS tsid="10200" onid="40200" service_id="20200" event_id="30200" running_status="3"/>
+<STATUS tsid="10000" onid="40000" service_id="20000" event_id="30000" running="1"/>
+<STATUS tsid="10100" onid="40100" service_id="20100" event_id="30100" running="2"/>
+<STATUS tsid="10200" onid="40200" service_id="20200" event_id="30200" running="3"/>
 </RST>
 <PMT program="20000" version="0" current_next="1" pcrpid="110">
 </PMT>
@@ -603,9 +603,11 @@
 <DESC id="0x2b" length="3" value="120500">
 <MPEG2_AAC_AUDIO_DESC profile="0x12" channel_config="0x05" additional_info="0x00"/>
 </DESC>
-<DESC id="0x7c" length="3" value="14ff1f">
+<DESC id="0x7c" length="3" value="14801f">
 <AAC_DESC profile_and_level="0x14" aac_type_flag="1" aac_type="0x1f"/>
 </DESC>
+</ES>
+<ES pid="200" streamtype="0x86" streamtype_txt="SCTE 35 Splice Information Table">
 </ES>
 </PMT>
 <DIT transition_flag="1"/>
@@ -616,7 +618,7 @@
 <DESC id="0x63" length="8" value="c01388c01b58c3e8">
 <PARTIAL_TRANSPORT_STREAM_DESC peak_rate="5000" min_overall_smoothing_rate="7000" max_overall_smoothing_buffer="1000"/>
 </DESC>
-<SERVICE sid="20000" running_status="1">
+<SERVICE sid="20000" running="1">
 <DESC id="0x05" length="4" value="54455354">
 <REGISTRATION_DESC identifier="TEST"/>
 </DESC>
@@ -627,7 +629,9 @@
 <REGISTRATION_DESC identifier="TEST"/>
 </DESC>
 </SERVICE>
-<SERVICE sid="21000" running_status="3">
+<SERVICE sid="21000" running="3">
 </SERVICE>
 </SIT>
+<SCTE35 command="5" command_str="insert" pts_adjustment="0" event_id="4242" cancel="0" out_of_network="1" program_splice="1" splice_time="270000000" auto_return="1" duration="27000000" unique_program_id="2424">
+</SCTE35>
 </TS>

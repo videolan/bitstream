@@ -2,9 +2,11 @@
  * dvb_gen_si.c: Generate SI tables and descriptors
  *****************************************************************************
  * Copyright (c) 2011 Unix Solutions Ltd.
+ * Copyright (c) 2015 VideoLAN
  *
  * Authors:
  *   Georgi Chorbadzhiyski <gf@unixsol.org>
+ *   Christophe Massiot <massiot@via.ecp.fr>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -38,6 +40,8 @@
 #include <bitstream/mpeg/psi.h>
 #include <bitstream/dvb/si.h>
 #include <bitstream/dvb/si_print.h>
+#include <bitstream/scte/35.h>
+#include <bitstream/scte/35_print.h>
 
 uint16_t tsid     = 10000;
 uint16_t sid      = 20000;
@@ -45,6 +49,7 @@ uint16_t event_id = 30000;
 uint16_t onid     = 40000;
 
 uint16_t pmt_pid  = 100;
+uint16_t scte35_pid  = 200;
 
 time_t ts_0 = 1234567890;
 time_t ts_1 = 1;
@@ -2959,6 +2964,12 @@ static void generate_pmt(void) {
             descs_set_length(desc_loop, desc - desc_loop - DESCS_HEADER_SIZE);
         }
 
+        pmt_n = pmt_get_es(pmt, pmt_n_counter++);
+        pmtn_init(pmt_n);
+        pmtn_set_streamtype(pmt_n, PMT_STREAMTYPE_SCTE_35);
+        pmtn_set_pid(pmt_n, scte35_pid);
+        pmtn_set_desclength(pmt_n, 0);
+
         // Set transport_stream_loop length
         pmt_n = pmt_get_es(pmt, pmt_n_counter); // Get last service
         pmt_set_length(pmt, pmt_n - pmt_get_es(pmt, 0) + pmt_get_desclength(pmt));
@@ -3073,6 +3084,58 @@ static void generate_sit(void) {
     free(sit);
 }
 
+/* SCTE 35 Splice Information Table */
+static void generate_scte35(void) {
+    uint8_t *scte35 = psi_allocate();
+
+    // Generate empty section
+    scte35_init(scte35);
+    psi_set_length(scte35, PSI_MAX_SIZE);
+    scte35_set_pts_adjustment(scte35, 0);
+    scte35_null_init(scte35);
+    scte35_set_desclength(scte35, 0);
+    psi_set_length(scte35,
+            scte35_get_descl(scte35) + PSI_CRC_SIZE - scte35 - PSI_HEADER_SIZE);
+    psi_set_crc(scte35);
+    output_psi_section(scte35, scte35_pid, &cc);
+
+    // Generate insert section
+    scte35_init(scte35);
+    psi_set_length(scte35, PSI_MAX_SIZE);
+    scte35_set_pts_adjustment(scte35, 0);
+    scte35_insert_init(scte35,
+            SCTE35_INSERT_HEADER2_SIZE +
+            SCTE35_SPLICE_TIME_HEADER_SIZE + SCTE35_SPLICE_TIME_TIME_SIZE +
+            SCTE35_BREAK_DURATION_HEADER_SIZE + SCTE35_INSERT_FOOTER_SIZE);
+    scte35_insert_set_cancel(scte35, false);
+    scte35_insert_set_event_id(scte35, 4242);
+    scte35_insert_set_out_of_network(scte35, true);
+    scte35_insert_set_program_splice(scte35, true);
+    scte35_insert_set_duration(scte35, true);
+    scte35_insert_set_splice_immediate(scte35, false);
+
+    uint8_t *splice_time = scte35_insert_get_splice_time(scte35);
+    scte35_splice_time_init(splice_time);
+    scte35_splice_time_set_time_specified(splice_time, true);
+    scte35_splice_time_set_pts_time(splice_time, 270000000);
+
+    uint8_t *duration = scte35_insert_get_break_duration(scte35);
+    scte35_break_duration_init(duration);
+    scte35_break_duration_set_auto_return(duration, true);
+    scte35_break_duration_set_duration(duration, 27000000);
+
+    scte35_insert_set_unique_program_id(scte35, 2424);
+    scte35_insert_set_avail_num(scte35, 0);
+    scte35_insert_set_avails_expected(scte35, 0);
+    scte35_set_desclength(scte35, 0);
+    psi_set_length(scte35,
+            scte35_get_descl(scte35) + PSI_CRC_SIZE - scte35 - PSI_HEADER_SIZE);
+    psi_set_crc(scte35);
+    output_psi_section(scte35, scte35_pid, &cc);
+
+    free(scte35);
+}
+
 int main(void)
 {
     generate_pat();
@@ -3088,6 +3151,7 @@ int main(void)
     generate_pmt();
     generate_dit();
     generate_sit();
+    generate_scte35();
 
     return EXIT_SUCCESS;
 }
