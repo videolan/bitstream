@@ -87,8 +87,8 @@ static inline void scte35_set_encrypted(uint8_t *p_scte35, bool b_encrypted)
 static inline uint64_t scte35_get_pts_adjustment(const uint8_t *p_scte35)
 {
     return ((uint64_t)(p_scte35[4] & 0x1) << 32) |
-           (p_scte35[5] << 24) | (p_scte35[6] << 16) |
-           (p_scte35[7] << 8) | p_scte35[8];
+           ((uint64_t)p_scte35[5] << 24) | ((uint64_t)p_scte35[6] << 16) |
+           ((uint64_t)p_scte35[7] << 8) | (uint64_t)p_scte35[8];
 }
 
 static inline void scte35_set_pts_adjustment(uint8_t *p_scte35,
@@ -303,7 +303,7 @@ static inline void scte35_insert_init(uint8_t *p_scte35, uint16_t i_length)
 static inline uint32_t scte35_insert_get_event_id(const uint8_t *p_scte35)
 {
     const uint8_t *p_command = scte35_get_command(p_scte35);
-    return (p_command[0] << 24) | (p_command[1] << 16) |
+    return ((uint32_t)p_command[0] << 24) | (p_command[1] << 16) |
            (p_command[2] << 8) | p_command[3];
 }
 
@@ -645,7 +645,7 @@ static inline void scte35_private_init(uint8_t *p_scte35, uint16_t i_length)
 static inline uint32_t scte35_private_get_identifier(const uint8_t *p_scte35)
 {
     const uint8_t *p_command = scte35_get_command(p_scte35);
-    return (p_command[0] << 24) | (p_command[1] << 16) |
+    return ((uint32_t)p_command[0] << 24) | (p_command[1] << 16) |
            (p_command[2] << 8) | p_command[3];
 }
 
