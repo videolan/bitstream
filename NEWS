@@ -1,3 +1,20 @@
+1.1 (5 Oct 2015)
+================
+ - Rename fields in BAT, RST and SIT to match those of SDT
+ - Add support for private data specifier 0x233a for descriptor 0x83
+ - Add support for elementary streams MPEG video and audio, AAC, A/52, Opus,
+   H264 and DVB subtitles
+ - Add support for SMPTE 2022-1 Forward Error Correction
+ - Add support for encoder/decoder DVB Simulcrypt EMMG interface
+ - Add support for IEEE 802.3 Ethernet frames
+ - Add support for IP and UDP headers
+ - Add support for IETF RTCP
+ - Add support for SCTE-35 Splice Information Table
+ - Fix parsing of PSI version_number
+ - Fix bug in EIT
+ - Fix bug in PCR writing
+ - Fix retrieval of PES payload offset in case of optional header
+ - Fix incorrect marker bit in PES PTS and DTS syntax
 
 1.0 (15 Dec 2011)
 =================
