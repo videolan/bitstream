@@ -46,7 +46,11 @@ extern "C"
  * ADTS header
  *****************************************************************************/
 #define ADTS_HEADER_SIZE        7
+#define ADTS_CRC_SIZE           2
 #define ADTS_SAMPLES_PER_BLOCK  1024
+#define ADTS_PROFILE_MAIN       0
+#define ADTS_PROFILE_LC         1
+#define ADTS_PROFILE_SSR        2
 
 /* fixed header */
 static inline void adts_set_sync(uint8_t *p_adts)
@@ -196,6 +200,13 @@ static inline bool adts_sync_compare_formats(const uint8_t *p_adts1, const uint8
            p_adts1[2] == p_adts2[2] &&
            (p_adts1[3] & 0xc0) == (p_adts2[3] & 0xc0);
 }
+
+/*****************************************************************************
+ * AudioSpecificConfig
+ *****************************************************************************/
+#define ASC_TYPE_MAIN           1
+#define ASC_TYPE_LC             2
+#define ASC_TYPE_SSR            3
 
 #ifdef __cplusplus
 }
