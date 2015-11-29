@@ -1,7 +1,7 @@
 /*****************************************************************************
  * mp2v.h: ISO/IEC 13818-2 (video)
  *****************************************************************************
- * Copyright (C) 2013 VideoLAN
+ * Copyright (C) 2013-2015 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *
@@ -28,6 +28,7 @@
 /*
  * Normative references:
  *  - ISO/IEC 13818-2 (MPEG-2 video)
+ *  - ISO/IEC JTC1/SC29/WG11 MPEG2007/m14868 (high progressive profile)
  */
 
 #ifndef __BITSTREAM_MPEG_MP2V_H__
@@ -288,6 +289,7 @@ static inline bool mp2vseq_get_nonintramatrix(const uint8_t *p_mp2vseq,
 #define MP2VSEQX_LEVEL_MAIN         8
 #define MP2VSEQX_LEVEL_HIGH1440     6
 #define MP2VSEQX_LEVEL_HIGH         4
+#define MP2VSEQX_LEVEL_HIGHP        2
 
 #define MP2VSEQX_CHROMA_420         1
 #define MP2VSEQX_CHROMA_422         2
