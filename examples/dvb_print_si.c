@@ -293,7 +293,9 @@ static void handle_pat(void)
                     for (i_pmt = 0; i_pmt < i_nb_sids; i_pmt++)
                         if (pp_sids[i_pmt]->i_sid == i_sid) {
                             pp_sids[i_pmt]->i_sid = 0;
-                            handle_pmt_es(pp_sids[i_pmt]->p_current_pmt, false);
+                            if (pp_sids[i_pmt]->p_current_pmt != NULL)
+                                handle_pmt_es(pp_sids[i_pmt]->p_current_pmt,
+                                              false);
                             free(pp_sids[i_pmt]->p_current_pmt);
                             pp_sids[i_pmt]->p_current_pmt = NULL;
                             psi_table_free(pp_sids[i]->pp_eit_sections);
