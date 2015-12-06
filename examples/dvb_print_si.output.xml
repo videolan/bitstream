@@ -445,9 +445,9 @@
 </ES>
 <ES pid="122" streamtype="0x06" streamtype_txt="13818-1 PES private data">
 <DESC id="0x46" length="15" value="656e670bff62756c127f6672651940">
-<VBI_TELX_DESC language="eng" type="0x1" type_txt="Initial teletext page" mag="3" page="0x255x"/>
-<VBI_TELX_DESC language="bul" type="0x2" type_txt="Teletext subtitle page" mag="2" page="0x127x"/>
-<VBI_TELX_DESC language="fre" type="0x3" type_txt="Additional information page" mag="1" page="0x64x"/>
+<VBI_TELX_DESC language="eng" type="0x1" type_txt="Initial teletext page" mag="3" page="0xff"/>
+<VBI_TELX_DESC language="bul" type="0x2" type_txt="Teletext subtitle page" mag="2" page="0x7f"/>
+<VBI_TELX_DESC language="fre" type="0x3" type_txt="Additional information page" mag="1" page="0x40"/>
 </DESC>
 <DESC id="0x45" length="27" value="0108e0c1e2c3e4c5e6c70304123456780401ca0504d4f5d6f70600">
 <VBI_DATA_DESC>
@@ -483,9 +483,9 @@
 </ES>
 <ES pid="123" streamtype="0x06" streamtype_txt="13818-1 PES private data">
 <DESC id="0x56" length="15" value="656e670bff62756c127f6672651940">
-<TELX_DESC language="eng" type="0x1" type_txt="Initial teletext page" mag="3" page="0x255x"/>
-<TELX_DESC language="bul" type="0x2" type_txt="Teletext subtitle page" mag="2" page="0x127x"/>
-<TELX_DESC language="fre" type="0x3" type_txt="Additional information page" mag="1" page="0x64x"/>
+<TELX_DESC language="eng" type="0x1" type_txt="Initial teletext page" mag="3" page="0xff"/>
+<TELX_DESC language="bul" type="0x2" type_txt="Teletext subtitle page" mag="2" page="0x7f"/>
+<TELX_DESC language="fre" type="0x3" type_txt="Additional information page" mag="1" page="0x40"/>
 </DESC>
 <DESC id="0x60" length="6" value="27103a984e20">
 <SERVICE_MOVE_DESC new_onid="10000" new_tsid="15000" new_service_id="20000"/>

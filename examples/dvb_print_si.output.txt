@@ -247,9 +247,9 @@ new PMT program=20000 version=1 pcrpid=110
     - desc 7a ac3 component_type_flag=1 component_type=10 bsid_flag=1 bsid=20 mainid_flag=1 mainid=30 asvc_flag=1 asvc=40 mixinfoexists=1 substream1_flag=1 substream1=50 substream2_flag=1 substream2=60 substream3_flag=1 substream3=70
     - desc 7b dts sample_rate_code=8 bit_rate_code=11 nblks=5 fsize=95 surround_mode=3 lfe_flag=1 extended_surround_flag=2
   * ES pid=122 streamtype=0x06 streamtype_txt="13818-1 PES private data"
-    - desc 46 vbi_telx language=eng type=0x1 type_txt="Initial teletext page" mag=3 page=0x255x
-    - desc 46 vbi_telx language=bul type=0x2 type_txt="Teletext subtitle page" mag=2 page=0x127x
-    - desc 46 vbi_telx language=fre type=0x3 type_txt="Additional information page" mag=1 page=0x64x
+    - desc 46 vbi_telx language=eng type=0x1 type_txt="Initial teletext page" mag=3 page=0xff
+    - desc 46 vbi_telx language=bul type=0x2 type_txt="Teletext subtitle page" mag=2 page=0x7f
+    - desc 46 vbi_telx language=fre type=0x3 type_txt="Additional information page" mag=1 page=0x40
     - desc 45 vbi_data service_id=0x01 length=8 service_txt="EBU teletext"
         - vbi_data field_parity=1 line_offset=0
         - vbi_data field_parity=0 line_offset=1
@@ -273,9 +273,9 @@ new PMT program=20000 version=1 pcrpid=110
         - vbi_data field_parity=1 line_offset=23
     - desc 45 vbi_data service_id=0x06 length=0 service_txt="Closed Captioning"
   * ES pid=123 streamtype=0x06 streamtype_txt="13818-1 PES private data"
-    - desc 56 telx language=eng type=0x1 type_txt="Initial teletext page" mag=3 page=0x255x
-    - desc 56 telx language=bul type=0x2 type_txt="Teletext subtitle page" mag=2 page=0x127x
-    - desc 56 telx language=fre type=0x3 type_txt="Additional information page" mag=1 page=0x64x
+    - desc 56 telx language=eng type=0x1 type_txt="Initial teletext page" mag=3 page=0xff
+    - desc 56 telx language=bul type=0x2 type_txt="Teletext subtitle page" mag=2 page=0x7f
+    - desc 56 telx language=fre type=0x3 type_txt="Additional information page" mag=1 page=0x40
     - desc 60 service_move new_onid=10000 new_tsid=15000 new_service_id=20000
     - desc 65 scrambling scrambling_mode=0x01 scrambling_mode_txt="DVB-CSA1"
   * ES pid=124 streamtype=0x06 streamtype_txt="13818-1 PES private data"
