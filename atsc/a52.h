@@ -105,6 +105,10 @@ static const uint16_t a52_frame_size_code_tab[38][3] = {
 
 /* A/52 Bitrate Table (A/52:2012 Table 5.18) */
 static const uint16_t a52_bitrate_tab[38] = {
+    32, 32,
+    40, 40,
+    48, 48,
+    56, 56,
     64, 64,
     80, 80,
     96, 96,
@@ -118,12 +122,8 @@ static const uint16_t a52_bitrate_tab[38] = {
     384, 384,
     448, 448,
     512, 512,
-    640, 640,
-    768, 768,
-    896, 896,
-    1024, 1024,
-    1152, 1152,
-    1280, 1280
+    576, 576,
+    640, 640
 };
 
 static inline uint16_t a52_get_sync(const uint8_t *p_a52)
