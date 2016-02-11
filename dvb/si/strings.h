@@ -52,7 +52,7 @@ static const char *ppsz_dvb_encodings[] = {
     "ISO-8859-14", "ISO-8859-15", "", "", "", "",
 
     /* 0x10 - 0x1f */
-    "", "UTF-16", "KSC5601-1987", "GB2312", "BIG-5", "UTF-8",
+    "", "UCS-2BE", "EUC-KR", "GB2312", "UCS-2BE", "UTF-8",
     "", "", "", "", "", "", "", "", "", "", NULL
 };
 static const char *ppsz_dvb_encodings10[] = {
