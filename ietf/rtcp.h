@@ -10,6 +10,11 @@ static inline void rtcp_set_rtp_version(uint8_t *p_rtcp)
     p_rtcp[0] = RTCP_RTP_VERSION << 6;
 }
 
+static inline uint8_t rtcp_get_pt(const uint8_t *p_rtcp)
+{
+    return p_rtcp[1];
+}
+
 static inline void rtcp_set_pt(uint8_t *p_rtcp, uint8_t pt)
 {
     p_rtcp[1] = pt;
