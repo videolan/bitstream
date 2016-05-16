@@ -79,10 +79,12 @@ extern "C"
 #define PMT_STREAMTYPE_META_SDP         0x19
 #define PMT_STREAMTYPE_IPMP_13818_11    0x1a
 #define PMT_STREAMTYPE_VIDEO_AVC        0x1b
+#define PMT_STREAMTYPE_VIDEO_HEVC       0x24
 #define PMT_STREAMTYPE_VIDEO_AVS        0x42
 #define PMT_STREAMTYPE_IPMP             0x7f
 #define PMT_STREAMTYPE_ATSC_A52         0x81
 #define PMT_STREAMTYPE_SCTE_35          0x86
+#define PMT_STREAMTYPE_ATSC_A52E        0x87
 
 static inline void pmt_init(uint8_t *p_pmt)
 {
