@@ -35,6 +35,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <bitstream/mpeg/ts.h>
 #include <bitstream/mpeg/psi.h>
@@ -1751,7 +1752,8 @@ static void output_psi_section(uint8_t *section, uint16_t pid, uint8_t *cc) {
         if (section_offset == section_length)
             psi_split_end(ts, &ts_offset);
 
-        write(fileno(stdout), ts, TS_SIZE);
+        if (write(fileno(stdout), ts, TS_SIZE) < 0)
+            perror("write");
     } while (section_offset < section_length);
 }
 
