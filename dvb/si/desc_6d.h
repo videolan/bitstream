@@ -69,7 +69,7 @@ static inline uint32_t desc6dn_get_frequency(const uint8_t *p_desc_n)
     return (p_desc_n[2] << 24) | (p_desc_n[3] << 16) | (p_desc_n[4] << 8) | p_desc_n[5];
 }
 
-static inline void desc6dn_set_frequency(uint8_t *p_desc_n, uint16_t i_frequency)
+static inline void desc6dn_set_frequency(uint8_t *p_desc_n, uint32_t i_frequency)
 {
     p_desc_n[2] = (i_frequency >> 24) & 0xff;
     p_desc_n[3] = (i_frequency >> 16) & 0xff;
