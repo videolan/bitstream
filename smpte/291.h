@@ -43,14 +43,14 @@ extern "C"
 #endif
 
 /*****************************************************************************
- * SMPTE 291 ancillary data (8-bit mode only)
+ * SMPTE 291 ancillary data
  *****************************************************************************/
 #define S291_HEADER_SIZE            6
 #define S291_FOOTER_SIZE            1
 
-#define S291_ADF1                   0x00
-#define S291_ADF2                   0xff
-#define S291_ADF3                   0xff
+#define S291_ADF1                   0x0000
+#define S291_ADF2                   0x03ff
+#define S291_ADF3                   0x03ff
 
 /* SMPTE 2016 */
 #define S291_AFD_DID                0x41
@@ -90,58 +90,72 @@ extern "C"
 #define S291_SMPTEVBI_DID           0x62
 #define S291_SMPTEVBI_SDID          0x03
 
-static inline void s291_set_did(uint8_t *p_s291, uint8_t i_did)
+static inline uint16_t s291_parity(uint8_t i_val)
 {
-    p_s291[3] = i_did;
+    uint8_t i_parity =
+        (((i_val * 0x0101010101010101ULL) & 0x8040201008040201ULL) % 0x1FF) & 1;
+    return (uint16_t)i_parity << 8 | ((uint16_t)(i_parity ^ 1) << 9);
 }
 
-static inline uint8_t s291_get_did(const uint8_t *p_s291)
+static inline void s291_set_did(uint16_t *p_s291, uint8_t i_did)
 {
-    return p_s291[3];
+    p_s291[3] = i_did | s291_parity(i_did);
 }
 
-static inline void s291_set_sdid(uint8_t *p_s291, uint8_t i_sdid)
+static inline uint8_t s291_get_did(const uint16_t *p_s291)
 {
-    p_s291[4] = i_sdid;
+    return p_s291[3] & 0xff;
 }
 
-static inline uint8_t s291_get_sdid(const uint8_t *p_s291)
+static inline void s291_set_sdid(uint16_t *p_s291, uint8_t i_sdid)
 {
-    return p_s291[4];
+    p_s291[4] = i_sdid | s291_parity(i_sdid);
 }
 
-static inline void s291_set_data_mode(uint8_t *p_s291, uint8_t i_data_mode)
+static inline uint8_t s291_get_sdid(const uint16_t *p_s291)
 {
-    p_s291[5] &= ~0x60;
-    p_s291[5] |= (i_data_mode << 5) & 0x60;
+    return p_s291[4] & 0xff;
 }
 
 #define s291_set_dbn s291_set_sdid
 #define s291_get_dbn s291_get_sdid
 
-static inline void s291_set_dc(uint8_t *p_s291, uint8_t i_dc)
+static inline void s291_set_dc(uint16_t *p_s291, uint8_t i_dc)
 {
-    p_s291[5] = i_dc;
+    p_s291[5] = i_dc | s291_parity(i_dc);
 }
 
-static inline uint8_t s291_get_dc(const uint8_t *p_s291)
+static inline uint8_t s291_get_dc(const uint16_t *p_s291)
 {
-    return p_s291[5];
+    return p_s291[5] & 0xff;
 }
 
-static inline uint8_t *s291_get_udw(const uint8_t *p_s291)
+static inline uint16_t *s291_get_udw(const uint16_t *p_s291)
 {
-    return (uint8_t *)&p_s291[6];
+    return (uint16_t *)&p_s291[6];
 }
 
-static inline bool s291_check_crc(const uint8_t *p_s291)
+static inline uint16_t s291_compute_cs(const uint16_t *p_s291)
 {
-    uint8_t i_crc = 0;
+    uint16_t i_cs = 0;
     uint8_t i_dc = s291_get_dc(p_s291);
-    int i;
-    for (i = 3; i < i_dc + S291_HEADER_SIZE; i++)
-        i_crc += p_s291[i];
-    return i_crc == p_s291[i];
+    unsigned int i;
+    for (i = 3; i < i_dc + S291_HEADER_SIZE; i++) {
+        i_cs += p_s291[i] & 0x1ff;
+        i_cs &= 0x1ff;
+    }
+    return i_cs | (~i_cs & 0x100) << 1;
+}
+
+static inline void s291_set_cs(uint16_t *p_s291)
+{
+    p_s291[S291_HEADER_SIZE + s291_get_dc(p_s291)] = s291_compute_cs(p_s291);
+}
+
+static inline bool s291_check_cs(const uint16_t *p_s291)
+{
+    return p_s291[S291_HEADER_SIZE + s291_get_dc(p_s291)] ==
+           s291_compute_cs(p_s291);
 }
 
 #ifdef __cplusplus
