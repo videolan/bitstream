@@ -44,24 +44,25 @@ extern "C"
 /*****************************************************************************
  * SMPTE RDD 8 Subtitling Distribution Packet
  *****************************************************************************/
-#define RDD08SDP_HEADER_SIZE        8
+#define RDD08SDP_HEADER_SIZE        9
 #define RDD08SDP_FOOTER_SIZE        4
 #define RDD08SDP_B_SIZE             45
 
-#define RDD08SDP_IDENT1             0x51
-#define RDD08SDP_IDENT2             0x15
-#define RDD08SDP_FOOTER             0x74
+#define RDD08SDP_IDENT1             0x0151
+#define RDD08SDP_IDENT2             0x0115
+#define RDD08SDP_FOOTER             0x0274
 
-#define RDD08SDP_FORMAT_WST         0x2
+#define RDD08SDP_FORMAT_WST         0x0102
+#define RDD08SDP_FRAMING_CODE       0x0227
 
 static inline uint8_t rdd08sdp_get_length(const uint16_t *p_rdd08)
 {
     return p_rdd08[2] & 0xff;
 }
 
-static inline uint8_t rdd08sdp_get_format(const uint16_t *p_rdd08)
+static inline uint16_t rdd08sdp_get_format(const uint16_t *p_rdd08)
 {
-    return p_rdd08[3] & 0xff;
+    return p_rdd08[3];
 }
 
 static inline uint8_t rdd08sdp_get_a(const uint16_t *p_rdd08, uint8_t n)
@@ -89,10 +90,10 @@ static inline uint16_t *rdd08sdp_get_b(const uint16_t *p_rdd08, uint8_t n)
     return (uint16_t *)b;
 }
 
-static inline uint8_t rdd08sdp_get_footer(const uint16_t *p_rdd08)
+static inline uint16_t rdd08sdp_get_footer(const uint16_t *p_rdd08)
 {
     uint8_t i_length = rdd08sdp_get_length(p_rdd08);
-    return p_rdd08[i_length - 4] & 0xff;
+    return p_rdd08[i_length - 4];
 }
 
 static inline uint16_t rdd08sdp_get_counter(const uint16_t *p_rdd08)
