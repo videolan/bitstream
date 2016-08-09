@@ -48,8 +48,8 @@ extern "C"
 #define DVBVBI_UNIT_HEADER_SIZE 2
 #define DVBVBI_DATA_IDENTIFIER  0x10
 
-#define DVBVBI_ID_TTX_SUB       0x02
-#define DVBVBI_ID_TTX_NONSUB    0x03
+#define DVBVBI_ID_TTX_NONSUB    0x02
+#define DVBVBI_ID_TTX_SUB       0x03
 #define DVBVBI_ID_TTX_INVERTED  0xc0
 #define DVBVBI_ID_VPS           0xc3
 #define DVBVBI_ID_WSS           0xc4
