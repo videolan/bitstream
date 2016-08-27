@@ -90,7 +90,7 @@ static inline const char *desc46_get_teletexttype_txt(uint8_t i_type)
            i_type == 0x02 ? "Teletext subtitle page" :
            i_type == 0x03 ? "Additional information page" :
            i_type == 0x04 ? "Programme schedule page" :
-           i_type == 0x05 ? "Teletext subtitle page for hearing impaired people schedule page" : "Reserved";
+           i_type == 0x05 ? "Teletext subtitle page for hearing impaired people" : "Reserved";
 }
 
 static inline void desc46n_set_teletextmagazine(uint8_t *p_desc_n,
