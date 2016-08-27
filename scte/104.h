@@ -27,7 +27,7 @@
 
 /*
  * Normative references:
- *  - SCTE 104 2004 (Automation to Compression Communications API)
+ *  - SCTE 104 2012 (Automation to Compression Communications API)
  */
 
 #ifndef __BITSTREAM_SCTE_104_H__
@@ -201,6 +201,11 @@ static inline uint16_t scte104o_get_opid(const uint8_t *p)
 static inline uint16_t scte104o_get_data_length(const uint8_t *p)
 {
     return (p[2] << 8) | p[3];
+}
+
+static inline uint8_t *scte104o_get_data(const uint8_t *p)
+{
+    return (uint8_t *)&p[4];
 }
 
 /*****************************************************************************
