@@ -1200,25 +1200,42 @@ int main(int i_argc, char **ppsz_argv)
         break;
     }
 
+    bool b_is_last_invalid = false;
     while (!feof(stdin) && !ferror(stdin)) {
         uint8_t p_ts[TS_SIZE];
         size_t i_ret = fread(p_ts, sizeof(p_ts), 1, stdin);
         if (i_ret != 1) continue;
         if (!ts_validate(p_ts)) {
-            switch (i_print_type) {
-            case PRINT_XML:
-                printf("<ERROR type=\"invalid_ts\"/>\n");
-                break;
-            default:
-                printf("invalid TS packet\n");
+            if (!b_is_last_invalid) {
+                switch (i_print_type) {
+                case PRINT_XML:
+                    printf("<ERROR type=\"invalid_ts\"/>\n");
+                    break;
+                default:
+                    printf("invalid TS packet\n");
+                }
+                b_is_last_invalid = true;
             }
-        } else {
-            uint16_t i_pid = ts_get_pid(p_ts);
-            ts_pid_t *p_pid = &p_pids[i_pid];
-            if (p_pid->i_psi_refcount)
-                handle_psi_packet(p_ts);
-            p_pid->i_last_cc = ts_get_cc(p_ts);
+
+            int i;
+            for (i = 1; i < TS_SIZE; i++) {
+                if (ts_validate(p_ts + i)) {
+                    memmove(p_ts, p_ts + i, TS_SIZE - i);
+                    i_ret = fread(p_ts + TS_SIZE - i, i, 1, stdin);
+                    if (i_ret != 1) continue;
+                    break;
+                }
+            }
+            if (i == TS_SIZE)
+                continue;
         }
+
+        uint16_t i_pid = ts_get_pid(p_ts);
+        ts_pid_t *p_pid = &p_pids[i_pid];
+        if (p_pid->i_psi_refcount)
+            handle_psi_packet(p_ts);
+        p_pid->i_last_cc = ts_get_cc(p_ts);
+        b_is_last_invalid = false;
     }
 
     switch (i_print_type) {
