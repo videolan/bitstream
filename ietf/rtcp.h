@@ -20,6 +20,11 @@ static inline void rtcp_set_pt(uint8_t *p_rtcp, uint8_t pt)
     p_rtcp[1] = pt;
 }
 
+static inline uint16_t rtcp_get_length(const uint8_t *p_rtcp)
+{
+    return (p_rtcp[2] << 8) | p_rtcp[3];
+}
+
 static inline void rtcp_set_length(uint8_t *p_rtcp,
                                       uint16_t length)
 {
