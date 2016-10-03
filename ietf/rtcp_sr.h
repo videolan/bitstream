@@ -4,6 +4,8 @@
 # include <inttypes.h>
 # include <bitstream/ietf/rtcp.h>
 
+# define RTCP_SR_SIZE    28
+
 # define RTCP_PT_SR             200
 
 static inline void rtcp_sr_set_rtp_version(uint8_t *p_rtcp)
