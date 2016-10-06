@@ -180,10 +180,12 @@ static inline const char *pmt_get_streamtype_txt(uint8_t i_stream_type) {
         case 0x19: return "Metadata in 13818-6 Synchronized Download Protocol";
         case 0x1A: return "13818-11 MPEG-2 IPMP stream";
         case 0x1B: return "H.264/14496-10 video (MPEG-4/AVC)";
+        case 0x24: return "H.265 video (MPEG-H/HEVC)";
         case 0x42: return "AVS Video";
         case 0x7F: return "IPMP stream";
         case 0x81: return "ATSC A/52";
         case 0x86: return "SCTE 35 Splice Information Table";
+        case 0x87: return "ATSC A/52e";
         default  : return "Unknown";
     }
 }
