@@ -40,6 +40,9 @@ extern "C"
 {
 #endif
 
+#define RFC_4175_EXT_SEQ_NUM_LEN 2
+#define RFC_4175_HEADER_LEN 6 /* Note: extended sequence number not included */
+
 /*  0                   1                   2                   3
  *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -69,111 +72,59 @@ static inline uint16_t rfc4175_get_extended_sequence_number(uint8_t *buf)
     return (buf[0] << 8) | buf[1];
 }
 
-static inline void rfc4175_set_line_1_length(uint8_t *buf, uint16_t length)
+static inline void rfc4175_set_line_length(uint8_t *buf, uint16_t length)
 {
-    buf[2] = (length >> 8) & 0xff;
-    buf[3] = length & 0xff;
+    buf[0] = (length >> 8) & 0xff;
+    buf[1] = length & 0xff;
 }
 
-static inline uint16_t rfc4175_get_line_1_length(uint8_t *buf)
+static inline uint16_t rfc4175_get_line_length(uint8_t *buf)
 {
-    return (buf[2] << 8) | buf[3];
+    return (buf[0] << 8) | buf[1];
 }
 
-static inline void rfc4175_set_line_1_field_id(uint8_t *buf, uint8_t id)
+static inline void rfc4175_set_line_field_id(uint8_t *buf, uint8_t id)
 {
-    buf[4] |= (!!id) << 7;
+    buf[2] |= (!!id) << 7;
 }
 
-static inline uint8_t rfc4175_get_line_1_field_id(uint8_t *buf)
+static inline uint8_t rfc4175_get_line_field_id(uint8_t *buf)
+{
+    return buf[2] >> 7;
+}
+
+static inline void rfc4175_set_line_number(uint8_t *buf, uint16_t number)
+{
+    buf[2] |= (number >> 8) & 0x7f;
+    buf[3]  = number & 0xff;
+}
+
+static inline uint16_t rfc4175_get_line_number(uint8_t *buf)
+{
+    return ((buf[2] & 0x7f) << 8) | buf[3];
+}
+
+static inline void rfc4175_set_line_continuation(uint8_t *buf, uint8_t continuation)
+{
+    buf[4] |= (!!continuation) << 7;
+}
+
+static inline uint8_t rfc4175_get_line_continuation(uint8_t *buf)
 {
     return buf[4] >> 7;
 }
 
-static inline void rfc4175_set_line_1_number(uint8_t *buf, uint16_t number)
+static inline void rfc4175_set_line_offset(uint8_t *buf, uint16_t offset)
 {
-    buf[4] |= (number >> 8) & 0x80;
-    buf[5]  = number & 0xff;
+    buf[4] |= (offset >> 8) & 0x7f;
+    buf[5]  = offset & 0xff;
 }
 
-static inline uint16_t rfc4175_get_line_1_number(uint8_t *buf)
+static inline uint16_t rfc4175_get_line_offset(uint8_t *buf)
 {
-    return ((buf[4] & 0x80) << 8) | buf[5];
+    return ((buf[4] & 0x7f) << 8) | buf[5];
 }
 
-static inline void rfc4175_set_line_1_continuation(uint8_t *buf, uint8_t continuation)
-{
-    buf[6] |= (!!continuation) << 7;
-}
-
-static inline uint8_t rfc4175_get_line_1_continuation(uint8_t *buf)
-{
-    return buf[6] >> 7;
-}
-
-static inline void rfc4175_set_line_1_offset(uint8_t *buf, uint16_t offset)
-{
-    buf[6] |= (offset >> 8) & 0x80;
-    buf[7]  = offset & 0xff;
-}
-
-static inline uint16_t rfc4175_get_line_1_offset(uint8_t *buf)
-{
-    return ((buf[6] & 0x80) << 8) | buf[7];
-}
-
-static inline void rfc4175_set_line_2_length(uint8_t *buf, uint16_t length)
-{
-    buf[8] = (length >> 8) & 0xff;
-    buf[9] = length & 0xff;
-}
-
-static inline uint16_t rfc4175_get_line_2_length(uint8_t *buf)
-{
-    return (buf[8] << 8) | buf[9];
-}
-
-static inline void rfc4175_set_line_2_field_id(uint8_t *buf, uint8_t id)
-{
-    buf[10] |= (!!id) << 7;
-}
-
-static inline uint8_t rfc4175_get_line_2_field_id(uint8_t *buf)
-{
-    return buf[10] >> 7;
-}
-
-static inline void rfc4175_set_line_2_number(uint8_t *buf, uint16_t number)
-{
-    buf[11] |= (number >> 8) & 0x80;
-    buf[12]  = number & 0xff;
-}
-
-static inline uint16_t rfc4175_get_line_2_number(uint8_t *buf)
-{
-    return ((buf[11] & 0x80) << 8) | buf[12];
-}
-
-static inline void rfc4175_set_line_2_continuation(uint8_t *buf, uint8_t continuation)
-{
-    buf[13] |= (!!continuation) << 7;
-}
-
-static inline uint8_t rfc4175_get_line_2_continuation(uint8_t *buf)
-{
-    return buf[13] >> 7;
-}
-
-static inline void rfc4175_set_line_2_offset(uint8_t *buf, uint16_t offset)
-{
-    buf[13] |= (offset >> 8) & 0x80;
-    buf[14]  = offset & 0xff;
-}
-
-static inline uint16_t rfc4175_get_line_2_offset(uint8_t *buf)
-{
-    return ((buf[13] & 0x80) << 8) | buf[14];
-}
 
 #ifdef __cplusplus
 }
