@@ -90,6 +90,20 @@ extern "C"
 #define S291_SMPTEVBI_DID           0x62
 #define S291_SMPTEVBI_SDID          0x03
 
+/* SMPTE 299 */
+#define S291_24BITAUDIO_GROUP1_DID  0xe7
+#define S291_24BITAUDIO_GROUP2_DID  0xe6
+#define S291_24BITAUDIO_GROUP3_DID  0xe5
+#define S291_24BITAUDIO_GROUP4_DID  0xe4
+#define S291_24BITAUDIOCONTROL_GROUP1_DID  0xe3
+#define S291_24BITAUDIOCONTROL_GROUP2_DID  0xe2
+#define S291_24BITAUDIOCONTROL_GROUP3_DID  0xe1
+#define S291_24BITAUDIOCONTROL_GROUP4_DID  0xe0
+
+/* SMPTE 352 */
+#define S291_PAYLOADID_DID          0x41
+#define S291_PAYLOADID_SDID         0x01
+
 static inline uint16_t s291_parity(uint8_t i_val)
 {
     uint8_t i_parity =
