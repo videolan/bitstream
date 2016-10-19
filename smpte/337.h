@@ -57,6 +57,7 @@ extern "C"
 #define S337_TYPE_PAUSE             3
 #define S337_TYPE_A52E              16
 #define S337_TYPE_VSYNC             26
+#define S337_TYPE_DOLBY_E           28
 #define S337_TYPE_CAPTION           29
 #define S337_TYPE_USER              30
 
