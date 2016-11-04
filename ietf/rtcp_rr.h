@@ -43,7 +43,7 @@ static inline void rtcp_rr_set_cumulative_packets_lost(uint8_t *p_rtcp_rr,
     int neg = packets_lost < 0;
     uint32_t u = neg ? -packets_lost : packets_lost;
 
-    p_rtcp_rr[13] = (neg << 7) | (u >> 16) & 0x7f;
+    p_rtcp_rr[13] = (neg << 7) | ((u >> 16) & 0x7f);
     p_rtcp_rr[14] = (u >>  8) & 0xff;
     p_rtcp_rr[15] =  u        & 0xff;
 }
