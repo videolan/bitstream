@@ -109,10 +109,9 @@ static inline void desc66_print(const uint8_t *p_desc, f_print pf_print,
     case PRINT_XML:
         pf_print(opaque,
                  "<DATA_BROADCAST_ID_DESC broadcast_id=\"0x%04x\""
-                 " selector_byte=\"%s\" selector_byte_txt=\"%s\"/>",
+                 " selector_byte=\"%s\"/>",
                  desc66_get_broadcast_id(p_desc),
-                 psz_selector_byte,
-                 psz_selector_byte_txt
+                 psz_selector_byte
                 );
         break;
     default:

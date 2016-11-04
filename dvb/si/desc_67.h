@@ -99,10 +99,9 @@ static inline void desc67_print(const uint8_t *p_desc, f_print pf_print,
     case PRINT_XML:
         pf_print(opaque,
                  !b_dsng_desc
-                  ? "<TRANSPORT_STREAM_DESC bytes=\"%s\" bytes_txt=\"%s\"/>"
-                  : "<DSNG_DESC bytes=\"%s\" bytes_txt=\"%s\"/>",
-                 psz_bytes,
-                 psz_bytes_txt
+                  ? "<TRANSPORT_STREAM_DESC bytes=\"%s\"/>"
+                  : "<DSNG_DESC bytes=\"%s\"/>",
+                 psz_bytes
                 );
         break;
     default:

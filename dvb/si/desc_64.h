@@ -166,12 +166,11 @@ static inline void desc64_print(const uint8_t *p_desc,
         psz_text = dvb_string_xml_escape(psz_text);
         pf_print(print_opaque,
                  "<DATA_BROADCAST_DESC broadcast_id=\"0x%04x\" component_tag=\"%u\""
-                 " selector_byte=\"%s\" selector_byte_txt=\"%s\" lang=\"%3.3s\""
+                 " selector_byte=\"%s\" lang=\"%3.3s\""
                  " text=\"%s\"/>",
                  desc64_get_broadcast_id(p_desc),
                  desc64_get_component_tag(p_desc),
                  psz_selector_byte,
-                 psz_selector_byte_txt,
                  (char *)desc64_get_lang(p_desc),
                  psz_text);
         break;
