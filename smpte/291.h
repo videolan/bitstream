@@ -104,6 +104,16 @@ extern "C"
 #define S291_PAYLOADID_DID          0x41
 #define S291_PAYLOADID_SDID         0x01
 
+/* SMPTE 272 */
+#define S291_SD_AUDIO_GROUP1_DID    0xff
+#define S291_SD_AUDIO_GROUP2_DID    0xfd
+#define S291_SD_AUDIO_GROUP3_DID    0xfb
+#define S291_SD_AUDIO_GROUP4_DID    0xf9
+#define S291_SD_AUDIOCONTROL_GROUP1_DID  0xef
+#define S291_SD_AUDIOCONTROL_GROUP2_DID  0xee
+#define S291_SD_AUDIOCONTROL_GROUP3_DID  0xed
+#define S291_SD_AUDIOCONTROL_GROUP4_DID  0xec
+
 static inline uint16_t s291_parity(uint8_t i_val)
 {
     uint8_t i_parity =
