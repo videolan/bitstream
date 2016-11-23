@@ -41,6 +41,9 @@ extern "C"
 {
 #endif
 
+#define HBRMT_HEADER_SIZE 8 /* plus timestamp and extension */
+#define HBRMT_DATA_SIZE 1376
+
 /*
  * Reminder : High Bit Rate Media Payload Header
     0               1               2               3
