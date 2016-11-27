@@ -64,19 +64,25 @@ static inline void eit_print(uint8_t *p_eit,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(print_opaque,
-                "<EIT tableid=\"0x%02x\" type=\"%s\" service_id=\"%u\" version=\"%u\""
-                " current_next=\"%u\" tsid=\"%u\" onid=\"%u\">",
+                "<EIT tableid=\"0x%02x\" type=\"%s\" service_id=\"%u\""
+                " version=\"%u\" section=\"%u\" last_section=\"%u\""
+                " current_next=\"%u\" segment_last_section=\"%u\""
+                " tsid=\"%u\" onid=\"%u\">",
                  i_tid, psz_tid,
                  eit_get_sid(p_eit),
                  psi_get_version(p_eit),
+                 psi_get_section(p_eit),
+                 psi_get_lastsection(p_eit),
                  !psi_get_current(p_eit) ? 0 : 1,
+                 eit_get_segment_last_sec_number(p_eit),
                  eit_get_tsid(p_eit),
                  eit_get_onid(p_eit)
                 );
         break;
     default:
         pf_print(print_opaque,
-                 "new EIT tableid=0x%02x type=%s service_id=%u version=%u%s section=%u/%u tsid=%u"
+                 "new EIT tableid=0x%02x type=%s service_id=%u version=%u%s"
+                 " section=%u/%u segment_last_section=%u tsid=%u"
                  " onid=%u",
                  i_tid, psz_tid,
                  eit_get_sid(p_eit),
@@ -84,6 +90,7 @@ static inline void eit_print(uint8_t *p_eit,
                  !psi_get_current(p_eit) ? " (next)" : "",
                  psi_get_section(p_eit),
                  psi_get_lastsection(p_eit),
+                 eit_get_segment_last_sec_number(p_eit),
                  eit_get_tsid(p_eit),
                  eit_get_onid(p_eit)
                 );

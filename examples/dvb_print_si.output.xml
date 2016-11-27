@@ -30,13 +30,13 @@
 </TSDT>
 <TSDT version="1" current_next="1">
 <DESC id="0x67" length="3" value="445642">
-<TRANSPORT_STREAM_DESC bytes="445642" bytes_txt="DVB"/>
+<TRANSPORT_STREAM_DESC bytes="445642"/>
 </DESC>
 <DESC id="0x67" length="4" value="434f4e54">
-<TRANSPORT_STREAM_DESC bytes="434f4e54" bytes_txt="CONT"/>
+<TRANSPORT_STREAM_DESC bytes="434f4e54"/>
 </DESC>
 <DESC id="0x68" length="33" value="313233342c534e475f48656164717561727465722c534e475f50726f7669646572">
-<DSNG_DESC bytes="313233342c534e475f48656164717561727465722c534e475f50726f7669646572" bytes_txt="1234,SNG_Headquarter,SNG_Provider"/>
+<DSNG_DESC bytes="313233342c534e475f48656164717561727465722c534e475f50726f7669646572"/>
 </DESC>
 </TSDT>
 <NIT tid="64" networkid="40000" version="0" current_next="1">
@@ -228,10 +228,10 @@
 <PRIVATE_DATA_SPECIFIER_DESC specifier="0xaabbccdd" />
 </DESC>
 <DESC id="0x64" length="22" value="11224e054259225445656e6709536f6d652074657874">
-<DATA_BROADCAST_DESC broadcast_id="0x1122" component_tag="78" selector_byte="4259225445" selector_byte_txt="BY.TE" lang="eng" text="Some text"/>
+<DATA_BROADCAST_DESC broadcast_id="0x1122" component_tag="78" selector_byte="4259225445" lang="eng" text="Some text"/>
 </DESC>
 <DESC id="0x66" length="6" value="1122554e4958">
-<DATA_BROADCAST_ID_DESC broadcast_id="0x1122" selector_byte="554e4958" selector_byte_txt="UNIX"/>
+<DATA_BROADCAST_ID_DESC broadcast_id="0x1122" selector_byte="554e4958"/>
 </DESC>
 </SERVICE>
 <SERVICE sid="20300" eit_schedule="1" eit_pf="1" running="2" free_CA="1">
@@ -248,9 +248,9 @@
 </DESC>
 </SERVICE>
 </SDT>
-<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="0" current_next="1" tsid="10000" onid="40000">
+<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="0" section="0" last_section="0" current_next="1" segment_last_section="0" tsid="10000" onid="40000">
 </EIT>
-<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="1" current_next="1" tsid="10000" onid="40000">
+<EIT tableid="0x4e" type="actual_pf" service_id="20000" version="1" section="0" last_section="0" current_next="1" segment_last_section="0" tsid="10000" onid="40000">
 <EVENT id="30000" start_time="1234567890" start_time_dec="2009-02-13 23:31:30 UTC" duration="86399" duration_dec="23:59:59" running="2" free_CA="0">
 <DESC id="0x4d" length="44" value="656e670e4d616a6f72205456206576656e7419546865206576656e74206f66207468652063656e7475727921">
 <SHORT_EVENT_DESC lang="eng" event_name="Major TV event" text="The event of the century!"/>
