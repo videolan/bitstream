@@ -284,12 +284,18 @@ static inline bool mp2vseq_get_nonintramatrix(const uint8_t *p_mp2vseq,
 #define MP2VSEQX_PROFILE_SNR_SCAL   (3 << 4)
 #define MP2VSEQX_PROFILE_SPAT_SCAL  (2 << 4)
 #define MP2VSEQX_PROFILE_HIGH       (1 << 4)
-#define MP2VSEQX_LEVEL_MASK         0xf
+#define MP2VSEQX_LEVEL_MASK         0x8f /* with escape bit */
 #define MP2VSEQX_LEVEL_LOW          10
 #define MP2VSEQX_LEVEL_MAIN         8
 #define MP2VSEQX_LEVEL_HIGH1440     6
 #define MP2VSEQX_LEVEL_HIGH         4
 #define MP2VSEQX_LEVEL_HIGHP        2
+#define MPV2SEQX_LEVEL_LOW_MV       0x8e
+#define MPV2SEQX_LEVEL_MAIN_MV      0x8d
+#define MPV2SEQX_LEVEL_HIGH_MV      0x8b
+#define MPV2SEQX_LEVEL_HIGH1440_MV  0x8a
+#define MPV2SEQX_LEVEL_MAIN_422     0x85
+#define MPV2SEQX_LEVEL_HIGH_422     0x82
 
 #define MP2VSEQX_CHROMA_420         1
 #define MP2VSEQX_CHROMA_422         2
