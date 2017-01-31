@@ -1,6 +1,6 @@
 PREFIX ?= /usr/local
 INCLUDE = $(subst //,/,$(DESTDIR)/$(PREFIX)/include/bitstream)
-VERSION = 1.1
+VERSION = 1.2
 
 all:
 	@echo "Run \"make install\" to install biTStream into $(INCLUDE)"

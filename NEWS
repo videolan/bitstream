@@ -1,3 +1,19 @@
+1.2 (31 Jan 2017)
+=================
+ - Add partial support for ITU-T H.265
+ - Add support for DVB-VBI
+ - Add support for SCTE 104
+ - Add support for SMPTE 2010
+ - Add support for SMPTE RDD 08 (OP-47 subtitles)
+ - Add support for SMPTE 291
+ - Add support for SMPTE 337
+ - Add support for RFC 4175 video
+ - Add support for hbrmt 2022-6
+ - Add support for RTP RFC 2250
+ - Improve support of RTCP
+ - Fix character set for Chinese DVB strings
+ - Fix A/52 bitrate table
+
 1.1 (5 Oct 2015)
 ================
  - Rename fields in BAT, RST and SIT to match those of SDT
