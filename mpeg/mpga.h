@@ -214,10 +214,15 @@ static inline bool mpga_sync_compare(const uint8_t *p_mpga1, const uint8_t *p_mp
 /* same but only takes into account meaningful fields */
 static inline bool mpga_sync_compare_formats(const uint8_t *p_mpga1, const uint8_t *p_mpga2)
 {
+    /* consider stereo and joint stereo the same - because encoders can
+     * switch on the fly */
+    uint8_t i_mode1 = mpga_get_mode(p_mpga1);
+    uint8_t i_mode2 = mpga_get_mode(p_mpga2);
+    if (i_mode1 == MPGA_MODE_JOINT) i_mode1 = MPGA_MODE_STEREO;
+    if (i_mode2 == MPGA_MODE_JOINT) i_mode2 = MPGA_MODE_STEREO;
     return p_mpga1[0] == p_mpga2[0] &&
            (p_mpga1[1] & 0xfe) == (p_mpga2[1] & 0xfe) &&
-           (p_mpga1[2] & 0xfc) == (p_mpga2[2] & 0xfc) &&
-           (p_mpga1[3] & 0xc0) == (p_mpga2[3] & 0xc0);
+           (p_mpga1[2] & 0xfc) == (p_mpga2[2] & 0xfc) && i_mode1 == i_mode2;
 }
 
 #ifdef __cplusplus
