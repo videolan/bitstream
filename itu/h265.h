@@ -28,6 +28,7 @@
 /*
  * Normative references:
  *  - ITU-T H.265 (high efficiency video coding)
+ *  - ISO/IEC 14496-15 2013 (AVC file format)
  */
 
 #ifndef __BITSTREAM_ITU_H265_H__
@@ -331,6 +332,331 @@ static inline void h265eob_init(uint8_t *p_h265eob)
 #define H265SLI_TYPE_B              0
 #define H265SLI_TYPE_P              1
 #define H265SLI_TYPE_I              2
+
+/*****************************************************************************
+ * H265 hvcC structure
+ *****************************************************************************/
+#define H265HVCC_HEADER             22
+#define H265HVCC_ARRAY_HEADER       3
+#define H265HVCC_NALU_HEADER        2
+
+static inline void h265hvcc_init(uint8_t *p)
+{
+    p[0] = 1; /* version */
+    p[1] = 0;
+    p[2] = 0;
+    p[3] = 0;
+    p[4] = 0;
+    p[5] = 0;
+    p[6] = 0;
+    p[7] = 0;
+    p[8] = 0;
+    p[9] = 0;
+    p[10] = 0;
+    p[11] = 0;
+    p[12] = 0;
+    p[13] = 0xf0;
+    p[14] = 0xfc;
+    p[15] = 0xfc;
+    p[16] = 0xf8;
+    p[17] = 0xf8;
+    p[18] = 0;
+    p[19] = 0;
+    p[20] = 0;
+    p[21] = 0;
+}
+
+static inline void h265hvcc_set_profile_space(uint8_t *p, uint8_t val)
+{
+    p[1] &= ~0xc0;
+    p[1] |= val << 6;
+}
+
+static inline uint8_t h265hvcc_get_profile_space(const uint8_t *p)
+{
+    return p[1] >> 6;
+}
+
+static inline void h265hvcc_set_tier(uint8_t *p)
+{
+    p[1] |= 0x40;
+}
+
+static inline bool h265hvcc_get_tier(const uint8_t *p)
+{
+    return p[1] & 0x40;
+}
+
+static inline void h265hvcc_set_profile_idc(uint8_t *p, uint8_t val)
+{
+    p[1] &= ~0x1f;
+    p[1] |= val & 0x1f;
+}
+
+static inline uint8_t h265hvcc_get_profile_idc(const uint8_t *p)
+{
+    return p[1] & 0x1f;
+}
+
+static inline void h265hvcc_set_profile_compatibility(uint8_t *p, uint32_t val)
+{
+    p[2] = val >> 24;
+    p[3] = (val >> 16) & 0xff;
+    p[4] = (val >> 8) & 0xff;
+    p[5] = val & 0xff;
+}
+
+static inline uint32_t h265hvcc_get_profile_compatibility(const uint8_t *p)
+{
+    return (p[2] << 24) | (p[3] << 16) | (p[4] << 8) | p[5];
+}
+
+static inline void h265hvcc_set_constraint_indicator(uint8_t *p, uint64_t val)
+{
+    p[6] = val >> 40;
+    p[7] = (val >> 32) & 0xff;
+    p[8] = (val >> 24) & 0xff;
+    p[9] = (val >> 16) & 0xff;
+    p[10] = (val >> 8) & 0xff;
+    p[11] = val & 0xff;
+}
+
+static inline uint64_t h265hvcc_get_constraint_indicator(const uint8_t *p)
+{
+    return ((uint64_t)p[6] << 40) |
+           ((uint64_t)p[7] << 32) |
+           ((uint64_t)p[8] << 24) |
+           ((uint64_t)p[9] << 16) |
+           ((uint64_t)p[10] << 8) |
+           (uint64_t)p[11];
+}
+
+static inline void h265hvcc_set_level_idc(uint8_t *p, uint8_t val)
+{
+    p[12] = val;
+}
+
+static inline uint8_t h265hvcc_get_level_idc(const uint8_t *p)
+{
+    return p[12];
+}
+
+static inline void h265hvcc_set_min_spatial_segmentation_idc(uint8_t *p, uint8_t val)
+{
+    p[13] = 0xf0 | val;
+}
+
+static inline uint8_t h265hvcc_get_min_spatial_segmentation_idc(const uint8_t *p)
+{
+    return p[13] & 0xf;
+}
+
+static inline void h265hvcc_set_parallelism_type(uint8_t *p, uint8_t val)
+{
+    p[14] = 0xfc | val;
+}
+
+static inline uint8_t h265hvcc_get_parallelism_type(const uint8_t *p)
+{
+    return p[14] & 0x3;
+}
+
+static inline void h265hvcc_set_chroma_format(uint8_t *p, uint8_t val)
+{
+    p[15] = 0xfc | val;
+}
+
+static inline uint8_t h265hvcc_get_chroma_format(const uint8_t *p)
+{
+    return p[15] & 0x3;
+}
+
+static inline void h265hvcc_set_bitdepth_luma_8(uint8_t *p, uint8_t val)
+{
+    p[16] = 0xf8 | val;
+}
+
+static inline uint8_t h265hvcc_get_bitdepth_luma_8(const uint8_t *p)
+{
+    return p[16] & 0x7;
+}
+
+static inline void h265hvcc_set_bitdepth_chroma_8(uint8_t *p, uint8_t val)
+{
+    p[17] = 0xf8 | val;
+}
+
+static inline uint8_t h265hvcc_get_bitdepth_chroma_8(const uint8_t *p)
+{
+    return p[17] & 0x7;
+}
+
+static inline void h265hvcc_set_avg_frame_rate(uint8_t *p, uint16_t val)
+{
+    p[18] = val >> 8;
+    p[19] = val & 0xff;
+}
+
+static inline uint32_t h265hvcc_get_avg_frame_rate(const uint8_t *p)
+{
+    return (p[18] << 8) | p[19];
+}
+
+static inline void h265hvcc_set_constant_frame_rate(uint8_t *p, uint8_t val)
+{
+    p[20] &= ~0xc0;
+    p[20] |= val << 6;
+}
+
+static inline uint8_t h265hvcc_get_constant_frame_rate(const uint8_t *p)
+{
+    return p[20] >> 6;
+}
+
+static inline void h265hvcc_set_num_temporal_layers(uint8_t *p, uint8_t val)
+{
+    p[21] &= ~0x38;
+    p[21] |= val << 3;
+}
+
+static inline uint8_t h265hvcc_get_num_temporal_layers(const uint8_t *p)
+{
+    return (p[21] >> 3) & 0x3;
+}
+
+static inline void h265hvcc_set_temporal_id_nested(uint8_t *p)
+{
+    p[21] |= 0x4;
+}
+
+static inline bool h265hvcc_get_temporal_id_nested(const uint8_t *p)
+{
+    return p[21] & 0x4;
+}
+
+static inline void h265hvcc_set_length_size_1(uint8_t *p, uint8_t val)
+{
+    p[21] &= ~0x3;
+    p[21] |= val;
+}
+
+static inline uint8_t h265hvcc_get_length_size_1(const uint8_t *p)
+{
+    return p[21] & 0x3;
+}
+
+static inline void h265hvcc_set_num_of_arrays(uint8_t *p, uint8_t val)
+{
+    p[22] = val;
+}
+
+static inline uint8_t h265hvcc_get_num_of_arrays(const uint8_t *p)
+{
+    return p[22];
+}
+
+static inline void h265hvcc_nalu_set_length(uint8_t *p, uint16_t val)
+{
+    p[0] = val >> 8;
+    p[1] = val & 0xff;
+}
+
+static inline uint16_t h265hvcc_nalu_get_length(const uint8_t *p)
+{
+    return (p[0] << 8) | p[1];
+}
+
+static inline uint8_t *h265hvcc_nalu_get_nalu(const uint8_t *p)
+{
+    return (uint8_t *)p + H265HVCC_NALU_HEADER;
+}
+
+static inline void h265hvcc_array_init(uint8_t *p)
+{
+    p[0] = 0;
+}
+
+static inline void h265hvcc_array_set_completeness(uint8_t *p)
+{
+    p[0] |= 0x80;
+}
+
+static inline bool h265hvcc_array_get_completeness(const uint8_t *p)
+{
+    return p[0] & 0x80;
+}
+
+static inline void h265hvcc_array_set_nal_unit_type(uint8_t *p, uint8_t val)
+{
+    p[0] &= ~0x3f;
+    p[0] |= val;
+}
+
+static inline uint8_t h265hvcc_array_get_nal_unit_type(const uint8_t *p)
+{
+    return p[0] & 0x3f;
+}
+
+static inline void h265hvcc_array_set_num_nalus(uint8_t *p, uint16_t val)
+{
+    p[1] = val >> 8;
+    p[2] = val & 0xff;
+}
+
+static inline uint16_t h265hvcc_array_get_num_nalus(const uint8_t *p)
+{
+    return (p[1] << 8) | p[2];
+}
+
+static inline uint8_t *h265hvcc_array_get_nalu(const uint8_t *p, uint8_t n)
+{
+    p += H265HVCC_ARRAY_HEADER;
+    while (n) {
+        uint16_t length = h265hvcc_nalu_get_length(p);
+        p += H265HVCC_NALU_HEADER + length;
+        n--;
+    }
+    return (uint8_t *)p;
+}
+
+static inline uint8_t *h265hvcc_get_array(const uint8_t *p, uint8_t n)
+{
+    p += H265HVCC_HEADER;
+    while (n) {
+        uint16_t num_nalus = h265hvcc_array_get_num_nalus(p);
+        p = h265hvcc_array_get_nalu(p, num_nalus);
+        n--;
+    }
+    return (uint8_t *)p;
+}
+
+static inline bool h265hvcc_validate(const uint8_t *p, size_t size)
+{
+    /* apparenty there is a prerelease with version = 0 */
+    if (p[0] != 1 && p[0] != 0)
+        return false;
+
+    if (size < H265HVCC_HEADER)
+        return false;
+
+    uint8_t num_arrays = h265hvcc_get_num_of_arrays(p);
+    uint8_t array = 0;
+    while (array < num_arrays) {
+        const uint8_t *a = h265hvcc_get_array(p, array++);
+        if (a + H265HVCC_ARRAY_HEADER > p + size)
+            return false;
+
+        uint8_t num_nalus = h265hvcc_array_get_num_nalus(a);
+        uint8_t nalu = 0;
+        while (nalu < num_nalus)
+            if (h265hvcc_array_get_nalu(a, nalu++) + H265HVCC_NALU_HEADER > p + size)
+                return false;
+    }
+
+    if (h265hvcc_get_array(p, num_arrays) > p + size)
+        return false;
+    return true;
+}
 
 #ifdef __cplusplus
 }

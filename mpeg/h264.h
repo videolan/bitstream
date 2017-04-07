@@ -28,6 +28,7 @@
 /*
  * Normative references:
  *  - ISO/IEC 14496-10 (advanced video coding)
+ *  - ISO/IEC 14496-15 (advanced video coding file format)
  */
 
 #ifndef __BITSTREAM_MPEG_H264_H__
@@ -99,6 +100,35 @@ static inline uint8_t h264nalst_get_ref(uint8_t start)
 static inline uint8_t h264nalst_get_type(uint8_t start)
 {
     return start & 0x1f;
+}
+
+static inline bool h264naltype_is_slice(uint8_t type)
+{
+    switch (type) {
+        case H264NAL_TYPE_IDR:
+        case H264NAL_TYPE_NONIDR:
+        case H264NAL_TYPE_PARTA:
+        case H264NAL_TYPE_PARTB:
+        case H264NAL_TYPE_PARTC:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static inline bool h264naltype_is_vcl(uint8_t type)
+{
+    switch (type) {
+        case H264NAL_TYPE_IDR:
+        case H264NAL_TYPE_NONIDR:
+        case H264NAL_TYPE_PARTA:
+        case H264NAL_TYPE_PARTB:
+        case H264NAL_TYPE_PARTC:
+        case H264NAL_TYPE_SEI:
+            return true;
+        default:
+            return false;
+    }
 }
 
 /*****************************************************************************
@@ -304,6 +334,167 @@ static inline void h264ssps_init(uint8_t *p_h264ssps)
 #define H264SLI_TYPE_I              2
 #define H264SLI_TYPE_SP             3
 #define H264SLI_TYPE_SI             4
+
+/*****************************************************************************
+ * H264 avcC structure
+ *****************************************************************************/
+#define H264AVCC_HEADER             6
+#define H264AVCC_HEADER2            1
+#define H264AVCC_SPS_HEADER         2
+#define H264AVCC_PPS_HEADER         2
+
+static inline void h264avcc_init(uint8_t *p)
+{
+    p[0] = 1; /* version */
+    p[4] = 0xfc;
+    p[5] = 0xe0;
+}
+
+static inline void h264avcc_set_profile(uint8_t *p, uint8_t val)
+{
+    p[1] = val;
+}
+
+static inline uint8_t h264avcc_get_profile(const uint8_t *p)
+{
+    return p[1];
+}
+
+static inline void h264avcc_set_profile_compatibility(uint8_t *p, uint8_t val)
+{
+    p[2] = val;
+}
+
+static inline uint8_t h264avcc_get_profile_compatibility(const uint8_t *p)
+{
+    return p[2];
+}
+
+static inline void h264avcc_set_level(uint8_t *p, uint8_t val)
+{
+    p[3] = val;
+}
+
+static inline uint8_t h264avcc_get_level(const uint8_t *p)
+{
+    return p[3];
+}
+
+static inline void h264avcc_set_length_size_1(uint8_t *p, uint8_t val)
+{
+    p[4] = 0xfc | val;
+}
+
+static inline uint8_t h264avcc_get_length_size_1(const uint8_t *p)
+{
+    return p[4] & 0x3;
+}
+
+static inline void h264avcc_set_nb_sps(uint8_t *p, uint8_t val)
+{
+    p[5] = 0xe0 | val;
+}
+
+static inline uint8_t h264avcc_get_nb_sps(const uint8_t *p)
+{
+    return p[5] & 0x1f;
+}
+
+static inline void h264avcc_spsh_set_length(uint8_t *p, uint16_t val)
+{
+    p[0] = val >> 8;
+    p[1] = val & 0xff;
+}
+
+static inline uint16_t h264avcc_spsh_get_length(const uint8_t *p)
+{
+    return (p[0] << 8) | p[1];
+}
+
+static inline uint8_t *h264avcc_spsh_get_sps(const uint8_t *p)
+{
+    return (uint8_t *)p + H264AVCC_SPS_HEADER;
+}
+
+static inline uint8_t *h264avcc_get_spsh(const uint8_t *p, uint8_t n)
+{
+    p += H264AVCC_HEADER;
+    while (n) {
+        uint16_t length = h264avcc_spsh_get_length(p);
+        p += H264AVCC_SPS_HEADER + length;
+        n--;
+    }
+    return (uint8_t *)p;
+}
+
+static inline void h264avcc_set_nb_pps(uint8_t *p, uint8_t val)
+{
+    p = h264avcc_get_spsh(p, h264avcc_get_nb_sps(p));
+    p[0] = val;
+}
+
+static inline uint8_t h264avcc_get_nb_pps(const uint8_t *p)
+{
+    p = h264avcc_get_spsh(p, h264avcc_get_nb_sps(p));
+    return p[0];
+}
+
+static inline void h264avcc_ppsh_set_length(uint8_t *p, uint16_t val)
+{
+    p[0] = val >> 8;
+    p[1] = val & 0xff;
+}
+
+static inline uint16_t h264avcc_ppsh_get_length(const uint8_t *p)
+{
+    return (p[0] << 8) | p[1];
+}
+
+static inline uint8_t *h264avcc_ppsh_get_pps(const uint8_t *p)
+{
+    return (uint8_t *)p + H264AVCC_PPS_HEADER;
+}
+
+static inline uint8_t *h264avcc_get_ppsh(const uint8_t *p, uint8_t n)
+{
+    p = h264avcc_get_spsh(p, h264avcc_get_nb_sps(p));
+    p += H264AVCC_HEADER2;
+    while (n) {
+        uint16_t length = h264avcc_ppsh_get_length(p);
+        p += H264AVCC_PPS_HEADER + length;
+        n--;
+    }
+    return (uint8_t *)p;
+}
+
+static inline bool h264avcc_validate(const uint8_t *p, size_t size)
+{
+    if (p[0] != 1)
+        return false;
+    /* don't check reserved bits as it is a common mistake */
+
+    if (size < H264AVCC_HEADER + H264AVCC_HEADER2)
+        return false;
+
+    uint8_t nb = h264avcc_get_nb_sps(p);
+    uint8_t n = 0;
+    while (n < nb)
+        if (h264avcc_get_spsh(p, n++) + H264AVCC_SPS_HEADER > p + size)
+            return false;
+
+    if (h264avcc_get_spsh(p, n) + H264AVCC_HEADER2 > p + size)
+        return false;
+
+    nb = h264avcc_get_nb_pps(p);
+    n = 0;
+    while (n < nb)
+        if (h264avcc_get_ppsh(p, n++) + H264AVCC_PPS_HEADER > p + size)
+            return false;
+
+    if (h264avcc_get_ppsh(p, n) > p + size)
+        return false;
+    return true;
+}
 
 #ifdef __cplusplus
 }
