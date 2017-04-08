@@ -324,6 +324,46 @@ static inline uint8_t mp2vseqx_get_profilelevel(const uint8_t *p_mp2vseqx)
     return ((p_mp2vseqx[4] & 0x0f) << 4) | (p_mp2vseqx[5] >> 4);
 }
 
+static inline const char *mp2vseqx_get_profile_txt(uint8_t i_profilelevel)
+{
+    if (i_profilelevel & (1 << 7)) {
+        return i_profilelevel == MPV2SEQX_LEVEL_LOW_MV  ||
+               i_profilelevel == MPV2SEQX_LEVEL_MAIN_MV ||
+               i_profilelevel == MPV2SEQX_LEVEL_HIGH_MV ||
+               i_profilelevel == MPV2SEQX_LEVEL_HIGH1440_MV ? "Multi-view" :
+               i_profilelevel == MPV2SEQX_LEVEL_MAIN_422 ||
+               i_profilelevel == MPV2SEQX_LEVEL_HIGH_422 ? "4:2:2" : "Reserved";
+    }
+    else {
+        i_profilelevel &= 0x70;
+        return i_profilelevel == MP2VSEQX_PROFILE_SIMPLE ? "Simple" :
+               i_profilelevel == MP2VSEQX_PROFILE_MAIN ? "Main" :
+               i_profilelevel == MP2VSEQX_PROFILE_SNR_SCAL ? "SNR Scalable" :
+               i_profilelevel == MP2VSEQX_PROFILE_SPAT_SCAL ? "Spatially Scalable" :
+               i_profilelevel == MP2VSEQX_PROFILE_HIGH ? "High" : "Reserved";
+    }
+}
+
+static inline const char *mp2vseqx_get_level_txt(uint8_t i_profilelevel)
+{
+    if (i_profilelevel & (1 << 7)) {
+        return i_profilelevel == MPV2SEQX_LEVEL_LOW_MV ? "Low" :
+               i_profilelevel == MPV2SEQX_LEVEL_MAIN_MV ||
+               i_profilelevel == MPV2SEQX_LEVEL_MAIN_422 ? "Main" :
+               i_profilelevel == MPV2SEQX_LEVEL_HIGH1440_MV ||
+               i_profilelevel == MPV2SEQX_LEVEL_HIGH_422 ? "High 1440" :
+               i_profilelevel == MPV2SEQX_LEVEL_HIGH_MV  ? "High" : "Reserved";
+    }
+    else {
+        i_profilelevel &= 0xf;
+        return i_profilelevel == MP2VSEQX_LEVEL_LOW ? "Low" :
+               i_profilelevel == MP2VSEQX_LEVEL_MAIN ? "Main" :
+               i_profilelevel == MP2VSEQX_LEVEL_HIGH1440 ? "High 1440" :
+               i_profilelevel == MP2VSEQX_LEVEL_HIGH ? "High" :
+               i_profilelevel == MP2VSEQX_LEVEL_HIGHP ? "HighP" : "Reserved";
+    }
+}
+
 static inline void mp2vseqx_set_progressive(uint8_t *p_mp2vseqx)
 {
     p_mp2vseqx[5] |= 0x8;
