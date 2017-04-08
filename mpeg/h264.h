@@ -246,6 +246,19 @@ static inline uint8_t h264sps_get_profile(const uint8_t *p_h264sps)
     return p_h264sps[4];
 }
 
+/* Note: doesn't do the constrained profile checks */
+static inline const char *h264_sps_get_profile_txt(uint8_t i_profile)
+{
+    return i_profile == 44 ? "CAVLC 4:4:4 Intra" :
+           i_profile == 66 ? "Baseline" :
+           i_profile == 77 ? "Main" :
+           i_profile == 88 ? "Extended" :
+           i_profile == 100 ? "High" :
+           i_profile == 110 ? "High 10" :
+           i_profile == 122 ? "High 4:2:2" :
+           i_profile == 144 ? "High 4:4:4 Predictive" : "Reserved";
+}
+
 static inline void h264sps_set_level(uint8_t *p_h264sps, uint8_t i_level)
 {
     p_h264sps[6] = i_level;
