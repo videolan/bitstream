@@ -1,7 +1,7 @@
 /*****************************************************************************
  * aac.h: ISO/IEC 14496-3 Advanced Audio Coding
  *****************************************************************************
- * Copyright (C) 2010, 2013 VideoLAN
+ * Copyright (C) 2010, 2013, 2017 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *
@@ -202,11 +202,67 @@ static inline bool adts_sync_compare_formats(const uint8_t *p_adts1, const uint8
 }
 
 /*****************************************************************************
+ * LOAS header
+ *****************************************************************************/
+#define LOAS_HEADER_SIZE        3
+
+static inline void loas_set_sync(uint8_t *p)
+{
+    p[0] = 0x56;
+    p[1] = 0xe0;
+    p[2] = 0x0;
+}
+
+static inline uint16_t loas_get_length(const uint8_t *p)
+{
+    return ((p[1] & 0x01f) << 8) | p[2];
+}
+
+static inline void loas_set_length(uint8_t *p, uint16_t val)
+{
+    p[1] = 0xe0 | (val >> 8);
+    p[2] = val & 0xff;
+}
+
+/*****************************************************************************
  * AudioSpecificConfig
  *****************************************************************************/
 #define ASC_TYPE_MAIN           1
 #define ASC_TYPE_LC             2
 #define ASC_TYPE_SSR            3
+#define ASC_TYPE_LTP            4
+#define ASC_TYPE_SBR            5
+#define ASC_TYPE_SCALABLE       6
+#define ASC_TYPE_TWINVQ         7
+#define ASC_TYPE_CELP           8
+#define ASC_TYPE_HVXC           9
+#define ASC_TYPE_ER_LC          17
+#define ASC_TYPE_ER_LTP         19
+#define ASC_TYPE_ER_SCALABLE    20
+#define ASC_TYPE_ER_TWINVQ      21
+#define ASC_TYPE_ER_BSAC        22
+#define ASC_TYPE_ER_LD          23
+#define ASC_TYPE_PS             29
+
+#define ASC_FLT_VARIABLE        0
+#define ASC_FLT_FIXED           1
+#define ASC_FLT_CELP_2          3
+#define ASC_FLT_CELP_FIXED      4
+#define ASC_FLT_CELP_4          5
+#define ASC_FLT_HVXC_FIXED      6
+#define ASC_FLT_HVXC_4          7
+
+/*****************************************************************************
+ * AAC syntactic elements
+ *****************************************************************************/
+#define AAC_SYN_SCE             0
+#define AAC_SYN_CPE             1
+#define AAC_SYN_CCE             2
+#define AAC_SYN_LFE             3
+#define AAC_SYN_DSE             4
+#define AAC_SYN_PCE             5
+#define AAC_SYN_FIL             6
+#define AAC_SYN_END             7
 
 #ifdef __cplusplus
 }
