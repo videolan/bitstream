@@ -164,8 +164,8 @@ static char *iconv_wrapper(void *_unused, const char *psz_encoding,
     if (iconv_handle == (iconv_t)-1)
         iconv_handle = iconv_open(psz_native_encoding, psz_encoding);
     if (iconv_handle == (iconv_t)-1) {
-        fprintf(stderr, "couldn't convert from %s to %s (%m)\n", psz_encoding,
-                psz_native_encoding);
+        fprintf(stderr, "couldn't initiate conversion from %s to %s (%m)\n",
+                psz_encoding, psz_native_encoding);
         return iconv_append_null(p_string, i_length);
     }
     psz_current_encoding = psz_encoding;
