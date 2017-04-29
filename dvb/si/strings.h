@@ -63,15 +63,18 @@ static const char *ppsz_dvb_encodings10[] = {
 };
 
 static inline const char *dvb_string_get_encoding(const uint8_t **pp_string,
-                                                  size_t *pi_length)
+        size_t *pi_length, const char *psz_default_encoding)
 {
     uint8_t i_first;
 
-    if (!*pi_length) return NULL;
+    if (!*pi_length)
+        return NULL;
     i_first = (*pp_string)[0];
 
-    if (!i_first) return NULL;
-    if (i_first >= 0x20) return "ISO-8859-1";
+    if (!i_first)
+        return NULL;
+    if (i_first >= 0x20)
+        return psz_default_encoding;
     (*pp_string)++;
     (*pi_length)--;
 
@@ -96,15 +99,17 @@ static inline const char *dvb_string_get_encoding(const uint8_t **pp_string,
     return ppsz_dvb_encodings[i_first];
 }
 
-static inline uint8_t *dvb_string_set(const uint8_t *p_string, size_t i_length,
-                                      const char *psz_encoding,
-                                      size_t *pi_out_length)
+static inline uint8_t *dvb_string_set_inner(const uint8_t *p_string,
+        size_t i_length, const char *psz_encoding, size_t *pi_out_length,
+        const char *psz_default_encoding)
 {
     int i;
 
-    if (!strcmp(psz_encoding, "ISO-8859-9")) {
+    if (!strcmp(psz_encoding, psz_default_encoding)) {
+        uint8_t *p_encoded = (uint8_t *)malloc(i_length);
         *pi_out_length = i_length;
-        return (uint8_t *)strdup((const char *)p_string);
+        memcpy(p_encoded, p_string, i_length);
+        return p_encoded;
     }
 
     for (i = 0; ppsz_dvb_encodings[i] != NULL; i++) {
@@ -133,13 +138,33 @@ static inline uint8_t *dvb_string_set(const uint8_t *p_string, size_t i_length,
     return NULL;
 }
 
+static inline uint8_t *dvb_string_set(const uint8_t *p_string, size_t i_length,
+                                      const char *psz_encoding,
+                                      size_t *pi_out_length)
+{
+    return dvb_string_set_inner(p_string, i_length, psz_encoding,
+                                pi_out_length, "ISO6937");
+}
+
+static inline uint8_t *dvb_string_set_quirks(const uint8_t *p_string,
+        size_t i_length, const char *psz_encoding, size_t *pi_out_length,
+        const char *psz_provider)
+{
+    if (psz_provider != NULL && !strcmp(psz_provider, "CSAT"))
+        return dvb_string_set_inner(p_string, i_length, psz_encoding,
+                                    pi_out_length, "ISO-8859-1");
+    return dvb_string_set_inner(p_string, i_length, psz_encoding,
+                                pi_out_length, "ISO6937");
+}
+
 /* simpler API because this one doesn't output to multibyte charsets */
-static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
-                                   f_iconv pf_iconv, void *iconv_opaque)
+static inline char *dvb_string_get_inner(const uint8_t *p_string,
+        size_t i_length, f_iconv pf_iconv, void *iconv_opaque,
+        const char *psz_default_encoding)
 {
     if (i_length) {
-        const char *psz_encoding = dvb_string_get_encoding(&p_string,
-                                                           &i_length);
+        const char *psz_encoding =
+            dvb_string_get_encoding(&p_string, &i_length, psz_default_encoding);
         if (psz_encoding == NULL || !i_length) {
             /* try one-byte charset */
             char *psz_string = (char *)malloc(i_length + 1);
@@ -148,11 +173,28 @@ static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
             return psz_string;
         }
 
-        return pf_iconv(iconv_opaque, psz_encoding,
-                        (char *)p_string, i_length);
+        return pf_iconv(iconv_opaque, psz_encoding, (char *)p_string, i_length);
     }
 
     return strdup("");
+}
+
+static inline char *dvb_string_get(const uint8_t *p_string, size_t i_length,
+                                   f_iconv pf_iconv, void *iconv_opaque)
+{
+    return dvb_string_get_inner(p_string, i_length, pf_iconv, iconv_opaque,
+                                "ISO6937");
+}
+
+static inline char *dvb_string_get_quirks(const uint8_t *p_string,
+        size_t i_length, f_iconv pf_iconv, void *iconv_opaque,
+        const char *psz_provider)
+{
+    if (psz_provider != NULL && !strcmp(psz_provider, "CSAT"))
+        return dvb_string_get_inner(p_string, i_length, pf_iconv, iconv_opaque,
+                                    "ISO-8859-1");
+    return dvb_string_get_inner(p_string, i_length, pf_iconv, iconv_opaque,
+                                "ISO6937");
 }
 
 static inline char *dvb_string_xml_escape(char *psz_input)
