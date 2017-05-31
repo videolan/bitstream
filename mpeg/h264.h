@@ -92,9 +92,26 @@ static inline uint8_t h264nal_get_type(const uint8_t *p_h264nal)
     return p_h264nal[3] & 0x1f;
 }
 
+static inline void h264nalst_init(uint8_t *p_start)
+{
+    p_start[0] = 0;
+}
+
+static inline void h264nalst_set_ref(uint8_t *p_start, uint8_t ref)
+{
+    p_start[0] &= 0x1f;
+    p_start[0] |= ref << 5;
+}
+
 static inline uint8_t h264nalst_get_ref(uint8_t start)
 {
     return (start & 0x60) >> 5;
+}
+
+static inline void h264nalst_set_type(uint8_t *p_start, uint8_t type)
+{
+    p_start[0] &= 0xe0;
+    p_start[0] |= type;
 }
 
 static inline uint8_t h264nalst_get_type(uint8_t start)
