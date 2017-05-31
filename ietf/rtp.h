@@ -71,6 +71,16 @@ static inline bool rtp_check_hdr(const uint8_t *p_rtp)
     return (p_rtp[0] & 0xc0) == 0x80;
 }
 
+static inline void rtp_set_padding(uint8_t *p_rtp)
+{
+    p_rtp[0] |= 0x20;
+}
+
+static inline bool rtp_check_padding(const uint8_t *p_rtp)
+{
+    return !!(p_rtp[0] & 0x20);
+}
+
 static inline void rtp_set_extension(uint8_t *p_rtp)
 {
     p_rtp[0] |= 0x10;
@@ -191,6 +201,16 @@ static inline uint8_t *rtp_payload(uint8_t *p_rtp)
     if (rtp_check_extension(p_rtp))
         i_size += 4 * (1 + rtpx_get_length(rtp_extension(p_rtp)));
     return p_rtp + i_size;
+}
+
+static inline size_t rtp_payload_size(uint8_t *p_rtp, size_t i_rtp_size)
+{
+    size_t i_payload_size = i_rtp_size - (rtp_payload(p_rtp) - p_rtp);
+    uint8_t i_padding_size = 0;
+    if (rtp_check_padding(p_rtp))
+        i_padding_size = p_rtp[i_rtp_size - 1];
+
+    return i_payload_size - i_padding_size;
 }
 
 #ifdef __cplusplus
