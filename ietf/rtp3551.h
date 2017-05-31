@@ -80,7 +80,8 @@ extern "C"
 /* Unassigned                   35-71 */
 /* Reserved                     72-76 */
 /* Unassigned                   77-95 */
-/* Dynamic                      96-127 */
+#define RTP_TYPE_DYNAMIC_FIRST  96
+#define RTP_TYPE_DYNAMIC_LAST   127
 
 static inline uint32_t rtp_3551_get_clock_rate(uint8_t i_type)
 {
