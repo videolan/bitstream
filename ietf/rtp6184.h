@@ -35,6 +35,9 @@
 #ifndef __BITSTREAM_IETF_RTP6184_H__
 # define __BITSTREAM_IETF_RTP6184_H__
 
+#include <stdint.h>
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C"
 {

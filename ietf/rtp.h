@@ -33,6 +33,7 @@
 #ifndef __BITSTREAM_IETF_RTP_H__
 #define __BITSTREAM_IETF_RTP_H__
 
+#include <stdlib.h>
 #include <stdint.h>   /* uint8_t, uint16_t, etc... */
 #include <stdbool.h>  /* bool */
 
