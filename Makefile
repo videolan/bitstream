@@ -3,7 +3,8 @@ INCLUDE = $(subst //,/,$(DESTDIR)/$(PREFIX)/include/bitstream)
 VERSION = 1.2
 
 all:
-	@echo "Run \"make install\" to install biTStream into $(INCLUDE)"
+	ln -nsf .. examples/bitstream
+	$(MAKE) -C examples
 
 install:
 	@echo "INSTALL  $(INCLUDE)"
@@ -35,6 +36,10 @@ uninstall:
 	@rm -rf $(INCLUDE)
 
 dist:
-	git archive --format=tar --prefix=bitstream-$(VERSION)/ master | bzip2 -9 > bitstream-$(VERSION).tar.bz2
+	git archive --format=tar --prefix=bitstream-$(VERSION)/ master | \
+	  bzip2 -9 > bitstream-$(VERSION).tar.bz2
 
-.PHONY: install uninstall distcheck
+clean:
+	$(MAKE) -C examples clean
+
+.PHONY: all install uninstall dist clean
