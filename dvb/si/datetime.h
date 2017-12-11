@@ -124,7 +124,7 @@ static inline uint32_t dvb_time_encode_duration(unsigned int duration_sec)
 }
 #undef dec2bcd
 
-static time_t dvb_time_format_UTC(uint64_t UTC_time, struct tm *tm, char *output) {
+static inline time_t dvb_time_format_UTC(uint64_t UTC_time, struct tm *tm, char *output) {
     struct tm tm_local;
     if (tm == NULL)
         tm = &tm_local;
