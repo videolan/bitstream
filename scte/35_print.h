@@ -62,12 +62,12 @@ static inline void scte35_null_print(const uint8_t *p_scte35,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(print_opaque,
-                 "<SCTE35 command=\"%"PRIu8"\" command_str=\"null\" pts_adjustment=\"%"PRIu64"\">",
+                 "<SCTE35 command=\"%" PRIu8 "\" command_str=\"null\" pts_adjustment=\"%" PRIu64 "\">",
                  SCTE35_NULL_COMMAND, i_pts_adjustment);
         break;
     default:
         pf_print(print_opaque,
-                 "new SCTE35 command=%"PRIu8" command_str=null pts_adjustment=%"PRIu64,
+                 "new SCTE35 command=%" PRIu8 " command_str=null pts_adjustment=%" PRIu64,
                  SCTE35_NULL_COMMAND, i_pts_adjustment);
     }
 }
@@ -82,12 +82,12 @@ static inline void scte35_insert_print(const uint8_t *p_scte35,
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(print_opaque,
-                     "<SCTE35 command=\"%"PRIu8"\" command_str=\"insert\" pts_adjustment=\"%"PRIu64"\" event_id=\"%"PRIu32"\" cancel=\"1\">",
+                     "<SCTE35 command=\"%" PRIu8 "\" command_str=\"insert\" pts_adjustment=\"%" PRIu64 "\" event_id=\"%" PRIu32 "\" cancel=\"1\">",
                      SCTE35_INSERT_COMMAND, i_pts_adjustment, i_event_id);
             break;
         default:
             pf_print(print_opaque,
-                     "new SCTE35 command=%"PRIu8" command_str=insert pts_adjustment=%"PRIu64" event_id=%"PRIu32" cancel=true",
+                     "new SCTE35 command=%" PRIu8 " command_str=insert pts_adjustment=%" PRIu64 " event_id=%" PRIu32 " cancel=true",
                      SCTE35_INSERT_COMMAND, i_pts_adjustment, i_event_id);
         }
         return;
@@ -113,12 +113,12 @@ static inline void scte35_insert_print(const uint8_t *p_scte35,
         switch (i_print_type) {
         case PRINT_XML:
             snprintf(psz_duration, 255,
-                     " auto_return=\"%d\" duration=\"%"PRIu64"\"",
+                     " auto_return=\"%d\" duration=\"%" PRIu64 "\"",
                      b_auto_return ? 1 : 0, i_duration);
             break;
         default:
             snprintf(psz_duration, 255,
-                     " auto_return=%s duration=%"PRIu64"",
+                     " auto_return=%s duration=%" PRIu64 "",
                      b_auto_return ? "true" : "false", i_duration);
         }
     }
@@ -157,11 +157,11 @@ static inline void scte35_insert_print(const uint8_t *p_scte35,
 
             switch (i_print_type) {
             case PRINT_XML:
-                snprintf(psz_splice_time, 255, " splice_time=\"%"PRIu64"\"",
+                snprintf(psz_splice_time, 255, " splice_time=\"%" PRIu64 "\"",
                          i_pts_time);
                 break;
             default:
-                snprintf(psz_splice_time, 255, " splice_time=%"PRIu64"",
+                snprintf(psz_splice_time, 255, " splice_time=%" PRIu64 "",
                          i_pts_time);
             }
         }
@@ -170,14 +170,14 @@ static inline void scte35_insert_print(const uint8_t *p_scte35,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(print_opaque,
-                 "<SCTE35 command=\"%"PRIu8"\" command_str=\"insert\" pts_adjustment=\"%"PRIu64"\" event_id=\"%"PRIu32"\" cancel=\"0\" out_of_network=\"%d\" program_splice=\"%d\"%s%s unique_program_id=\"%"PRIu16"\">",
+                 "<SCTE35 command=\"%" PRIu8 "\" command_str=\"insert\" pts_adjustment=\"%" PRIu64 "\" event_id=\"%" PRIu32 "\" cancel=\"0\" out_of_network=\"%d\" program_splice=\"%d\"%s%s unique_program_id=\"%" PRIu16 "\">",
                  SCTE35_INSERT_COMMAND, i_pts_adjustment, i_event_id,
                  b_out_of_network ? 1 : 0, b_program_splice ? 1 : 0,
                  psz_splice_time, psz_duration, i_unique_program_id);
         break;
     default:
         pf_print(print_opaque,
-                 "new SCTE35 command=%"PRIu8" command_str=insert pts_adjustment=%"PRIu64" event_id=%"PRIu32" cancel=false out_of_network=%s program_splice=%s%s%s unique_program_id=%"PRIu16,
+                 "new SCTE35 command=%" PRIu8 " command_str=insert pts_adjustment=%" PRIu64 " event_id=%" PRIu32 " cancel=false out_of_network=%s program_splice=%s%s%s unique_program_id=%" PRIu16,
                  SCTE35_INSERT_COMMAND, i_pts_adjustment, i_event_id,
                  b_out_of_network ? "true" : "false",
                  b_program_splice ? "true" : "false",
@@ -195,23 +195,23 @@ static inline void scte35_time_signal_print(const uint8_t *p_scte35,
     case PRINT_XML:
         if (scte35_splice_time_has_time_specified(p_splice_time))
             pf_print(print_opaque,
-                     "<SCTE35 command=\"%"PRIu8"\" command_str=\"time_signal\" pts_adjustment=\"%"PRIu64"\" splice_time=\"%"PRIu64"\">",
+                     "<SCTE35 command=\"%" PRIu8 "\" command_str=\"time_signal\" pts_adjustment=\"%" PRIu64 "\" splice_time=\"%" PRIu64 "\">",
                      SCTE35_TIME_SIGNAL_COMMAND, i_pts_adjustment,
                      scte35_splice_time_get_pts_time(p_splice_time));
         else
             pf_print(print_opaque,
-                     "<SCTE35 command=\"%"PRIu8"\" command_str=\"time_signal\" pts_adjustment=\"%"PRIu64"\" splice_time=\"undefined\">",
+                     "<SCTE35 command=\"%" PRIu8 "\" command_str=\"time_signal\" pts_adjustment=\"%" PRIu64 "\" splice_time=\"undefined\">",
                      SCTE35_TIME_SIGNAL_COMMAND, i_pts_adjustment);
         break;
     default:
         if (scte35_splice_time_has_time_specified(p_splice_time))
             pf_print(print_opaque,
-                     "new SCTE35 command=%"PRIu8" command_str=time_signal pts_adjustment=%"PRIu64" splice_time=%"PRIu64,
+                     "new SCTE35 command=%" PRIu8 " command_str=time_signal pts_adjustment=%" PRIu64 " splice_time=%" PRIu64,
                      SCTE35_TIME_SIGNAL_COMMAND, i_pts_adjustment,
                      scte35_splice_time_get_pts_time(p_splice_time));
         else
             pf_print(print_opaque,
-                     "new SCTE35 command=%"PRIu8" command_str=time_signal pts_adjustment=%"PRIu64" splice_time=undefined",
+                     "new SCTE35 command=%" PRIu8 " command_str=time_signal pts_adjustment=%" PRIu64 " splice_time=undefined",
                      SCTE35_TIME_SIGNAL_COMMAND, i_pts_adjustment);
     }
 }
@@ -225,12 +225,12 @@ static inline void scte35_private_print(const uint8_t *p_scte35,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(print_opaque,
-                 "<SCTE35 command=\"%"PRIu8"\" command_str=\"private\" pts_adjustment=\"%"PRIu64"\" identifier=\"%"PRIu32"\" />",
+                 "<SCTE35 command=\"%" PRIu8 "\" command_str=\"private\" pts_adjustment=\"%" PRIu64 "\" identifier=\"%" PRIu32 "\" />",
                  SCTE35_PRIVATE_COMMAND, i_pts_adjustment, i_identifier);
         break;
     default:
         pf_print(print_opaque,
-                 "new SCTE35 command=%"PRIu8" command_str=private pts_adjustment=%"PRIu64" identifier=%"PRIu32,
+                 "new SCTE35 command=%" PRIu8 " command_str=private pts_adjustment=%" PRIu64 " identifier=%" PRIu32,
                  SCTE35_PRIVATE_COMMAND, i_pts_adjustment, i_identifier);
     }
 }
@@ -268,12 +268,12 @@ static inline void scte35_print(const uint8_t *p_scte35,
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(print_opaque,
-                     "<SCTE35 command=\"%"PRIu8"\" command_str=\"%s\" pts_adjustment=\"%"PRIu64"\">",
+                     "<SCTE35 command=\"%" PRIu8 "\" command_str=\"%s\" pts_adjustment=\"%" PRIu64 "\">",
                      i_type, scte35_get_command_type_txt(i_type), i_pts_adjustment);
             break;
         default:
             pf_print(print_opaque,
-                     "new SCTE35 command=%"PRIu8" command_str=%s pts_adjustment=%"PRIu64,
+                     "new SCTE35 command=%" PRIu8 " command_str=%s pts_adjustment=%" PRIu64,
                      i_type, scte35_get_command_type_txt(i_type), i_pts_adjustment);
         }
     }

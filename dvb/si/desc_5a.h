@@ -247,7 +247,7 @@ static inline void desc5a_print(const uint8_t *p_desc, f_print pf_print,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque,
-             "<TERRESTRIAL_DESC frequency=\"%"PRIu64"\" bandwidth=\"%u\" priority=\"%s\" timeslicing=\"%d\" mpefec=\"%d\" constellation=\"%s\" hierarchy=\"%s\" coderatehp=\"%s\" coderatelp=\"%s\" guard=\"%s\" transmission=\"%s\" otherfrequency=\"%d\"/>",
+             "<TERRESTRIAL_DESC frequency=\"%" PRIu64 "\" bandwidth=\"%u\" priority=\"%s\" timeslicing=\"%d\" mpefec=\"%d\" constellation=\"%s\" hierarchy=\"%s\" coderatehp=\"%s\" coderatelp=\"%s\" guard=\"%s\" transmission=\"%s\" otherfrequency=\"%d\"/>",
              desc5a_get_frequency(p_desc), i_bandwidth,
              desc5a_get_priority(p_desc) ? "HP" : "LP",
              desc5a_get_timeslicing(p_desc) ? 1 : 0,
@@ -260,7 +260,7 @@ static inline void desc5a_print(const uint8_t *p_desc, f_print pf_print,
         break;
     default:
         pf_print(opaque,
-             "    - desc 5a dvb-t frequency=%"PRIu64" Hz bandwidth=%u MHz priority=%s timeslicing=%d mpefec=%d constellation=%s hierarchy=%s coderatehp=%s coderatelp=%s guard=%s transmission=%s otherfrequency=%d",
+             "    - desc 5a dvb-t frequency=%" PRIu64 " Hz bandwidth=%u MHz priority=%s timeslicing=%d mpefec=%d constellation=%s hierarchy=%s coderatehp=%s coderatelp=%s guard=%s transmission=%s otherfrequency=%d",
              desc5a_get_frequency(p_desc), i_bandwidth,
              desc5a_get_priority(p_desc) ? "HP" : "LP",
              desc5a_get_timeslicing(p_desc) ? 1 : 0,

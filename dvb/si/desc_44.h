@@ -128,14 +128,14 @@ static inline void desc44_print(const uint8_t *p_desc, f_print pf_print,
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque,
-             "<CABLE_DESC frequency=\"%"PRIu64"\" fecouter=\"%s\" modulation=\"%s\" symbolrate=\"%u\" fecinner=\"%s\"/>",
+             "<CABLE_DESC frequency=\"%" PRIu64 "\" fecouter=\"%s\" modulation=\"%s\" symbolrate=\"%u\" fecinner=\"%s\"/>",
              desc44_get_frequency(p_desc), psz_fecouter, psz_modulation,
              desc44_get_symbolrate(p_desc),
              dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
         break;
     default:
         pf_print(opaque,
-             "    - desc 44 dvb-c frequency=%"PRIu64" Hz fecouter=%s modulation=%s symbolrate=%u fecinner=%s",
+             "    - desc 44 dvb-c frequency=%" PRIu64 " Hz fecouter=%s modulation=%s symbolrate=%u fecinner=%s",
              desc44_get_frequency(p_desc), psz_fecouter, psz_modulation,
              desc44_get_symbolrate(p_desc),
              dvb_delivery_get_fec(desc43_get_fecinner(p_desc)));
