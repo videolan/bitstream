@@ -1,7 +1,8 @@
-examples/dvb_ecmg
-examples/dvb_ecmg_test
-examples/dvb_gen_si
-examples/dvb_print_si
-examples/mpeg_print_pcr
-examples/mpeg_restamp
-examples/rtp_check_seqnum
+/bitstream.pc
+/examples/dvb_ecmg
+/examples/dvb_ecmg_test
+/examples/dvb_gen_si
+/examples/dvb_print_si
+/examples/mpeg_print_pcr
+/examples/mpeg_restamp
+/examples/rtp_check_seqnum

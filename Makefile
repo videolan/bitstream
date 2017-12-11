@@ -1,12 +1,22 @@
 PREFIX ?= /usr/local
-INCLUDE = $(subst //,/,$(DESTDIR)/$(PREFIX)/include/bitstream)
+INCLUDEDIR = $(PREFIX)/include
+LIBDIR = $(PREFIX)/lib
+INCLUDE = $(DESTDIR)$(INCLUDEDIR)/bitstream
+PKGCONFIG = $(DESTDIR)$(LIBDIR)/pkgconfig
 VERSION = 1.2
 
 all:
 	ln -nsf .. examples/bitstream
 	$(MAKE) -C examples
 
-install:
+bitstream.pc: bitstream.pc.in
+	@echo "GEN      $@"
+	@sed -e 's|@PREFIX@|$(PREFIX)|' \
+	     -e 's|@INCLUDEDIR@|$(INCLUDEDIR)|' \
+	     -e 's|@VERSION@|$(VERSION)|' \
+	     $< > $@
+
+install: bitstream.pc
 	@echo "INSTALL  $(INCLUDE)"
 	@install -d $(INCLUDE)
 	@install -m 644 common.h $(INCLUDE)/
@@ -30,16 +40,22 @@ install:
 	@install -m 644 scte/*.h $(INCLUDE)/scte
 	@install -d $(INCLUDE)/smpte
 	@install -m 644 smpte/*.h $(INCLUDE)/smpte
+	@echo "INSTALL  $(PKGCONFIG)/bitstream.pc"
+	@install -d $(PKGCONFIG)
+	@install -m 644 bitstream.pc $(PKGCONFIG)
 
 uninstall:
 	@echo "REMOVE   $(INCLUDE)"
-	@rm -rf $(INCLUDE)
+	@$(RM) -r $(INCLUDE)
+	@echo "REMOVE   $(PKGCONFIG)/bitstream.pc"
+	@$(RM) $(PKGCONFIG)/bitstream.pc
 
 dist:
 	git archive --format=tar --prefix=bitstream-$(VERSION)/ master | \
 	  bzip2 -9 > bitstream-$(VERSION).tar.bz2
 
 clean:
+	$(RM) bitstream.pc
 	$(MAKE) -C examples clean
 
 .PHONY: all install uninstall dist clean
