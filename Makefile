@@ -55,7 +55,27 @@ dist:
 	  bzip2 -9 > bitstream-$(VERSION).tar.bz2
 
 clean:
-	$(RM) bitstream.pc
+	$(RM) bitstream bitstream.pc
 	$(MAKE) -C examples clean
 
-.PHONY: all install uninstall dist clean
+# if you want to check only particular headers,
+# use make check HEADER_LIST="dvb/sim.h ietf/rtp.h"
+
+HEADER_LIST = $$(find * -name '*.h')
+
+FLAGS = -I. -Werror -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wformat=2
+
+compiler_c = $(CC) $(FLAGS) $(CFLAGS)
+compiler_c++ = $(CXX) $(FLAGS) $(CXXFLAGS)
+compile = $(compiler_$1) -include "$$header" -c -x $1 /dev/null -o /dev/null
+
+check:
+	@ln -nsf . bitstream
+	@for header in $(HEADER_LIST); do \
+	  $(if $(V),set -x;) \
+	  $(call compile,c) || exit 1; \
+	  $(call compile,c++) || exit 1; \
+	  echo "PASS: $$header"; \
+	done
+
+.PHONY: all install uninstall dist clean check
