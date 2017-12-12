@@ -203,9 +203,9 @@ static inline bool intf##_append_##name(uint8_t *p_tlv, type i_##name)      \
 static inline type intf##_find_##name(uint8_t *p_tlv, uint16_t n)           \
 {                                                                           \
     const uint8_t *p_tlv_n = tlv_find_param(p_tlv, param, n);               \
-    type i_##name = (type)(p_tlv_n[4]) << 8 * (sizeof(type) - 1);           \
+    type i_##name = 0;                                                      \
     int i;                                                                  \
-    for (i = 1; i < sizeof(type); i++)                                      \
+    for (i = 0; i < sizeof(type); i++)                                      \
         i_##name |= (utype)(p_tlv_n[4 + i]) << 8 * (sizeof(type) - i - 1);  \
     return i_##name;                                                        \
 }
