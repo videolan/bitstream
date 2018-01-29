@@ -3,7 +3,7 @@ INCLUDEDIR = $(PREFIX)/include
 LIBDIR = $(PREFIX)/lib
 INCLUDE = $(DESTDIR)$(INCLUDEDIR)/bitstream
 PKGCONFIG = $(DESTDIR)$(LIBDIR)/pkgconfig
-VERSION = 1.2
+VERSION = 1.3
 
 all:
 	ln -nsf .. examples/bitstream
