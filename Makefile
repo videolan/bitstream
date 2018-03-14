@@ -1,8 +1,9 @@
 PREFIX ?= /usr/local
 INCLUDEDIR = $(PREFIX)/include
 LIBDIR = $(PREFIX)/lib
+DATADIR = $(PREFIX)/share
 INCLUDE = $(DESTDIR)$(INCLUDEDIR)/bitstream
-PKGCONFIG = $(DESTDIR)$(LIBDIR)/pkgconfig
+PKGCONFIG = $(DESTDIR)$(DATADIR)/pkgconfig
 VERSION = 1.4
 
 all:
