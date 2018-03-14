@@ -4,7 +4,7 @@ LIBDIR = $(PREFIX)/lib
 DATADIR = $(PREFIX)/share
 INCLUDE = $(DESTDIR)$(INCLUDEDIR)/bitstream
 PKGCONFIG = $(DESTDIR)$(DATADIR)/pkgconfig
-VERSION = 1.3
+VERSION = 1.4
 
 all:
 	ln -nsf .. examples/bitstream

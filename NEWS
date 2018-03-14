@@ -1,3 +1,7 @@
+1.4 (not released yet)
+=================
+ - Add RTCP helpers
+
 1.3 (29 Jan 2018)
 =================
  - Add support for avcC and hvcC structures
