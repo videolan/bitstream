@@ -670,7 +670,8 @@ static inline bool scte35_private_validate(const uint8_t *p_scte35)
 static inline bool scte35_validate(const uint8_t *p_scte35)
 {
     if (psi_get_syntax(p_scte35) ||
-        psi_get_tableid(p_scte35) != SCTE35_TABLE_ID)
+        psi_get_tableid(p_scte35) != SCTE35_TABLE_ID ||
+        psi_get_length(p_scte35) <  SCTE35_HEADER2_SIZE + PSI_CRC_SIZE)
         return false;
 
     if (!psi_check_crc(p_scte35))
