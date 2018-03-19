@@ -10,7 +10,7 @@ all:
 	ln -nsf .. examples/bitstream
 	$(MAKE) -C examples
 
-bitstream.pc: bitstream.pc.in
+bitstream.pc: bitstream.pc.in Makefile
 	@echo "GEN      $@"
 	@sed -e 's|@PREFIX@|$(PREFIX)|' \
 	     -e 's|@INCLUDEDIR@|$(INCLUDEDIR)|' \
