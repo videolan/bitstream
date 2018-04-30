@@ -72,10 +72,10 @@ static inline void desc48_set_provider(uint8_t *p_desc,
     memcpy(p + 1, p_provider, i_length);
 }
 
-static inline const uint8_t *desc48_get_provider(const uint8_t *p_desc,
+static inline uint8_t *desc48_get_provider(const uint8_t *p_desc,
                                                  uint8_t *pi_length)
 {
-    const uint8_t *p = p_desc + DESC48_HEADER_SIZE;
+    uint8_t *p = p_desc + DESC48_HEADER_SIZE;
     *pi_length = p[0];
     return p + 1;
 }
