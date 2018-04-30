@@ -99,6 +99,18 @@ static inline uint8_t smpte_fec_get_pt_recovery(const uint8_t *p_fec)
     return p_fec[4] & 0x7f;
 }
 
+static inline void smpte_fec_set_mask(uint8_t *p_fec, uint32_t mask)
+{
+    p_fec[5] = (mask >> 16) & 0xff;
+    p_fec[6] = (mask >>  8) & 0xff;
+    p_fec[7] = (mask      ) & 0xff;
+}
+
+static inline uint32_t smpte_fec_get_mask(const uint8_t *p_fec)
+{
+    return (p_fec[5] << 16) | (p_fec[6] << 8) | p_fec[7];
+}
+
 static inline void smpte_fec_set_ts_recovery(uint8_t *p_fec, uint32_t snbase)
 {
     p_fec[8] =  (snbase >> 24) & 0xff;
@@ -112,6 +124,26 @@ static inline uint32_t smpte_fec_get_ts_recovery(const uint8_t *p_fec)
     return (p_fec[8] << 24) | (p_fec[9] << 16) | (p_fec[10] << 8) | p_fec[11];
 }
 
+static inline void smpte_fec_clear_n(uint8_t *p_fec)
+{
+    p_fec[12] &= ~0x80;
+}
+
+static inline void smpte_fec_set_n(uint8_t *p_fec)
+{
+    p_fec[12] |= 0x80;
+}
+
+static inline bool smpte_fec_check_n(const uint8_t *p_fec)
+{
+    return !!(p_fec[12] & 0x80);
+}
+
+static inline void smpte_fec_clear_d(uint8_t *p_fec)
+{
+    p_fec[12] &= ~0x40;
+}
+
 static inline void smpte_fec_set_d(uint8_t *p_fec)
 {
     p_fec[12] |= 0x40;
@@ -120,6 +152,28 @@ static inline void smpte_fec_set_d(uint8_t *p_fec)
 static inline bool smpte_fec_check_d(const uint8_t *p_fec)
 {
     return !!(p_fec[12] & 0x40);
+}
+
+static inline void smpte_fec_set_type(uint8_t *p_fec, uint8_t type)
+{
+    type &= 0x7;
+    p_fec[12] = (p_fec[12] & 0xc7) | (type << 3);
+}
+
+static inline uint8_t smpte_fec_get_type(uint8_t *p_fec)
+{
+    return (p_fec[12] >> 3) & 0x7;
+}
+
+static inline void smpte_fec_set_index(uint8_t *p_fec, uint8_t index)
+{
+    index &= 0x7;
+    p_fec[12] = (p_fec[12] & 0xf8) | index;
+}
+
+static inline uint8_t smpte_fec_get_index(uint8_t *p_fec)
+{
+    return p_fec[12] & 0x7;
 }
 
 static inline void smpte_fec_set_offset(uint8_t *p_fec, uint8_t offset)
