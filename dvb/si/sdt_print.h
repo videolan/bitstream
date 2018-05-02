@@ -73,6 +73,9 @@ static inline void sdt_table_print(uint8_t **pp_sections,
         uint8_t *p_service;
         int j = 0;
 
+       if (p_section == NULL)
+           break;
+
         while ((p_service = sdt_get_service(p_section, j)) != NULL) {
             j++;
             switch (i_print_type) {
