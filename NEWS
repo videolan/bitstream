@@ -1,6 +1,8 @@
-1.4 (not released yet)
+1.4 (1 July 2018)
 =================
  - Add RTCP helpers
+ - Add support for SMPTE 352
+ - Misc descriptors fixes
 
 1.3 (29 Jan 2018)
 =================
