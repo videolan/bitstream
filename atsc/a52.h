@@ -1,7 +1,7 @@
 /*****************************************************************************
  * a52.h: ATSC A/52:2012 Digital Audio Compression Standard
  *****************************************************************************
- * Copyright (C) 2013-2014 VideoLAN
+ * Copyright (C) 2013-2018 VideoLAN
  *
  * Authors: Benjamin Cohen <bencoh@notk.org>
  *
@@ -300,6 +300,28 @@ static inline void a52e_set_fscod2(uint8_t *p_a52, uint8_t i_fscod)
 {
     p_a52[4] &= ~0x30;
     p_a52[4] |= (i_fscod & 0x3) << 4;
+}
+
+static inline uint8_t a52e_get_acmod(const uint8_t *p_a52)
+{
+    return (p_a52[4] & 0xe) >> 1;
+}
+
+static inline void a52e_set_acmod(uint8_t *p_a52, uint8_t i_acmod)
+{
+    p_a52[4] &= ~0xe;
+    p_a52[4] |= (i_acmod & 0x7) << 1;
+}
+
+static inline uint8_t a52e_get_lfeon(const uint8_t *p_a52)
+{
+    return p_a52[4] & 0x1;
+}
+
+static inline void a52e_set_lfeon(uint8_t *p_a52, uint8_t i_lfeon)
+{
+    p_a52[4] &= ~0x1;
+    p_a52[4] |= i_lfeon & 0x1;
 }
 
 static inline bool a52e_sync_compare_formats(const uint8_t *p_a521, const uint8_t *p_a522)
