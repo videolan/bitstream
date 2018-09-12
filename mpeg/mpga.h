@@ -228,6 +228,23 @@ static inline bool mpga_sync_compare_formats(const uint8_t *p_mpga1, const uint8
     return i_mode1 == i_mode2;
 }
 
+/* same but without comparing bitrate (free bitrate) */
+static inline bool mpga_sync_compare_formats_free(const uint8_t *p_mpga1, const uint8_t *p_mpga2)
+{
+    if (!(p_mpga1[0] == p_mpga2[0] &&
+          (p_mpga1[1] & 0xfe) == (p_mpga2[1] & 0xfe) &&
+          (p_mpga1[2] & 0xc) == (p_mpga2[2] & 0xc)))
+        return false;
+
+    /* consider stereo and joint stereo the same - because encoders can
+     * switch on the fly */
+    uint8_t i_mode1 = mpga_get_mode(p_mpga1);
+    uint8_t i_mode2 = mpga_get_mode(p_mpga2);
+    if (i_mode1 == MPGA_MODE_JOINT) i_mode1 = MPGA_MODE_STEREO;
+    if (i_mode2 == MPGA_MODE_JOINT) i_mode2 = MPGA_MODE_STEREO;
+    return i_mode1 == i_mode2;
+}
+
 #ifdef __cplusplus
 }
 #endif
