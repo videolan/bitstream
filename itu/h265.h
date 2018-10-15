@@ -336,7 +336,7 @@ static inline void h265eob_init(uint8_t *p_h265eob)
 /*****************************************************************************
  * H265 hvcC structure
  *****************************************************************************/
-#define H265HVCC_HEADER             22
+#define H265HVCC_HEADER             23
 #define H265HVCC_ARRAY_HEADER       3
 #define H265HVCC_NALU_HEADER        2
 
