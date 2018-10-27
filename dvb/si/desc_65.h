@@ -70,6 +70,7 @@ static inline const char *desc65_get_scrambling_mode_txt(uint8_t i_mode)
            i_mode == 0x03                   ? "DVB-CSA3 in standart mode" :
            i_mode == 0x04                   ? "DVB-CSA3 in minimally enhanced mode" :
            i_mode == 0x05                   ? "DVB-CSA3 in fully enhanced mode" :
+           i_mode == 0x10                   ? "DVB-CISSA version 1" :
            i_mode >= 0x06 && i_mode <= 0x6f ? "Reserved" :
            i_mode >= 0x70 && i_mode <= 0x7f ? "ATIS defined" :
            i_mode >= 0x80 && i_mode <= 0xfe ? "User defined" : "Reserved";
