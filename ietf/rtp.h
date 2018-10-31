@@ -168,6 +168,19 @@ static inline void rtp_get_ssrc(const uint8_t *p_rtp, uint8_t pi_ssrc[4])
     pi_ssrc[3] = p_rtp[11];
 }
 
+static inline void rtp_set_int_ssrc(uint8_t *p_rtp, uint32_t i_ssrc)
+{
+    p_rtp[8] = (i_ssrc >> 24) & 0xff;
+    p_rtp[9] = (i_ssrc >> 16) & 0xff;
+    p_rtp[10] = (i_ssrc >> 8) & 0xff;
+    p_rtp[11] = i_ssrc & 0xff;
+}
+
+static inline uint32_t rtp_get_int_ssrc(const uint8_t *p_rtp)
+{
+    return (p_rtp[8] << 24) | (p_rtp[9] << 16) | (p_rtp[10] << 8) | p_rtp[11];
+}
+
 static inline uint8_t *rtp_extension(uint8_t *p_rtp)
 {
     return p_rtp + RTP_HEADER_SIZE + 4 * rtp_get_cc(p_rtp);

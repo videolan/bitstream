@@ -30,6 +30,19 @@ static inline void rtcp_fb_set_ssrc_pkt_sender(uint8_t *p_rtcp_fb,
     p_rtcp_fb[7] = pi_ssrc[3];
 }
 
+static inline void rtcp_fb_set_int_ssrc_pkt_sender(uint8_t *p_rtcp_fb, uint32_t i_ssrc)
+{
+    p_rtcp_fb[4] = (i_ssrc >> 24) & 0xff;
+    p_rtcp_fb[5] = (i_ssrc >> 16) & 0xff;
+    p_rtcp_fb[6] = (i_ssrc >> 8) & 0xff;
+    p_rtcp_fb[7] = i_ssrc & 0xff;
+}
+
+static inline uint32_t rtcp_fb_get_int_ssrc_pkt_sender(const uint8_t *p_rtcp_fb)
+{
+    return (p_rtcp_fb[4] << 24) | (p_rtcp_fb[5] << 16) | (p_rtcp_fb[6] << 8) | p_rtcp_fb[7];
+}
+
 static inline void rtcp_fb_set_ssrc_media_src(uint8_t *p_rtcp_fb,
                                               const uint8_t pi_ssrc[4])
 {
