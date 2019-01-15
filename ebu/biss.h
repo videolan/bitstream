@@ -89,7 +89,7 @@ static inline uint8_t bissca_emm_get_last_table_id(const uint8_t *p_emm)
 static inline void bissca_emm_set_emm_cipher_type(uint8_t *p_emm, uint8_t bissca_emm_cipher_type)
 {
     p_emm[BISSCA_EMM_HEADER_SIZE+3] &= 0x0f;
-    p_emm[BISSCA_EMM_HEADER_SIZE+3] |= (emm_cipher_type << 5);
+    p_emm[BISSCA_EMM_HEADER_SIZE+3] |= (bissca_emm_cipher_type << 5);
 }
 
 static inline uint8_t bissca_emm_get_emm_cipher_type(const uint8_t *p_emm)
@@ -195,7 +195,7 @@ static inline bool bissca_emm_validate(const uint8_t *p_emm)
          || i_section_size < BISSCA_EMM_HEADER_SIZE + 6 + bissca_emm_get_desclength(p_emm))
         return false;
 
-    if (!descl_validate(emm_get_descl_const(p_emm), bissca_emm_get_desclength(p_emm)))
+    if (!descl_validate(bissca_emm_get_descl_const(p_emm), bissca_emm_get_desclength(p_emm)))
         return false;
 
     // TODO: validate RSA loop ?
