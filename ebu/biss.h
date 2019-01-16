@@ -43,9 +43,10 @@ extern "C"
 #endif
 
 /*****************************************************************************
- * Conditional Access Table
+ * Entitlement Management Message Table
  *****************************************************************************/
 #define BISSCA_EMM_TABLE_ID            0x81
+#define BISSCA_EMM_TABLE_ID_LAST       0x8f
 #define BISSCA_EMM_HEADER_SIZE         PSI_HEADER_SIZE_SYNTAX1
 
 #define BISSCA_EMM_CIPHER_RSA_2048_OAEP    0
@@ -188,7 +189,8 @@ static inline bool bissca_emm_validate(const uint8_t *p_emm)
 
     if (!psi_get_syntax(p_emm) || psi_get_section(p_emm)
          || psi_get_lastsection(p_emm)
-         || psi_get_tableid(p_emm) != BISSCA_EMM_TABLE_ID)
+         || psi_get_tableid(p_emm) < BISSCA_EMM_TABLE_ID
+         || psi_get_tableid(p_emm) > BISSCA_EMM_TABLE_ID_LAST)
         return false;
 
     if (i_section_size < BISSCA_EMM_HEADER_SIZE + 6
