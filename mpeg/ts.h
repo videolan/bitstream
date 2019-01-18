@@ -150,6 +150,11 @@ static inline uint8_t ts_get_adaptation(const uint8_t *p_ts)
     return p_ts[4];
 }
 
+/* not technically defined in ISO-13818, but this seems to be the industry consensus */
+#define TS_SCRAMBLING_CLEAR 0
+#define TS_SCRAMBLING_EVEN  2
+#define TS_SCRAMBLING_ODD   3
+
 static inline void ts_set_scrambling(uint8_t *p_ts, uint8_t i_scrambling)
 {
     p_ts[3] &= ~0xc0;
