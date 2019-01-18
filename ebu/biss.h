@@ -43,9 +43,10 @@ extern "C"
 #endif
 
 /*****************************************************************************
- * Conditional Access Table
+ * Entitlement Management Message Table
  *****************************************************************************/
 #define BISSCA_EMM_TABLE_ID            0x81
+#define BISSCA_EMM_TABLE_ID_LAST       0x8f
 #define BISSCA_EMM_HEADER_SIZE         PSI_HEADER_SIZE_SYNTAX1
 
 #define BISSCA_EMM_CIPHER_RSA_2048_OAEP    0
@@ -188,7 +189,8 @@ static inline bool bissca_emm_validate(const uint8_t *p_emm)
 
     if (!psi_get_syntax(p_emm) || psi_get_section(p_emm)
          || psi_get_lastsection(p_emm)
-         || psi_get_tableid(p_emm) != BISSCA_EMM_TABLE_ID)
+         || psi_get_tableid(p_emm) < BISSCA_EMM_TABLE_ID
+         || psi_get_tableid(p_emm) > BISSCA_EMM_TABLE_ID_LAST)
         return false;
 
     if (i_section_size < BISSCA_EMM_HEADER_SIZE + 6
@@ -204,6 +206,164 @@ static inline bool bissca_emm_validate(const uint8_t *p_emm)
 }
 
 static inline bool bissca_emm_table_validate(uint8_t **pp_sections)
+{
+    uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
+    uint8_t i;
+
+    for (i = 0; i <= i_last_section; i++) {
+        uint8_t *p_section = psi_table_get_section(pp_sections, i);
+
+        if (!psi_check_crc(p_section))
+            return false;
+    }
+
+    return true;
+}
+
+/*****************************************************************************
+ * Entitlement Control Message Table
+ *****************************************************************************/
+
+#define BISSCA_ECM_TABLE_ID            0x80
+#define BISSCA_ECM_HEADER_SIZE         PSI_HEADER_SIZE_SYNTAX1
+
+#define BISSCA_ECM_CIPHER_AES_128_CBC   0
+
+static inline void bissca_ecm_init(uint8_t *p_ecm, uint16_t esid)
+{
+    psi_init(p_ecm, true);
+    psi_set_tableid(p_ecm, BISSCA_ECM_TABLE_ID);
+    p_ecm[1] &= ~0x40;
+    psi_set_tableidext(p_ecm, esid);
+    psi_set_section(p_ecm, 0);
+    psi_set_lastsection(p_ecm, 0);
+    p_ecm[BISSCA_ECM_HEADER_SIZE+2] = 0x0f;
+    p_ecm[BISSCA_ECM_HEADER_SIZE+3] = 0xf0;
+}
+
+static inline void bissca_ecm_set_onid(uint8_t *p_ecm, uint16_t onid)
+{
+    bissca_emm_set_onid(p_ecm, onid);
+}
+
+static inline uint16_t bissca_ecm_get_onid(const uint8_t *p_ecm)
+{
+    return bissca_emm_get_onid(p_ecm);
+}
+
+static inline void bissca_ecm_set_cipher_type(uint8_t *p_ecm, uint8_t cipher_type)
+{
+    p_ecm[BISSCA_EMM_HEADER_SIZE+2] &= ~(7 << 5);
+    p_ecm[BISSCA_EMM_HEADER_SIZE+2] |= (cipher_type & 7) << 5;
+}
+
+static inline uint8_t bissca_ecm_get_cipher_type(const uint8_t *p_ecm)
+{
+    return p_ecm[BISSCA_EMM_HEADER_SIZE+2] >> 5;
+}
+
+static inline uint16_t bissca_ecm_get_desclength(const uint8_t *p_ecm)
+{
+    return ((p_ecm[BISSCA_ECM_HEADER_SIZE + 2] & 0xf) << 8) |
+        p_ecm[BISSCA_ECM_HEADER_SIZE + 3];
+}
+
+static inline void bissca_ecm_set_desclength(uint8_t *p_ecm, uint16_t i_desc_len)
+{
+    p_ecm[BISSCA_ECM_HEADER_SIZE + 2] &= 0xf0;
+    p_ecm[BISSCA_ECM_HEADER_SIZE + 2] |= (i_desc_len << 8) & 0xf;
+    p_ecm[BISSCA_ECM_HEADER_SIZE + 3] = i_desc_len & 0xff;
+}
+
+static inline uint8_t *bissca_ecm_get_descl(uint8_t *p_ecm)
+{
+    return p_ecm + BISSCA_ECM_HEADER_SIZE + 4;
+}
+
+static inline const uint8_t *bissca_ecm_get_descl_const(const uint8_t *p_ecm)
+{
+    return p_ecm + BISSCA_ECM_HEADER_SIZE + 4;
+}
+
+static inline void bissca_ecm_set_session_key_parity(uint8_t *p_ecm, bool odd)
+{
+    uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
+    p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len] = (!!odd << 7) | 0x7f;
+}
+
+static inline bool bissca_ecm_get_session_key_parity(const uint8_t *p_ecm)
+{
+    uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
+    return p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len] & 0x80;
+}
+
+static inline void bissca_ecm_set_iv(uint8_t *p_ecm, const uint8_t iv[16])
+{
+    uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
+    uint8_t *p_iv = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1];
+    memcpy(p_iv, iv, 16);
+}
+
+static inline void bissca_ecm_get_iv(const uint8_t *p_ecm, uint8_t iv[16])
+{
+    uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
+    uint8_t *p_iv = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1];
+    memcpy(iv, p_iv, 16);
+}
+
+static inline void bissca_ecm_set_even_word(uint8_t *p_ecm, const uint8_t even[16])
+{
+    uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
+    uint8_t *p_even = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1 + 16];
+    memcpy(p_even, even, 16);
+}
+
+static inline void bissca_ecm_get_even_word(const uint8_t *p_ecm, uint8_t even[16])
+{
+    uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
+    uint8_t *p_even = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1 + 16];
+    memcpy(even, p_even, 16);
+}
+
+static inline void bissca_ecm_set_odd_word(uint8_t *p_ecm, const uint8_t odd[16])
+{
+    uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
+    uint8_t *p_odd = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1 + 32];
+    memcpy(p_odd, odd, 16);
+}
+
+static inline void bissca_ecm_get_odd_word(const uint8_t *p_ecm, uint8_t odd[16])
+{
+    uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
+    uint8_t *p_odd = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1 + 32];
+    memcpy(odd, p_odd, 16);
+}
+
+static inline bool bissca_ecm_validate(const uint8_t *p_ecm)
+{
+    uint16_t i_section_size = psi_get_length(p_ecm) + PSI_HEADER_SIZE
+                               - PSI_CRC_SIZE;
+
+    if (!psi_get_syntax(p_ecm) || psi_get_section(p_ecm)
+         || psi_get_lastsection(p_ecm)
+         || psi_get_tableid(p_ecm) != BISSCA_ECM_TABLE_ID)
+        return false;
+
+    if (i_section_size < BISSCA_ECM_HEADER_SIZE + 6
+         || i_section_size < BISSCA_ECM_HEADER_SIZE + 6 + bissca_ecm_get_desclength(p_ecm))
+        return false;
+
+    if (bissca_ecm_get_cipher_type(p_ecm) == BISSCA_ECM_CIPHER_AES_128_CBC
+          && i_section_size < BISSCA_ECM_HEADER_SIZE + 6 + bissca_ecm_get_desclength(p_ecm) + 49)
+        return false;
+
+    if (!descl_validate(bissca_ecm_get_descl_const(p_ecm), bissca_ecm_get_desclength(p_ecm)))
+        return false;
+
+    return true;
+}
+
+static inline bool bissca_ecm_table_validate(uint8_t **pp_sections)
 {
     uint8_t i_last_section = psi_table_get_lastsection(pp_sections);
     uint8_t i;
