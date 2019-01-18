@@ -307,7 +307,7 @@ static inline void bissca_ecm_set_iv(uint8_t *p_ecm, const uint8_t iv[16])
 static inline void bissca_ecm_get_iv(const uint8_t *p_ecm, uint8_t iv[16])
 {
     uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
-    uint8_t *p_iv = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1];
+    const uint8_t *p_iv = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1];
     memcpy(iv, p_iv, 16);
 }
 
@@ -321,7 +321,7 @@ static inline void bissca_ecm_set_even_word(uint8_t *p_ecm, const uint8_t even[1
 static inline void bissca_ecm_get_even_word(const uint8_t *p_ecm, uint8_t even[16])
 {
     uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
-    uint8_t *p_even = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1 + 16];
+    const uint8_t *p_even = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1 + 16];
     memcpy(even, p_even, 16);
 }
 
@@ -335,7 +335,7 @@ static inline void bissca_ecm_set_odd_word(uint8_t *p_ecm, const uint8_t odd[16]
 static inline void bissca_ecm_get_odd_word(const uint8_t *p_ecm, uint8_t odd[16])
 {
     uint16_t desc_len = bissca_ecm_get_desclength(p_ecm);
-    uint8_t *p_odd = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1 + 32];
+    const uint8_t *p_odd = &p_ecm[BISSCA_ECM_HEADER_SIZE + 4 + desc_len + 1 + 32];
     memcpy(odd, p_odd, 16);
 }
 
