@@ -60,7 +60,7 @@ static inline void dvb_mjd_get(uint16_t mjd, int *y, int *m, int *d)
 {
     int k;
     int yp = (mjd * 20 - 301564) / 7305;
-    int mp = (mjd * 10000 - 149561000 - yp * 3652500) / 306001;
+    int mp = (mjd * 10000 - 149561000 - 10000 * (yp * 1461 / 4)) / 306001;
     *d = mjd - 14956 - yp * 1461 / 4 - mp * 306001 / 10000;
     k = (mp == 14 || mp == 15) ? 1 : 0;
     *y = yp + k;
