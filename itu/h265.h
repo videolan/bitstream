@@ -356,14 +356,15 @@ static inline void h265hvcc_init(uint8_t *p)
     p[11] = 0;
     p[12] = 0;
     p[13] = 0xf0;
-    p[14] = 0xfc;
+    p[14] = 0;
     p[15] = 0xfc;
-    p[16] = 0xf8;
+    p[16] = 0xfc;
     p[17] = 0xf8;
-    p[18] = 0;
+    p[18] = 0xf8;
     p[19] = 0;
     p[20] = 0;
     p[21] = 0;
+    p[22] = 0;
 }
 
 static inline void h265hvcc_set_profile_space(uint8_t *p, uint8_t val)
@@ -441,76 +442,77 @@ static inline uint8_t h265hvcc_get_level_idc(const uint8_t *p)
     return p[12];
 }
 
-static inline void h265hvcc_set_min_spatial_segmentation_idc(uint8_t *p, uint8_t val)
+static inline void h265hvcc_set_min_spatial_segmentation_idc(uint8_t *p, uint16_t val)
 {
-    p[13] = 0xf0 | val;
+    p[13] = 0xf0 | (val >> 8);
+    p[14] = val & 0xff;
 }
 
-static inline uint8_t h265hvcc_get_min_spatial_segmentation_idc(const uint8_t *p)
+static inline uint16_t h265hvcc_get_min_spatial_segmentation_idc(const uint8_t *p)
 {
-    return p[13] & 0xf;
+    return (p[13] & 0xf) << 8 | p[14];
 }
 
 static inline void h265hvcc_set_parallelism_type(uint8_t *p, uint8_t val)
 {
-    p[14] = 0xfc | val;
+    p[15] = 0xfc | val;
 }
 
 static inline uint8_t h265hvcc_get_parallelism_type(const uint8_t *p)
 {
-    return p[14] & 0x3;
+    return p[15] & 0x3;
 }
 
 static inline void h265hvcc_set_chroma_format(uint8_t *p, uint8_t val)
 {
-    p[15] = 0xfc | val;
+    p[16] = 0xfc | val;
 }
 
 static inline uint8_t h265hvcc_get_chroma_format(const uint8_t *p)
 {
-    return p[15] & 0x3;
+    return p[16] & 0x3;
 }
 
 static inline void h265hvcc_set_bitdepth_luma_8(uint8_t *p, uint8_t val)
 {
-    p[16] = 0xf8 | val;
+    p[17] = 0xf8 | val;
 }
 
 static inline uint8_t h265hvcc_get_bitdepth_luma_8(const uint8_t *p)
 {
-    return p[16] & 0x7;
+    return p[17] & 0x7;
 }
 
 static inline void h265hvcc_set_bitdepth_chroma_8(uint8_t *p, uint8_t val)
 {
-    p[17] = 0xf8 | val;
+    p[18] = 0xf8 | val;
 }
 
 static inline uint8_t h265hvcc_get_bitdepth_chroma_8(const uint8_t *p)
 {
-    return p[17] & 0x7;
+    return p[18] & 0x7;
 }
 
 static inline void h265hvcc_set_avg_frame_rate(uint8_t *p, uint16_t val)
 {
-    p[18] = val >> 8;
-    p[19] = val & 0xff;
+    p[19] = val >> 8;
+    p[20] = val & 0xff;
 }
 
-static inline uint32_t h265hvcc_get_avg_frame_rate(const uint8_t *p)
+static inline uint16_t h265hvcc_get_avg_frame_rate(const uint8_t *p)
 {
-    return (p[18] << 8) | p[19];
+    return (p[19] << 8) | p[20];
 }
 
 static inline void h265hvcc_set_constant_frame_rate(uint8_t *p, uint8_t val)
 {
-    p[20] &= ~0xc0;
-    p[20] |= val << 6;
+    p[21] &= ~0xc0;
+    p[21] |= val << 6;
 }
 
 static inline uint8_t h265hvcc_get_constant_frame_rate(const uint8_t *p)
 {
-    return p[20] >> 6;
+    return p[21] >> 6;
 }
 
 static inline void h265hvcc_set_num_temporal_layers(uint8_t *p, uint8_t val)
