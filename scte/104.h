@@ -55,6 +55,11 @@ static inline uint8_t scte104t_get_type(const uint8_t *p)
     return p[0];
 }
 
+static inline void scte104t_set_type(uint8_t *p, uint8_t i_type)
+{
+    p[0] = i_type;
+}
+
 static inline uint8_t scte104t_get_size(const uint8_t *p)
 {
     switch (scte104t_get_type(p)) {
@@ -81,10 +86,24 @@ static inline uint32_t scte104t_get_utc_seconds(const uint8_t *p)
            (uint32_t)p[4];
 }
 
+static inline void scte104t_set_utc_seconds(uint8_t *p, uint32_t i_seconds)
+{
+    p[1] = (i_seconds >> 24) & 0xff;
+    p[2] = (i_seconds >> 16) & 0xff;
+    p[3] = (i_seconds >>  8) & 0xff;
+    p[4] = (i_seconds >>  0) & 0xff;
+}
+
 static inline uint16_t scte104t_get_utc_microseconds(const uint8_t *p)
 {
     return ((uint16_t)p[5] << 8) |
            (uint16_t)p[6];
+}
+
+static inline void scte104t_set_utc_microseconds(uint8_t *p, uint16_t i_microseconds)
+{
+    p[5] = (i_microseconds >> 8) & 0xff;
+    p[6] = (i_microseconds >> 0) & 0xff;
 }
 
 static inline uint8_t scte104t_get_hours(const uint8_t *p)
@@ -92,9 +111,19 @@ static inline uint8_t scte104t_get_hours(const uint8_t *p)
     return p[1];
 }
 
+static inline void scte104t_set_hours(uint8_t *p, uint8_t i_hours)
+{
+    p[1] = i_hours;
+}
+
 static inline uint8_t scte104t_get_minutes(const uint8_t *p)
 {
     return p[2];
+}
+
+static inline void scte104t_set_minutes(uint8_t *p, uint8_t i_minutes)
+{
+    p[2] = i_minutes;
 }
 
 static inline uint8_t scte104t_get_seconds(const uint8_t *p)
@@ -102,9 +131,19 @@ static inline uint8_t scte104t_get_seconds(const uint8_t *p)
     return p[3];
 }
 
+static inline void scte104t_set_seconds(uint8_t *p, uint8_t i_seconds)
+{
+    p[3] = i_seconds;
+}
+
 static inline uint8_t scte104t_get_frames(const uint8_t *p)
 {
     return p[4];
+}
+
+static inline void scte104t_set_frames(uint8_t *p, uint8_t i_frames)
+{
+    p[4] = i_frames;
 }
 
 static inline uint8_t scte104t_get_gpi_number(const uint8_t *p)
@@ -112,9 +151,19 @@ static inline uint8_t scte104t_get_gpi_number(const uint8_t *p)
     return p[1];
 }
 
+static inline void scte104t_set_gpi_number(uint8_t *p, uint8_t i_gpi_number)
+{
+    p[1] = i_gpi_number;
+}
+
 static inline uint8_t scte104t_get_gpi_edge(const uint8_t *p)
 {
     return p[2];
+}
+
+static inline void scte104t_set_gpi_edge(uint8_t *p, uint8_t i_gpi_edge)
+{
+    p[2] = i_gpi_edge;
 }
 
 /*****************************************************************************
@@ -133,9 +182,21 @@ static inline uint16_t scte104_get_opid(const uint8_t *p)
     return (p[0] << 8) | p[1];
 }
 
+static inline void scte104_set_opid(uint8_t *p, uint16_t i_opid)
+{
+    p[0] = (i_opid >> 8) & 0xff;
+    p[1] = (i_opid >> 0) & 0xff;
+}
+
 static inline uint16_t scte104_get_size(const uint8_t *p)
 {
     return (p[2] << 8) | p[3];
+}
+
+static inline void scte104_set_size(uint8_t *p, uint16_t i_size)
+{
+    p[2] = (i_size >> 8) & 0xff;
+    p[3] = (i_size >> 0) & 0xff;
 }
 
 /*****************************************************************************
@@ -148,9 +209,21 @@ static inline uint16_t scte104s_get_result(const uint8_t *p)
     return (p[4] << 8) | p[5];
 }
 
+static inline void scte104s_set_result(uint8_t *p, uint16_t i_result)
+{
+    p[4] = (i_result >> 8) & 0xff;
+    p[5] = (i_result >> 0) & 0xff;
+}
+
 static inline uint16_t scte104s_get_result_extension(const uint8_t *p)
 {
     return (p[6] << 8) | p[7];
+}
+
+static inline void scte104s_set_result_extension(uint8_t *p, uint16_t i_result_ext)
+{
+    p[6] = (i_result_ext >> 8) & 0xff;
+    p[7] = (i_result_ext >> 0) & 0xff;
 }
 
 static inline uint8_t scte104s_get_protocol(const uint8_t *p)
@@ -158,9 +231,19 @@ static inline uint8_t scte104s_get_protocol(const uint8_t *p)
     return p[8];
 }
 
+static inline void scte104s_set_protocol(uint8_t *p, uint8_t i_protocol)
+{
+    p[8] = i_protocol;
+}
+
 static inline uint8_t scte104s_get_as_index(const uint8_t *p)
 {
     return p[9];
+}
+
+static inline void scte104s_set_as_index(uint8_t *p, uint8_t i_as_index)
+{
+    p[9] = i_as_index;
 }
 
 static inline uint8_t scte104s_get_message_number(const uint8_t *p)
@@ -168,9 +251,20 @@ static inline uint8_t scte104s_get_message_number(const uint8_t *p)
     return p[10];
 }
 
+static inline void scte104s_set_message_num(uint8_t *p, uint8_t i_message_num)
+{
+    p[10] = i_message_num;
+}
+
 static inline uint16_t scte104s_get_dpi_pid_index(const uint8_t *p)
 {
     return (p[11] << 8) | p[12];
+}
+
+static inline void scte104s_set_dpi_pid_index(uint8_t *p, uint16_t i_dpi_pid_idx)
+{
+    p[11] = (i_dpi_pid_idx >> 8) & 0xff;
+    p[12] = (i_dpi_pid_idx >> 0) & 0xff;
 }
 
 static inline uint8_t *scte104s_get_data(const uint8_t *p, uint16_t *pi_size)
@@ -198,9 +292,21 @@ static inline uint16_t scte104o_get_opid(const uint8_t *p)
     return (p[0] << 8) | p[1];
 }
 
+static inline void scte104o_set_opid(uint8_t *p, uint16_t i_opid)
+{
+    p[0] = (i_opid >> 8) & 0xff;
+    p[1] = (i_opid >> 0) & 0xff;
+}
+
 static inline uint16_t scte104o_get_data_length(const uint8_t *p)
 {
     return (p[2] << 8) | p[3];
+}
+
+static inline void scte104o_set_data_length(uint8_t *p, uint16_t i_data_len)
+{
+    p[2] = (i_data_len >> 8) & 0xff;
+    p[3] = (i_data_len >> 0) & 0xff;
 }
 
 static inline uint8_t *scte104o_get_data(const uint8_t *p)
@@ -218,9 +324,19 @@ static inline uint8_t scte104m_get_protocol(const uint8_t *p)
     return p[4];
 }
 
+static inline void scte104m_set_protocol(uint8_t *p, uint8_t i_protocol)
+{
+    p[4] = i_protocol;
+}
+
 static inline uint8_t scte104m_get_as_index(const uint8_t *p)
 {
     return p[5];
+}
+
+static inline void scte104m_set_as_index(uint8_t *p, uint8_t i_as_idx)
+{
+    p[5] = i_as_idx;
 }
 
 static inline uint8_t scte104m_get_message_number(const uint8_t *p)
@@ -228,14 +344,30 @@ static inline uint8_t scte104m_get_message_number(const uint8_t *p)
     return p[6];
 }
 
+static inline void scte104m_set_message_number(uint8_t *p, uint8_t i_message_num)
+{
+    p[6] = i_message_num;
+}
+
 static inline uint16_t scte104m_get_dpi_pid_index(const uint8_t *p)
 {
     return (p[7] << 8) | p[8];
 }
 
+static inline void scte104m_set_dpi_pid_index(uint8_t *p, uint16_t i_dpi_pid_idx)
+{
+    p[7] = (i_dpi_pid_idx >> 8) & 0xff;
+    p[8] = (i_dpi_pid_idx >> 0) & 0xff;
+}
+
 static inline uint8_t scte104m_get_scte35_protocol(const uint8_t *p)
 {
     return p[9];
+}
+
+static inline void scte104m_set_scte35_protocol(uint8_t *p, uint8_t i_scte_protocol)
+{
+    p[9] = i_scte_protocol;
 }
 
 static inline uint8_t *scte104m_get_timestamp(const uint8_t *p)
@@ -247,6 +379,12 @@ static inline uint8_t scte104m_get_num_ops(const uint8_t *p)
 {
     p = scte104m_get_timestamp(p);
     return p[scte104t_get_size(p)];
+}
+
+static inline void scte104m_set_num_ops(uint8_t *p, uint8_t i_num_ops)
+{
+    p = scte104m_get_timestamp(p);
+    p[scte104t_get_size(p)] = i_num_ops;
 }
 
 static inline uint8_t *scte104m_get_op(const uint8_t *p, uint8_t i_op)
@@ -298,6 +436,11 @@ static inline uint8_t scte104srd_get_insert_type(const uint8_t *p)
     return p[0];
 }
 
+static inline void scte104srd_set_insert_type(uint8_t *p, uint8_t i_insert_type)
+{
+    p[0] = i_insert_type;
+}
+
 static inline uint32_t scte104srd_get_event_id(const uint8_t *p)
 {
     return ((uint32_t)p[1] << 24) |
@@ -306,10 +449,24 @@ static inline uint32_t scte104srd_get_event_id(const uint8_t *p)
            (uint32_t)p[4];
 }
 
+static inline void scte104srd_set_event_id(uint8_t *p, uint32_t i_event_id)
+{
+    p[1] = (i_event_id >> 24) & 0xff;
+    p[2] = (i_event_id >> 16) & 0xff;
+    p[3] = (i_event_id >>  8) & 0xff;
+    p[4] = (i_event_id >>  0) & 0xff;
+}
+
 static inline uint16_t scte104srd_get_unique_program_id(const uint8_t *p)
 {
     return ((uint16_t)p[5] << 8) |
            (uint16_t)p[6];
+}
+
+static inline void scte104srd_set_unique_program_id(uint8_t *p, uint16_t i_unique_prog_id)
+{
+    p[5] = (i_unique_prog_id >> 8) & 0xff;
+    p[6] = (i_unique_prog_id >> 0) & 0xff;
 }
 
 static inline uint16_t scte104srd_get_pre_roll_time(const uint8_t *p)
@@ -318,10 +475,22 @@ static inline uint16_t scte104srd_get_pre_roll_time(const uint8_t *p)
            (uint16_t)p[8];
 }
 
+static inline void scte104srd_set_pre_roll_time(uint8_t *p, uint16_t i_pre_roll_time)
+{
+    p[7] = (i_pre_roll_time >> 8) & 0xff;
+    p[8] = (i_pre_roll_time >> 0) & 0xff;
+}
+
 static inline uint16_t scte104srd_get_break_duration(const uint8_t *p)
 {
     return ((uint16_t)p[9] << 8) |
            (uint16_t)p[10];
+}
+
+static inline void scte104srd_set_break_duration(uint8_t *p, uint16_t i_break_duration)
+{
+    p[ 9] = (i_break_duration >> 8) & 0xff;
+    p[10] = (i_break_duration >> 0) & 0xff;
 }
 
 static inline uint8_t scte104srd_get_avail_num(const uint8_t *p)
@@ -329,14 +498,29 @@ static inline uint8_t scte104srd_get_avail_num(const uint8_t *p)
     return p[11];
 }
 
+static inline void scte104srd_set_avail_num(uint8_t *p, uint8_t i_avail_num)
+{
+    p[11] = i_avail_num;
+}
+
 static inline uint8_t scte104srd_get_avails_expected(const uint8_t *p)
 {
     return p[12];
 }
 
+static inline void scte104srd_set_avails_expected(uint8_t *p, uint8_t i_avails_expected)
+{
+    p[12] = i_avails_expected;
+}
+
 static inline uint8_t scte104srd_get_auto_return(const uint8_t *p)
 {
     return p[13];
+}
+
+static inline void scte104srd_set_auto_return(uint8_t *p, uint8_t i_auto_return)
+{
+    p[13] = i_auto_return;
 }
 
 #ifdef __cplusplus
