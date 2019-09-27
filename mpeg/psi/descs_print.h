@@ -32,6 +32,7 @@
 #include <bitstream/mpeg/psi/descriptors.h>
 #include <bitstream/mpeg/psi/descs_list.h>
 #include <bitstream/dvb/si/descs_list.h>
+#include <bitstream/atsc/si/descs_list.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -183,6 +184,8 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
         CASE_DESC(7a)
         CASE_DESC(7b)
         CASE_DESC(7c)
+        CASE_DESC(81)
+        CASE_DESC(cc)
 
 #undef CASE_DESC
 #undef CASE_DESC_ICONV
