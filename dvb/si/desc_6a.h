@@ -51,12 +51,12 @@ static inline void desc6a_init(uint8_t *p_desc)
 {
     desc_set_tag(p_desc, 0x6a);
     desc_set_length(p_desc, (DESC6A_HEADER_SIZE - DESC_HEADER_SIZE));
-    p_desc[2] = 0x0f;
+    p_desc[2] = 0x00;
 }
 
 static inline void desc6a_clear_flags(uint8_t *p_desc)
 {
-    p_desc[2] = 0x0f;
+    p_desc[2] = 0x00;
 }
 
 #define DEFINE_AC3_FLAG(FLAGNAME, bit) \
