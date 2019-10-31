@@ -1,5 +1,28 @@
 /*****************************************************************************
  * desc_38.h: Descriptor 0x38 (HEVC video descriptor)
+ *****************************************************************************
+* Copyright (C) 2009-2010 VideoLAN
+ *
+ * Authors: Dina Shalkov <dina.shalkov@ntt.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
 #ifndef __BITSTREAM_MPEG_DESC_38_H__
@@ -60,13 +83,7 @@ static inline void desc38_set_profile_idc(uint8_t *p_desc, uint8_t profile_idc)
 
 static inline uint32_t desc38_get_profile_compatibility_indication(const uint8_t *p_desc)
 {
-#if BYTE_ORDER == BIG_ENDIAN
-    return (p_desc[3] | (p_desc[4] << 8) | (p_desc[5] << 16) | (p_desc[6] << 24));
-#elif BYTE_ORDER == LITTLE_ENDIAN
     return (p_desc[3] << 24) | (p_desc[4] << 16) | (p_desc[5] << 8) | p_desc[6];
-#else
-    # error "What kind of system is this?"
-#endif
 }
 
 static inline void desc38_set_profile_compatibility_indication(uint8_t *p_desc, uint32_t profile_compatibility_indication)

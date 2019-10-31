@@ -1,6 +1,30 @@
 /*****************************************************************************
- * desc_3f.h: ISO/IEC 13818-1 Descriptor 0x2a (HEVC timing and HRD descriptor)
+ * desc_3f.h: ISO/IEC 13818-1 Descriptor 0x3F (HEVC timing and HRD descriptor)
+ *****************************************************************************
+ * Copyright (C) 2019 VideoLAN
+ *
+ * Authors: Dina Shalkov <dina.shalkov@ntt.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
+
 
 #ifndef __BITSTREAM_MPEG_DESC_3F_H__
 #define __BITSTREAM_MPEG_DESC_3F_H__
@@ -23,7 +47,7 @@ extern "C"
 static inline void desc3f_init(uint8_t *p_desc)
 {
     desc_set_tag(p_desc, 0x3f);
-    p_desc[2] = 0x03;   // Extention descriptor tag
+    p_desc[2] = 0x03;   // Extension descriptor tag
     desc_set_length(p_desc, DESC3F_HEADER_SIZE - DESC_HEADER_SIZE);
 }
 
