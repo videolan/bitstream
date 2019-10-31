@@ -120,12 +120,22 @@ static inline bool pes_get_dataalignment(const uint8_t *p_pes)
 
 static inline void pes_set_copyright(uint8_t *p_pes)
 {
-     p_pes[6] |= 0x2;
+    p_pes[6] |= 0x2;
 }
 
 static inline bool pes_get_copyright(const uint8_t *p_pes)
 {
     return !!(p_pes[6] & 0x2);
+}
+
+static inline void pes_set_original(uint8_t *p_pes)
+{
+    p_pes[6] |= 0x1;
+}
+
+static inline bool pes_get_original(const uint8_t *p_pes)
+{
+    return !!(p_pes[6] & 0x1);
 }
 
 static inline bool pes_has_pts(const uint8_t *p_pes)

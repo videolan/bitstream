@@ -2,7 +2,7 @@ PREFIX ?= /usr/local
 WARN = -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare
 CPPFLAGS = -I. -I.. -I../..
 CFLAGS := $(WARN) -O2 -g $(CFLAGS)
-OBJ = dvb_print_si dvb_gen_si dvb_ecmg dvb_ecmg_test mpeg_print_pcr rtp_check_seqnum mpeg_restamp
+OBJ = dvb_print_si dvb_gen_si dvb_ecmg dvb_ecmg_test mpeg_print_pcr mpeg_print_au_info rtp_check_seqnum mpeg_restamp
 
 ifeq "$(shell uname -s)" "Linux"
 LDFLAGS += -lrt
