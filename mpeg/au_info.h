@@ -43,6 +43,14 @@ extern "C"
 {
 #endif
 
+#define ANNOUNCEMENT_SWITCHING  0x1
+#define AU_INFORMATION          0x2
+#define PVR_ASSIST_INFO         0x3
+
+static inline void au_info_init(uint8_t *p_au_info) {
+    p_au_info[3] = 0x0;
+}
+
 static inline void au_info_set_data_field_tag(uint8_t *p_au_info, uint8_t i_data_field_tag)
 {
     p_au_info[0] = i_data_field_tag;
@@ -63,8 +71,13 @@ static inline uint8_t au_info_get_data_field_length(const uint8_t *p_au_info)
     return p_au_info[1];
 }
 
+#define CF_UNDEFINED 0x0
+#define CF_H262 0x1
+#define CF_H264 0x2
+#define CF_VC1  0x3
 static inline void au_info_set_au_coding_format(uint8_t *p_au_info, uint8_t i_au_coding_format)
 {
+    p_au_info[2] &= ~0xF0;
     p_au_info[2] |= (i_au_coding_format & 0x0F) << 4;
 }
 
@@ -75,6 +88,7 @@ static inline uint8_t au_info_get_au_coding_format(const uint8_t *p_au_info)
 
 static inline void au_info_set_au_coding_type_info(uint8_t *p_au_info, uint8_t i_au_coding_type_info)
 {
+    p_au_info[2] &= ~0x0F;
     p_au_info[2] |= (i_au_coding_type_info & 0x0F);
 }
 
@@ -85,6 +99,7 @@ static inline uint8_t au_info_get_au_coding_type_info(const uint8_t *p_au_info)
 
 static inline void au_info_set_au_ref_pic_idc(uint8_t *p_au_info, uint8_t i_au_ref_pic_idc)
 {
+    p_au_info[3] &= ~0xC0;
     p_au_info[3] |= (i_au_ref_pic_idc & 0x3) << 6;
 }
 
@@ -95,6 +110,7 @@ static inline uint8_t au_info_get_au_ref_pic_idc(const uint8_t *p_au_info)
 
 static inline void au_info_set_au_pic_struct(uint8_t *p_au_info, uint8_t i_au_pic_struct)
 {
+    p_au_info[3] &= ~0x30;
     p_au_info[3] |= (i_au_pic_struct & 0x3) << 4;
 }
 

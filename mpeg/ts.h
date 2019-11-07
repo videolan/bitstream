@@ -323,7 +323,7 @@ static inline uint8_t *ts_private_data(uint8_t *p_ts)
 static inline void tsaf_set_ts_private_data(uint8_t *p_ts, uint8_t i_length)
 {
     uint8_t *p_payload;
-    p_ts[5] &= ~0x2;
+    p_ts[5] |= 0x2;
     p_payload = ts_private_data(p_ts);
     *p_payload = i_length;
 }

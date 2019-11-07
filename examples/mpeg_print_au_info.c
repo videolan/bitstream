@@ -99,7 +99,7 @@ int main(int i_argc, char **ppsz_argv)
                 if (tsaf_has_transport_private_data(p_ts)) {
                     uint8_t tag = tsaf_get_private_data_tag(p_ts);
                     uint8_t len = tsaf_get_private_data_length(p_ts);
-                    fprintf(stderr, "packet %llu ts private data [len %d] found [%d]\n", pnum, len, tag);
+                    fprintf(stderr, "packet %lu ts private data [len %d] found [%d]\n", pnum, len, tag);
                     if (tag == 0x02) {                        
                         uint8_t *p_au = ts_private_data(p_ts);
                         p_au++;
