@@ -1,7 +1,7 @@
 /*****************************************************************************
- * au_info.h: ISO/IEC 13818-1 Access Unit Information
+ * au_info.h: ETSI TS 101154 Access Unit Information
  *****************************************************************************
- * Copyright (C) 2009-2010 VideoLAN
+ * Copyright (C) 2019 VideoLAN
  *
  * Authors: Roberto Corno <corno.roberto@gmail.com>
  *
@@ -27,7 +27,7 @@
 
 /*
  * Normative references:
- *  - ISO/IEC 13818-1:2007(E) (MPEG-2 systems)
+ *  - ETSI TS 101154 V1.9.1 (2009-09)
  */
 
 #ifndef __BITSTREAM_MPEG_AU_INFO_H__

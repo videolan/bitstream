@@ -83,13 +83,7 @@ static inline void desc38_set_profile_idc(uint8_t *p_desc, uint8_t profile_idc)
 
 static inline uint32_t desc38_get_profile_compatibility_indication(const uint8_t *p_desc)
 {
-#if BYTE_ORDER == BIG_ENDIAN
-    return (p_desc[3] | (p_desc[4] << 8) | (p_desc[5] << 16) | (p_desc[6] << 24));
-#elif BYTE_ORDER == LITTLE_ENDIAN
     return (p_desc[3] << 24) | (p_desc[4] << 16) | (p_desc[5] << 8) | p_desc[6];
-#else
-    # error "What kind of system is this?"
-#endif
 }
 
 static inline void desc38_set_profile_compatibility_indication(uint8_t *p_desc, uint32_t profile_compatibility_indication)

@@ -1,7 +1,7 @@
 /*****************************************************************************
- * desc_3f.h: ISO/IEC 13818-1 Descriptor 0x2a (HEVC timing and HRD descriptor)
+ * desc_3f.h: ISO/IEC 13818-1 Descriptor 0x3F (HEVC timing and HRD descriptor)
  *****************************************************************************
- * Copyright (C) 2009-2010 VideoLAN
+ * Copyright (C) 2019 VideoLAN
  *
  * Authors: Dina Shalkov <dina.shalkov@ntt.com>
  *
@@ -47,7 +47,7 @@ extern "C"
 static inline void desc3f_init(uint8_t *p_desc)
 {
     desc_set_tag(p_desc, 0x3f);
-    p_desc[2] = 0x03;   // Extention descriptor tag
+    p_desc[2] = 0x03;   // Extension descriptor tag
     desc_set_length(p_desc, DESC3F_HEADER_SIZE - DESC_HEADER_SIZE);
 }
 

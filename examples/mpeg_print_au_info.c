@@ -1,9 +1,9 @@
 /*****************************************************************************
- * mpeg_print_pcr.c: Prints PCR PID from the first program of the stream
+ * mpeg_print_au_info.c: Prints adaptation field AU_INFO
  *****************************************************************************
- * Copyright (C) 2011 VideoLAN
+ * Copyright (C) 2019 VideoLAN
  *
- * Authors: Christophe Massiot <massiot@via.ecp.fr>
+ * Authors: Roberto Corno <corno.roberto@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
