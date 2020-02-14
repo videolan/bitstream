@@ -431,6 +431,7 @@ static inline bool scte104m_validate(const uint8_t *p, const int buf_size)
  *****************************************************************************/
 #define SCTE104SRD_HEADER_SIZE          14
 
+#define SCTE104SRD_RESERVED             0
 #define SCTE104SRD_START_NORMAL         1
 #define SCTE104SRD_START_IMMEDIATE      2
 #define SCTE104SRD_END_NORMAL           3
