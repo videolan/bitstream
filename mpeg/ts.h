@@ -268,6 +268,11 @@ static inline bool tsaf_has_pcr(const uint8_t *p_ts)
     return !!(p_ts[5] & 0x10);
 }
 
+static inline bool tsaf_has_opcr(const uint8_t *p_ts)
+{
+    return !!(p_ts[5] & 0x8);
+}
+
 static inline uint64_t tsaf_get_pcr(const uint8_t *p_ts)
 {
     return ((uint64_t) p_ts[6] << 25) | (p_ts[7] << 17) | (p_ts[8] << 9) | (p_ts[9] << 1) |
@@ -279,6 +284,61 @@ static inline uint64_t tsaf_get_pcrext(const uint8_t *p_ts)
     return ((p_ts[10] & 1) << 8) | p_ts[11];
 }
 
+static inline void tsaf_set_splicing_point(uint8_t *p_ts)
+{
+    p_ts[5] |= 0x4;
+}
+
+static inline bool tsaf_has_splicing_point(const uint8_t *p_ts)
+{
+    return !!(p_ts[5] & 0x4);
+}
+
+static inline void tsaf_set_transport_private_data(uint8_t *p_ts)
+{
+    p_ts[5] |= 0x2;
+}
+
+static inline bool tsaf_has_transport_private_data(const uint8_t *p_ts)
+{
+    return !!(p_ts[5] & 0x2);
+}
+
+static inline uint8_t *ts_splice_countdown(uint8_t *p_ts)
+{
+    return (p_ts + 6 + (tsaf_has_pcr(p_ts) ? 6 : 0) + (tsaf_has_opcr(p_ts) ? 6 : 0));
+}
+
+static inline void tsaf_set_splice_countdown(uint8_t *p_ts, uint8_t i_splice_countdown)
+{
+    uint8_t *p_payload = ts_splice_countdown(p_ts);
+    *p_payload = i_splice_countdown;
+}
+
+static inline uint8_t *ts_private_data(uint8_t *p_ts)
+{
+    return ts_splice_countdown(p_ts) + (tsaf_has_splicing_point(p_ts) ? 1: 0);
+}
+
+static inline void tsaf_set_ts_private_data(uint8_t *p_ts, uint8_t i_length)
+{
+    uint8_t *p_payload;
+    p_ts[5] |= 0x2;
+    p_payload = ts_private_data(p_ts);
+    *p_payload = i_length;
+}
+
+static inline uint8_t tsaf_get_private_data_length(uint8_t *p_ts)
+{
+    uint8_t *p_payload = ts_private_data(p_ts);
+    return p_payload[0];
+}
+
+static inline uint8_t tsaf_get_private_data_tag(uint8_t *p_ts)
+{
+    uint8_t *p_payload = ts_private_data(p_ts);
+    return p_payload[1];
+}
 /*****************************************************************************
  * TS payload gathering
  *****************************************************************************/
