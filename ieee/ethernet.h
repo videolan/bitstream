@@ -45,6 +45,7 @@ extern "C"
 
 #define ETHERNET_ADDR_LEN 6
 #define ETHERNET_HEADER_LEN (2*ETHERNET_ADDR_LEN + 2)
+#define ETHERNET_VLAN_LEN 4
 
 #define ETHERNET_TYPE_IP            0x0800
 #define ETHERNET_TYPE_ARP           0x0806
