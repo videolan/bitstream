@@ -1,7 +1,7 @@
 /*****************************************************************************
  * sdt.h: ETSI EN 300 468 Service Definition Table (SDT)
  *****************************************************************************
- * Copyright (C) 2009-2010 VideoLAN
+ * Copyright (C) 2009-2020 VideoLAN
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *
@@ -238,7 +238,7 @@ static inline bool sdt_table_validate(uint8_t **pp_sections)
         if (!psi_check_crc(p_section))
             return false;
 
-        if (!j)
+        if (!i)
             i_onid = sdt_get_onid(p_section);
         else if (sdt_get_onid(p_section) != i_onid)
             return false;
