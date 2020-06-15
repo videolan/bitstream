@@ -665,6 +665,441 @@ static inline bool scte35_private_validate(const uint8_t *p_scte35)
 }
 
 /*****************************************************************************
+ * Splice Information Table - splice descriptor
+ *****************************************************************************/
+#define SCTE35_SPLICE_DESC_HEADER_SIZE  6
+
+#define SCTE35_SPLICE_DESC_TAG_AVAIL    0x00
+#define SCTE35_SPLICE_DESC_TAG_DTMF     0x01
+#define SCTE35_SPLICE_DESC_TAG_SEG      0x02
+
+#define scte35_splice_desc_get_tag      desc_get_tag
+#define scte35_splice_desc_get_length   desc_get_length
+
+static inline uint32_t scte35_splice_desc_get_identifier(const uint8_t *p_desc)
+{
+    return ((uint32_t)p_desc[2] << 24) | (p_desc[3] << 16) |
+        (p_desc[4] << 8) | p_desc[5];
+}
+
+/*****************************************************************************
+ * Splice Information Table - segmentation descriptor
+ *****************************************************************************/
+static inline uint32_t scte35_seg_desc_get_event_id(const uint8_t *p_desc)
+{
+    return ((uint32_t)p_desc[6] << 24) | (p_desc[7] << 16) |
+        (p_desc[8] << 8) | p_desc[9];
+}
+
+static inline bool scte35_seg_desc_has_cancel(const uint8_t *p_desc)
+{
+    return !!(p_desc[10] & 0x80);
+}
+
+static inline bool scte35_seg_desc_has_program_seg(const uint8_t *p_desc)
+{
+    return !scte35_seg_desc_has_cancel(p_desc) &&
+        !!(p_desc[11] & 0x80);
+}
+
+static inline bool scte35_seg_desc_has_duration(const uint8_t *p_desc)
+{
+    return !scte35_seg_desc_has_cancel(p_desc) &&
+        !!(p_desc[11] & 0x40);
+}
+
+static inline bool
+scte35_seg_desc_has_delivery_not_restricted(const uint8_t *p_desc)
+{
+    return !scte35_seg_desc_has_cancel(p_desc) &&
+        !!(p_desc[11] & 0x20);
+}
+
+static inline bool
+scte35_seg_desc_has_web_delivery_allowed(const uint8_t *p_desc)
+{
+    return !scte35_seg_desc_has_delivery_not_restricted(p_desc) &&
+        !!(p_desc[11] & 0x10);
+}
+
+static inline bool
+scte35_seg_desc_has_no_regional_blackout(const uint8_t *p_desc)
+{
+    return !scte35_seg_desc_has_delivery_not_restricted(p_desc) &&
+        !!(p_desc[11] & 0x08);
+}
+
+static inline bool
+scte35_seg_desc_has_archive_allowed(const uint8_t *p_desc)
+{
+    return !scte35_seg_desc_has_delivery_not_restricted(p_desc) &&
+        !!(p_desc[11] & 0x04);
+}
+
+#define SCTE35_SEG_DESC_DEVICE_RESTRICTION_GRP0 0x00
+#define SCTE35_SEG_DESC_DEVICE_RESTRICTION_GRP1 0x01
+#define SCTE35_SEG_DESC_DEVICE_RESTRICTION_GRP2 0x02
+#define SCTE35_SEG_DESC_DEVICE_RESTRICTION_NONE 0x03
+
+static inline uint8_t
+scte35_seg_desc_get_device_restrictions(const uint8_t *p_desc)
+{
+    return p_desc[11] & 0x03;
+}
+
+static inline uint8_t scte35_seg_desc_get_component_count(const uint8_t *p_desc)
+{
+    return scte35_seg_desc_has_program_seg(p_desc) ? 0 : p_desc[12];
+}
+
+static inline uint8_t *scte35_seg_desc_get_component(const uint8_t *p_desc,
+                                                     uint8_t i)
+{
+    if (i < scte35_seg_desc_get_component_count(p_desc))
+        return (uint8_t *)p_desc + 13 + 6 * i;
+    return NULL;
+}
+
+static inline uint8_t scte35_seg_desc_component_get_tag(const uint8_t *p_comp)
+{
+    return p_comp[0];
+}
+
+static inline uint64_t
+scte35_seg_desc_component_get_pts_off(const uint8_t *p_comp)
+{
+    return (((uint64_t)p_comp[1] & 0x1) << 32) | (p_comp[2] << 24) |
+        (p_comp[3] << 16) | (p_comp[4] << 8) | p_comp[5];
+}
+
+static inline uint64_t scte35_seg_desc_get_duration(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc) ||
+        !scte35_seg_desc_has_duration(p_desc))
+        return 0;
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    return ((uint64_t)p[0] << 32) | (p[1] << 24) | (p[2] << 16) | (p[3] < 8) |
+        p[4];
+}
+
+#define SCTE35_SEG_DESC_UPID_TYPE_NOT_USED           0x00
+#define SCTE35_SEG_DESC_UPID_TYPE_USER_DEFINED       0x01 /* deprecated */
+#define SCTE35_SEG_DESC_UPID_TYPE_ISCI               0x02 /* deprecated */
+#define SCTE35_SEG_DESC_UPID_TYPE_AD_ID              0x03
+#define SCTE35_SEG_DESC_UPID_TYPE_UMID               0x04
+#define SCTE35_SEG_DESC_UPID_TYPE_ISAN_DEPRECATED    0x05 /* deprecated */
+#define SCTE35_SEG_DESC_UPID_TYPE_ISAN               0x06
+#define SCTE35_SEG_DESC_UPID_TYPE_TID                0x07
+#define SCTE35_SEG_DESC_UPID_TYPE_TI                 0x08
+#define SCTE35_SEG_DESC_UPID_TYPE_ADI                0x09
+#define SCTE35_SEG_DESC_UPID_TYPE_EIDR               0x0A
+#define SCTE35_SEG_DESC_UPID_TYPE_ATSC               0x0B
+#define SCTE35_SEG_DESC_UPID_TYPE_MPU                0x0C
+#define SCTE35_SEG_DESC_UPID_TYPE_MID                0x0D
+#define SCTE35_SEG_DESC_UPID_TYPE_ADS                0x0E
+#define SCTE35_SEG_DESC_UPID_TYPE_URI                0x0F
+
+static inline const char *scte35_seg_desc_upid_type_to_str(uint8_t upid)
+{
+    switch (upid) {
+        case SCTE35_SEG_DESC_UPID_TYPE_NOT_USED:
+            return "not_used";
+        case SCTE35_SEG_DESC_UPID_TYPE_USER_DEFINED:
+            return "user_defined";
+        case SCTE35_SEG_DESC_UPID_TYPE_ISCI:
+            return "ISCI";
+        case SCTE35_SEG_DESC_UPID_TYPE_AD_ID:
+            return "AD_ID";
+        case SCTE35_SEG_DESC_UPID_TYPE_UMID:
+            return "IMID";
+        case SCTE35_SEG_DESC_UPID_TYPE_ISAN_DEPRECATED:
+            return "ISAN_deprecated";
+        case SCTE35_SEG_DESC_UPID_TYPE_ISAN:
+            return "ISAN";
+        case SCTE35_SEG_DESC_UPID_TYPE_TID:
+            return "TID";
+        case SCTE35_SEG_DESC_UPID_TYPE_TI:
+            return "TI";
+        case SCTE35_SEG_DESC_UPID_TYPE_ADI:
+            return "ADI";
+        case SCTE35_SEG_DESC_UPID_TYPE_EIDR:
+            return "EIDR";
+        case SCTE35_SEG_DESC_UPID_TYPE_ATSC:
+            return "ATSC";
+        case SCTE35_SEG_DESC_UPID_TYPE_MPU:
+            return "MPU";
+        case SCTE35_SEG_DESC_UPID_TYPE_MID:
+            return "MID";
+        case SCTE35_SEG_DESC_UPID_TYPE_ADS:
+            return "ADS";
+        case SCTE35_SEG_DESC_UPID_TYPE_URI:
+            return "URI";
+    }
+    return "unknown";
+}
+
+static inline uint8_t scte35_seg_desc_get_upid_type(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return 0;
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    return p[0];
+}
+
+static inline uint8_t scte35_seg_desc_get_upid_length(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return 0;
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    return p[1];
+}
+
+static inline uint8_t *scte35_seg_desc_get_upid(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return 0;
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    return (uint8_t *)p + 2;
+}
+
+#define SCTE35_SEG_DESC_TYPE_ID_NOT_INDICATED            0x00
+#define SCTE35_SEG_DESC_TYPE_ID_CONTENT_ID               0x01
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_START               0x10
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_END                 0x11
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_EARLY_TERM          0x12
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_BREAKAWAY           0x13
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_RESUMPTION          0x14
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_RUNOVER_PLANNED     0x15
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_RUNOVER_UNPLANNED   0x16
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_OVERLAP_START       0x17
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_BLACKOUT_OVERRIDE   0x18
+#define SCTE35_SEG_DESC_TYPE_ID_PROG_START_IN_PROGRESS   0x19
+#define SCTE35_SEG_DESC_TYPE_ID_CHAPTER_START            0x20
+#define SCTE35_SEG_DESC_TYPE_ID_CHAPTER_END              0x21
+#define SCTE35_SEG_DESC_TYPE_ID_BREAK_START              0x22
+#define SCTE35_SEG_DESC_TYPE_ID_BREAK_END                0x23
+#define SCTE35_SEG_DESC_TYPE_ID_PROVIDER_AD_START        0x30
+#define SCTE35_SEG_DESC_TYPE_ID_PROVIDER_AD_END          0x31
+#define SCTE35_SEG_DESC_TYPE_ID_DISTRIBUTOR_AD_START     0x32
+#define SCTE35_SEG_DESC_TYPE_ID_DISTRIBUTOR_AD_END       0x33
+#define SCTE35_SEG_DESC_TYPE_ID_PROVIDER_PO_START        0x34
+#define SCTE35_SEG_DESC_TYPE_ID_PROVIDER_PO_END          0x35
+#define SCTE35_SEG_DESC_TYPE_ID_DISTRIBUTOR_PO_START     0x36
+#define SCTE35_SEG_DESC_TYPE_ID_DISTRIBUTOR_PO_END       0x37
+#define SCTE35_SEG_DESC_TYPE_ID_UNSCHEDULED_EV_START     0x40
+#define SCTE35_SEG_DESC_TYPE_ID_UNSCHEDULED_EV_END       0x41
+#define SCTE35_SEG_DESC_TYPE_ID_NETWORK_START            0x50
+#define SCTE35_SEG_DESC_TYPE_ID_NETWORK_END              0x51
+/* SNPTV */
+#define SCTE35_SEG_DESC_TYPE_ID_AD_SERVER                0x02
+
+static inline const char *scte35_seg_desc_type_id_to_str(uint8_t type_id)
+{
+    switch (type_id) {
+	case SCTE35_SEG_DESC_TYPE_ID_NOT_INDICATED:
+		return "not_indicated";
+	case SCTE35_SEG_DESC_TYPE_ID_CONTENT_ID:
+		return "content_id";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_START:
+		return "prog_start";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_END:
+		return "prog_end";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_EARLY_TERM:
+		return "prog_early_term";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_BREAKAWAY:
+		return "prog_breakaway";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_RESUMPTION:
+		return "prog_resumption";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_RUNOVER_PLANNED:
+		return "prog_runover_planned";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_RUNOVER_UNPLANNED:
+		return "prog_runover_unplanned";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_OVERLAP_START:
+		return "prog_overlap_start";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_BLACKOUT_OVERRIDE:
+		return "prog_blackout_override";
+	case SCTE35_SEG_DESC_TYPE_ID_PROG_START_IN_PROGRESS:
+		return "prog_start_in_progress";
+	case SCTE35_SEG_DESC_TYPE_ID_CHAPTER_START:
+		return "chapter_start";
+	case SCTE35_SEG_DESC_TYPE_ID_CHAPTER_END:
+		return "chapter_end";
+	case SCTE35_SEG_DESC_TYPE_ID_BREAK_START:
+		return "break_start";
+	case SCTE35_SEG_DESC_TYPE_ID_BREAK_END:
+		return "break_end";
+	case SCTE35_SEG_DESC_TYPE_ID_PROVIDER_AD_START:
+		return "provider_ad_start";
+	case SCTE35_SEG_DESC_TYPE_ID_PROVIDER_AD_END:
+		return "provider_ad_end";
+	case SCTE35_SEG_DESC_TYPE_ID_DISTRIBUTOR_AD_START:
+		return "distributor_ad_start";
+	case SCTE35_SEG_DESC_TYPE_ID_DISTRIBUTOR_AD_END:
+		return "distributor_ad_end";
+	case SCTE35_SEG_DESC_TYPE_ID_PROVIDER_PO_START:
+		return "provider_po_start";
+	case SCTE35_SEG_DESC_TYPE_ID_PROVIDER_PO_END:
+		return "provider_po_end";
+	case SCTE35_SEG_DESC_TYPE_ID_DISTRIBUTOR_PO_START:
+		return "distributor_po_start";
+	case SCTE35_SEG_DESC_TYPE_ID_DISTRIBUTOR_PO_END:
+		return "distributor_po_end";
+	case SCTE35_SEG_DESC_TYPE_ID_UNSCHEDULED_EV_START:
+		return "unscheduled_ev_start";
+	case SCTE35_SEG_DESC_TYPE_ID_UNSCHEDULED_EV_END:
+		return "unscheduled_ev_end";
+	case SCTE35_SEG_DESC_TYPE_ID_NETWORK_START:
+		return "network_start";
+	case SCTE35_SEG_DESC_TYPE_ID_NETWORK_END:
+		return "network_end";
+
+	case SCTE35_SEG_DESC_TYPE_ID_AD_SERVER:
+		return "ad_server";
+    }
+    return "unknown";
+}
+
+static inline uint8_t scte35_seg_desc_get_type_id(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return 0;
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    return p[0];
+}
+
+static inline uint8_t scte35_seg_desc_get_num(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return 0;
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    return p[1];
+}
+
+static inline uint8_t scte35_seg_desc_get_expected(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return 0;
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    return p[2];
+}
+
+static inline bool scte35_seg_desc_has_sub_num(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return false;
+
+    uint8_t type_id = scte35_seg_desc_get_type_id(p_desc);
+    if (type_id != 0x34 && type_id != 0x36)
+        return false;
+
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    if (p + 3 < p_desc + scte35_splice_desc_get_length(p_desc))
+        return true;
+    return false;
+}
+
+static inline uint8_t scte35_seg_desc_get_sub_num(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return 0;
+
+    uint8_t type_id = scte35_seg_desc_get_type_id(p_desc);
+    if (type_id != 0x34 && type_id != 0x36)
+        return 0;
+
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    if (p + 3 < p_desc + scte35_splice_desc_get_length(p_desc))
+        return p[3];
+    return 0;
+}
+
+static inline bool scte35_seg_desc_has_sub_expected(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return false;
+
+    uint8_t type_id = scte35_seg_desc_get_type_id(p_desc);
+    if (type_id != 0x34 && type_id != 0x36)
+        return false;
+
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    if (p + 4 < p_desc + scte35_splice_desc_get_length(p_desc))
+        return true;
+    return false;
+}
+
+static inline uint8_t scte35_seg_desc_get_sub_expected(const uint8_t *p_desc)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return 0;
+
+    uint8_t type_id = scte35_seg_desc_get_type_id(p_desc);
+    if (type_id != 0x34 && type_id != 0x36)
+        return 0;
+
+    const uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    if (p + 4 < p_desc + scte35_splice_desc_get_length(p_desc))
+        return p[4];
+    return 0;
+}
+
+/*****************************************************************************
  * Splice Information Table validation
  *****************************************************************************/
 static inline bool scte35_validate(const uint8_t *p_scte35)
