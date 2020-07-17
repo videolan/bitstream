@@ -31,6 +31,10 @@
 #ifndef __BITSTREAM_IETF_RTP2435_H__
 #define __BITSTREAM_IETF_RTP2435_H__
 
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -125,7 +129,7 @@ static inline uint8_t *rtp2435_restart(uint8_t *header)
 static inline uint8_t *rtp2435_quantization_table(uint8_t *header)
 {
     uint8_t q = rtp2435_get_q(header);
-    if (128 <= q && q <= 255) {
+    if (128 <= q) {
         uint8_t *p;
         if ((p = rtp2435_restart(header)))
             return p + RTP_2435_RESTART_HEADER_SIZE;
