@@ -171,6 +171,10 @@ static inline void scte104t_set_gpi_edge(uint8_t *p, uint8_t i_gpi_edge)
  *****************************************************************************/
 #define SCTE104_HEADER_SIZE             4
 
+#define SCTE104_OPID_INIT_REQUEST_DATA              0x0001
+#define SCTE104_OPID_INIT_RESPONSE_DATA             0x0002
+#define SCTE104_OPID_ALIVE_REQUEST_DATA             0x0003
+#define SCTE104_OPID_ALIVE_RESPONSE_DATA            0x0004
 #define SCTE104_OPID_INJECT_SECTION                 0x0100
 #define SCTE104_OPID_SPLICE                         0x0101
 #define SCTE104_OPID_SPLICE_NULL                    0x0102
