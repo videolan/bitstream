@@ -1,0 +1,6 @@
+image: gcc
+
+test:
+    stage: test
+    script:
+      - make check
