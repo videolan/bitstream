@@ -4,3 +4,6 @@ test:
     stage: test
     script:
       - make check
+    tags:
+        - docker
+        - amd64
