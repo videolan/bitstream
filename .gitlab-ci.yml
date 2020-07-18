@@ -1,4 +1,4 @@
-image: gcc
+image: registry.videolan.org/x264-debian-unstable:20190404162201
 
 test:
     stage: test
