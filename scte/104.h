@@ -171,11 +171,13 @@ static inline void scte104t_set_gpi_edge(uint8_t *p, uint8_t i_gpi_edge)
  *****************************************************************************/
 #define SCTE104_HEADER_SIZE             4
 
-#define SCTE104_OPID_INJECT_SECTION     0x0100
-#define SCTE104_OPID_SPLICE             0x0101
-#define SCTE104_OPID_SPLICE_NULL        0x0102
-#define SCTE104_OPID_TIME_SIGNAL        0x0104
-#define SCTE104_OPID_MULTIPLE           0xffff
+#define SCTE104_OPID_INJECT_SECTION                 0x0100
+#define SCTE104_OPID_SPLICE                         0x0101
+#define SCTE104_OPID_SPLICE_NULL                    0x0102
+#define SCTE104_OPID_TIME_SIGNAL                    0x0104
+#define SCTE104_OPID_INSERT_DESCRIPTOR              0x0108
+#define SCTE104_OPID_INSERT_SEGMENTATION_DESCRIPTOR 0x010B
+#define SCTE104_OPID_MULTIPLE                       0xffff
 
 static inline uint16_t scte104_get_opid(const uint8_t *p)
 {
@@ -521,6 +523,146 @@ static inline uint8_t scte104srd_get_auto_return(const uint8_t *p)
 static inline void scte104srd_set_auto_return(uint8_t *p, uint8_t i_auto_return)
 {
     p[13] = i_auto_return;
+}
+
+/*****************************************************************************
+ * SCTE-104 : time_signal_request_data
+ *****************************************************************************/
+static inline uint16_t scte104tsrd_get_pre_roll_time(const uint8_t *p)
+{
+    return ((uint16_t)p[0] << 8) | ((uint16_t)p[1]);
+}
+
+/*****************************************************************************
+ * SCTE-104 : insert_descriptor_request_data
+ *****************************************************************************/
+static inline uint8_t scte104idrd_get_count(const uint8_t *p)
+{
+    return p[0];
+}
+
+static inline uint8_t *scte104idrd_get_image(const uint8_t *p)
+{
+    return (uint8_t *)(p + 1);
+}
+
+/*****************************************************************************
+ * SCTE-104 : insert_segmentation_descriptor_request_data
+ *****************************************************************************/
+static inline uint32_t scte104isdrd_get_event_id(const uint8_t *p)
+{
+    return ((uint32_t)p[0] << 24) | ((uint32_t)p[1] << 16) |
+        ((uint32_t)p[2] << 8) | ((uint32_t)p[3]);
+}
+
+static inline uint8_t scte104isdrd_get_cancel_indicator(const uint8_t *p)
+{
+    return p[4];
+}
+
+static inline uint16_t scte104isdrd_get_duration(const uint8_t *p)
+{
+    return ((uint16_t)p[5] << 8) | ((uint16_t)p[6]);
+}
+
+static inline uint8_t scte104isdrd_get_upid_type(const uint8_t *p)
+{
+    return p[7];
+}
+
+static inline uint8_t scte104isdrd_get_upid_length(const uint8_t *p)
+{
+    return p[8];
+}
+
+static inline uint8_t *scte104isdrd_get_upid(const uint8_t *p)
+{
+    return (uint8_t *)p + 9;
+}
+
+static inline uint8_t scte104isdrd_get_type_id(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[0];
+}
+
+static inline uint8_t scte104isdrd_get_num(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[1];
+}
+
+static inline uint8_t scte104isdrd_get_expected(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[2];
+}
+
+static inline uint8_t
+scte104isdrd_get_duration_extension_frames(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[3];
+}
+
+static inline uint8_t scte104isdrd_get_delivery_not_restricted(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[4];
+}
+
+static inline uint8_t scte104isdrd_get_web_delivery_allowed(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[5];
+}
+
+static inline uint8_t scte104isdrd_get_no_regional_blackout(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[6];
+}
+
+static inline uint8_t scte104isdrd_get_archive_allowed(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[7];
+}
+
+static inline uint8_t scte104isdrd_get_device_restrictions(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[8];
+}
+
+static inline uint8_t scte104isdrd_get_insert_sub_info(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[9];
+}
+
+static inline uint8_t scte104isdrd_get_sub_num(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[10];
+}
+
+static inline uint8_t scte104isdrd_get_sub_expected(const uint8_t *p)
+{
+    uint8_t upid_length = scte104isdrd_get_upid_length(p);
+    p += 9 + upid_length;
+    return p[11];
 }
 
 #ifdef __cplusplus

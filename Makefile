@@ -70,7 +70,7 @@ HEADER_LIST = $$(find * -name '*.h')
 
 FLAGS = -I. -Werror -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wformat=2
 
-compiler_c = $(CC) $(FLAGS) $(CFLAGS)
+compiler_c = $(CC) $(FLAGS) $(CFLAGS) -std=gnu99
 compiler_c++ = $(CXX) $(FLAGS) $(CXXFLAGS)
 compile = $(compiler_$1) -include "$$header" -c -x $1 /dev/null -o /dev/null
 

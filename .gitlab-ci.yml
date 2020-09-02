@@ -1,0 +1,9 @@
+image: registry.videolan.org/videolan-base-xenial
+
+test:
+    stage: test
+    script:
+      - make check
+    tags:
+        - docker
+        - amd64
