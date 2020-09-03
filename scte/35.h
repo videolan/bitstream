@@ -868,7 +868,7 @@ static inline uint8_t scte35_seg_desc_get_upid_length(const uint8_t *p_desc)
 static inline uint8_t *scte35_seg_desc_get_upid(const uint8_t *p_desc)
 {
     if (scte35_seg_desc_has_cancel(p_desc))
-        return 0;
+        return NULL;
     const uint8_t *p = p_desc + 12;
     if (!scte35_seg_desc_has_program_seg(p_desc))
         p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
