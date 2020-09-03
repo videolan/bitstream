@@ -780,8 +780,9 @@ static inline uint64_t scte35_seg_desc_get_duration(const uint8_t *p_desc)
     const uint8_t *p = p_desc + 12;
     if (!scte35_seg_desc_has_program_seg(p_desc))
         p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
-    return ((uint64_t)p[0] << 32) | (p[1] << 24) | (p[2] << 16) | (p[3] < 8) |
-        p[4];
+    return ((uint64_t)p[0] << 32) | ((uint64_t)p[1] << 24) |
+        ((uint64_t)p[2] << 16) | ((uint64_t)p[3] << 8) |
+        (uint64_t)p[4];
 }
 
 #define SCTE35_SEG_DESC_UPID_TYPE_NOT_USED           0x00
