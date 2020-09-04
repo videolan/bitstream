@@ -674,7 +674,9 @@ static inline bool scte35_private_validate(const uint8_t *p_scte35)
 #define SCTE35_SPLICE_DESC_TAG_SEG      0x02
 
 #define scte35_splice_desc_get_tag      desc_get_tag
+#define scte35_splice_desc_set_tag      desc_set_tag
 #define scte35_splice_desc_get_length   desc_get_length
+#define scte35_splice_desc_set_length   desc_set_length
 
 static inline uint32_t scte35_splice_desc_get_identifier(const uint8_t *p_desc)
 {
@@ -682,18 +684,49 @@ static inline uint32_t scte35_splice_desc_get_identifier(const uint8_t *p_desc)
         (p_desc[4] << 8) | p_desc[5];
 }
 
+static inline void scte35_splice_desc_set_identifier(uint8_t *p_desc,
+                                                     uint32_t identifier)
+{
+    p_desc[2] = (identifier >> 24) & 0xff;
+    p_desc[3] = (identifier >> 16) & 0xff;
+    p_desc[4] = (identifier >> 8) & 0xff;
+    p_desc[5] = identifier & 0xff;
+}
+
 /*****************************************************************************
  * Splice Information Table - segmentation descriptor
  *****************************************************************************/
+#define SCTE35_SEG_DESC_HEADER_SIZE         5
+#define SCTE35_SEG_DESC_NO_CANCEL_SIZE      6
+#define SCTE35_SEG_DESC_NO_PROG_SEG_SIZE    1
+#define SCTE35_SEG_DESC_COMPONENT_SIZE      6
+#define SCTE35_SEG_DESC_DURATION_SIZE       5
+#define SCTE35_SEG_DESC_SUB_SEG_SIZE        2
+
 static inline uint32_t scte35_seg_desc_get_event_id(const uint8_t *p_desc)
 {
     return ((uint32_t)p_desc[6] << 24) | (p_desc[7] << 16) |
         (p_desc[8] << 8) | p_desc[9];
 }
 
+static inline void scte35_seg_desc_set_event_id(uint8_t *p_desc,
+                                                uint32_t event_id)
+{
+    p_desc[6] = (event_id >> 24) & 0xff;
+    p_desc[7] = (event_id >> 16) & 0xff;
+    p_desc[8] = (event_id >> 8) & 0xff;
+    p_desc[9] = event_id & 0xff;
+}
+
 static inline bool scte35_seg_desc_has_cancel(const uint8_t *p_desc)
 {
     return !!(p_desc[10] & 0x80);
+}
+
+static inline void scte35_seg_desc_set_cancel(uint8_t *p_desc,
+                                              bool flag)
+{
+    p_desc[10] = (p_desc[10] & 0x7f) | (flag ? 0x80 : 0x00);
 }
 
 static inline bool scte35_seg_desc_has_program_seg(const uint8_t *p_desc)
@@ -702,10 +735,26 @@ static inline bool scte35_seg_desc_has_program_seg(const uint8_t *p_desc)
         !!(p_desc[11] & 0x80);
 }
 
+static inline void scte35_seg_desc_set_program_seg(uint8_t *p_desc,
+                                                   bool flag)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+    p_desc[11] = (p_desc[11] & 0x7f) | (flag ? 0x80 : 0x00);
+}
+
 static inline bool scte35_seg_desc_has_duration(const uint8_t *p_desc)
 {
     return !scte35_seg_desc_has_cancel(p_desc) &&
         !!(p_desc[11] & 0x40);
+}
+
+static inline void scte35_seg_desc_set_has_duration(uint8_t *p_desc,
+                                                    bool flag)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+    p_desc[11] = (p_desc[11] & 0xbf) | (flag ? 0x40 : 0x00);
 }
 
 static inline bool
@@ -715,11 +764,30 @@ scte35_seg_desc_has_delivery_not_restricted(const uint8_t *p_desc)
         !!(p_desc[11] & 0x20);
 }
 
+static inline void
+scte35_seg_desc_set_delivery_not_restricted(uint8_t *p_desc,
+                                            bool flag)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+    p_desc[11] = (p_desc[11] & 0xdf) | (flag ? 0x20 : 0x00);
+}
+
 static inline bool
 scte35_seg_desc_has_web_delivery_allowed(const uint8_t *p_desc)
 {
     return !scte35_seg_desc_has_delivery_not_restricted(p_desc) &&
         !!(p_desc[11] & 0x10);
+}
+
+static inline void
+scte35_seg_desc_set_web_delivery_allowed(uint8_t *p_desc,
+                                         bool flag)
+{
+    if (scte35_seg_desc_has_cancel(p_desc) ||
+        scte35_seg_desc_has_delivery_not_restricted(p_desc))
+        return;
+    p_desc[11] = (p_desc[11] & 0xef) | (flag ? 0x10 : 0x00);
 }
 
 static inline bool
@@ -729,11 +797,31 @@ scte35_seg_desc_has_no_regional_blackout(const uint8_t *p_desc)
         !!(p_desc[11] & 0x08);
 }
 
+static inline void
+scte35_seg_desc_set_no_regional_blackout(uint8_t *p_desc,
+                                         bool flag)
+{
+    if (scte35_seg_desc_has_cancel(p_desc) ||
+        scte35_seg_desc_has_delivery_not_restricted(p_desc))
+        return;
+    p_desc[11] = (p_desc[11] & 0xf7) | (flag ? 0x08 : 0x00);
+}
+
 static inline bool
 scte35_seg_desc_has_archive_allowed(const uint8_t *p_desc)
 {
     return !scte35_seg_desc_has_delivery_not_restricted(p_desc) &&
         !!(p_desc[11] & 0x04);
+}
+
+static inline void
+scte35_seg_desc_set_archive_allowed(uint8_t *p_desc,
+                                    bool flag)
+{
+    if (scte35_seg_desc_has_cancel(p_desc) ||
+        scte35_seg_desc_has_delivery_not_restricted(p_desc))
+        return;
+    p_desc[11] = (p_desc[11] & 0xfb) | (flag ? 0x04 : 0x00);
 }
 
 #define SCTE35_SEG_DESC_DEVICE_RESTRICTION_GRP0 0x00
@@ -747,9 +835,27 @@ scte35_seg_desc_get_device_restrictions(const uint8_t *p_desc)
     return p_desc[11] & 0x03;
 }
 
+static inline void
+scte35_seg_desc_set_device_restrictions(uint8_t *p_desc,
+                                        uint8_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc) ||
+        scte35_seg_desc_has_delivery_not_restricted(p_desc))
+        return;
+    p_desc[11] = (p_desc[11] & 0xfc) | value;
+}
+
 static inline uint8_t scte35_seg_desc_get_component_count(const uint8_t *p_desc)
 {
     return scte35_seg_desc_has_program_seg(p_desc) ? 0 : p_desc[12];
+}
+
+static inline void scte35_seg_desc_set_component_count(uint8_t *p_desc,
+                                                       uint8_t count)
+{
+    if (scte35_seg_desc_has_program_seg(p_desc))
+        return;
+    p_desc[12] = count;
 }
 
 static inline uint8_t *scte35_seg_desc_get_component(const uint8_t *p_desc,
@@ -765,11 +871,27 @@ static inline uint8_t scte35_seg_desc_component_get_tag(const uint8_t *p_comp)
     return p_comp[0];
 }
 
+static inline void scte35_seg_desc_component_set_tag(uint8_t *p_comp,
+                                                     uint8_t value)
+{
+    p_comp[0] = value;
+}
+
 static inline uint64_t
 scte35_seg_desc_component_get_pts_off(const uint8_t *p_comp)
 {
     return (((uint64_t)p_comp[1] & 0x1) << 32) | (p_comp[2] << 24) |
         (p_comp[3] << 16) | (p_comp[4] << 8) | p_comp[5];
+}
+
+static inline void
+scte35_seg_desc_component_set_pts_off(uint8_t *p_comp, uint64_t value)
+{
+    p_comp[1] = (p_comp[1] & 0xfe) | ((value >> 32) & 0x01);
+    p_comp[2] = (value >> 24) & 0xff;
+    p_comp[3] = (value >> 16) & 0xff;
+    p_comp[4] = (value >> 8) & 0xff;
+    p_comp[5] = value & 0xff;
 }
 
 static inline uint64_t scte35_seg_desc_get_duration(const uint8_t *p_desc)
@@ -780,8 +902,25 @@ static inline uint64_t scte35_seg_desc_get_duration(const uint8_t *p_desc)
     const uint8_t *p = p_desc + 12;
     if (!scte35_seg_desc_has_program_seg(p_desc))
         p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
-    return ((uint64_t)p[0] << 32) | (p[1] << 24) | (p[2] << 16) | (p[3] < 8) |
-        p[4];
+    return ((uint64_t)p[0] << 32) | ((uint64_t)p[1] << 24) |
+        ((uint64_t)p[2] << 16) | ((uint64_t)p[3] << 8) |
+        (uint64_t)p[4];
+}
+
+static inline void scte35_seg_desc_set_duration(uint8_t *p_desc,
+                                                uint64_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc) ||
+        !scte35_seg_desc_has_duration(p_desc))
+        return;
+    uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    p[0] = (value >> 32) & 0xff;
+    p[1] = (value >> 24) & 0xff;
+    p[2] = (value >> 16) & 0xff;
+    p[3] = (value >> 8) & 0xff;
+    p[4] = value & 0xff;
 }
 
 #define SCTE35_SEG_DESC_UPID_TYPE_NOT_USED           0x00
@@ -852,6 +991,19 @@ static inline uint8_t scte35_seg_desc_get_upid_type(const uint8_t *p_desc)
     return p[0];
 }
 
+static inline void scte35_seg_desc_set_upid_type(uint8_t *p_desc,
+                                                 uint8_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+    uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p[0] = value;
+}
+
 static inline uint8_t scte35_seg_desc_get_upid_length(const uint8_t *p_desc)
 {
     if (scte35_seg_desc_has_cancel(p_desc))
@@ -864,10 +1016,23 @@ static inline uint8_t scte35_seg_desc_get_upid_length(const uint8_t *p_desc)
     return p[1];
 }
 
+static inline void scte35_seg_desc_set_upid_length(uint8_t *p_desc,
+                                                   uint8_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+    uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p[1] = value;
+}
+
 static inline uint8_t *scte35_seg_desc_get_upid(const uint8_t *p_desc)
 {
     if (scte35_seg_desc_has_cancel(p_desc))
-        return 0;
+        return NULL;
     const uint8_t *p = p_desc + 12;
     if (!scte35_seg_desc_has_program_seg(p_desc))
         p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
@@ -987,6 +1152,20 @@ static inline uint8_t scte35_seg_desc_get_type_id(const uint8_t *p_desc)
     return p[0];
 }
 
+static inline void scte35_seg_desc_set_type_id(uint8_t *p_desc, uint8_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+    uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    p[0] = value;
+}
+
 static inline uint8_t scte35_seg_desc_get_num(const uint8_t *p_desc)
 {
     if (scte35_seg_desc_has_cancel(p_desc))
@@ -1001,6 +1180,20 @@ static inline uint8_t scte35_seg_desc_get_num(const uint8_t *p_desc)
     return p[1];
 }
 
+static inline void scte35_seg_desc_set_num(uint8_t *p_desc, uint8_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+    uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    p[1] = value;
+}
+
 static inline uint8_t scte35_seg_desc_get_expected(const uint8_t *p_desc)
 {
     if (scte35_seg_desc_has_cancel(p_desc))
@@ -1013,6 +1206,20 @@ static inline uint8_t scte35_seg_desc_get_expected(const uint8_t *p_desc)
     p += 2;
     p += scte35_seg_desc_get_upid_length(p_desc);
     return p[2];
+}
+
+static inline void scte35_seg_desc_set_expected(uint8_t *p_desc, uint8_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+    uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    p[2] = value;
 }
 
 static inline bool scte35_seg_desc_has_sub_num(const uint8_t *p_desc)
@@ -1057,6 +1264,26 @@ static inline uint8_t scte35_seg_desc_get_sub_num(const uint8_t *p_desc)
     return 0;
 }
 
+static inline void scte35_seg_desc_set_sub_num(uint8_t *p_desc, uint8_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+
+    uint8_t type_id = scte35_seg_desc_get_type_id(p_desc);
+    if (type_id != 0x34 && type_id != 0x36)
+        return;
+
+    uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    if (p + 3 < p_desc + scte35_splice_desc_get_length(p_desc))
+        p[3] = value;
+}
+
 static inline bool scte35_seg_desc_has_sub_expected(const uint8_t *p_desc)
 {
     if (scte35_seg_desc_has_cancel(p_desc))
@@ -1097,6 +1324,27 @@ static inline uint8_t scte35_seg_desc_get_sub_expected(const uint8_t *p_desc)
     if (p + 4 < p_desc + scte35_splice_desc_get_length(p_desc))
         return p[4];
     return 0;
+}
+
+static inline void scte35_seg_desc_set_sub_expected(uint8_t *p_desc,
+                                                    uint8_t value)
+{
+    if (scte35_seg_desc_has_cancel(p_desc))
+        return;
+
+    uint8_t type_id = scte35_seg_desc_get_type_id(p_desc);
+    if (type_id != 0x34 && type_id != 0x36)
+        return;
+
+    uint8_t *p = p_desc + 12;
+    if (!scte35_seg_desc_has_program_seg(p_desc))
+        p += 1 + 6 * scte35_seg_desc_get_component_count(p_desc);
+    if (scte35_seg_desc_has_duration(p_desc))
+        p += 5;
+    p += 2;
+    p += scte35_seg_desc_get_upid_length(p_desc);
+    if (p + 4 < p_desc + scte35_splice_desc_get_length(p_desc))
+        p[4] = value;
 }
 
 /*****************************************************************************
