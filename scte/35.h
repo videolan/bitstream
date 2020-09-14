@@ -669,6 +669,8 @@ static inline bool scte35_private_validate(const uint8_t *p_scte35)
  *****************************************************************************/
 #define SCTE35_SPLICE_DESC_HEADER_SIZE  6
 
+#define SCTE35_SPLICE_DESC_IDENTIFIER   0x43554549
+
 #define SCTE35_SPLICE_DESC_TAG_AVAIL    0x00
 #define SCTE35_SPLICE_DESC_TAG_DTMF     0x01
 #define SCTE35_SPLICE_DESC_TAG_SEG      0x02
@@ -702,6 +704,17 @@ static inline void scte35_splice_desc_set_identifier(uint8_t *p_desc,
 #define SCTE35_SEG_DESC_COMPONENT_SIZE      6
 #define SCTE35_SEG_DESC_DURATION_SIZE       5
 #define SCTE35_SEG_DESC_SUB_SEG_SIZE        2
+
+static inline void scte35_seg_desc_init(uint8_t *p_desc, uint8_t length)
+{
+    scte35_splice_desc_set_tag(p_desc, SCTE35_SPLICE_DESC_TAG_SEG);
+    scte35_splice_desc_set_length(p_desc,
+                                  SCTE35_SPLICE_DESC_HEADER_SIZE -
+                                  DESC_HEADER_SIZE +
+                                  SCTE35_SEG_DESC_HEADER_SIZE + length);
+    scte35_splice_desc_set_identifier(p_desc, SCTE35_SPLICE_DESC_IDENTIFIER);
+    p_desc[10] = 0x7f;
+}
 
 static inline uint32_t scte35_seg_desc_get_event_id(const uint8_t *p_desc)
 {
@@ -771,6 +784,8 @@ scte35_seg_desc_set_delivery_not_restricted(uint8_t *p_desc,
     if (scte35_seg_desc_has_cancel(p_desc))
         return;
     p_desc[11] = (p_desc[11] & 0xdf) | (flag ? 0x20 : 0x00);
+    if (flag)
+        p_desc[11] |= 0x1f;
 }
 
 static inline bool
@@ -864,6 +879,11 @@ static inline uint8_t *scte35_seg_desc_get_component(const uint8_t *p_desc,
     if (i < scte35_seg_desc_get_component_count(p_desc))
         return (uint8_t *)p_desc + 13 + 6 * i;
     return NULL;
+}
+
+static inline void scte35_seg_desc_component_init(uint8_t *p_comp)
+{
+    p_comp[1] = 0xfe;
 }
 
 static inline uint8_t scte35_seg_desc_component_get_tag(const uint8_t *p_comp)
