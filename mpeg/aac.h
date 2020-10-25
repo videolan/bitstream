@@ -29,6 +29,7 @@
  * Normative references:
  *  - ISO/IEC 14496-3 Subpart 4:1998(E)
  *    (Advanced Audio Coding, Time/Frequency Coding)
+ *  - ISO/IEC 13818-1:2013(E) (MPEG-2 Systems)
  */
 
 #ifndef __BITSTREAM_MPEG_AAC_H__
@@ -251,6 +252,39 @@ static inline void loas_set_length(uint8_t *p, uint16_t val)
 #define ASC_FLT_CELP_4          5
 #define ASC_FLT_HVXC_FIXED      6
 #define ASC_FLT_HVXC_4          7
+
+/* Returns the profile_and_level structure for MPEG-4 audio descriptor */
+static inline uint8_t asc_get_profilelevel(uint8_t asc_aot, uint8_t channels, uint32_t rate)
+{
+    uint8_t profilelevel;
+    switch (asc_aot) {
+        case ASC_TYPE_LC:
+            profilelevel = 0x50;
+            break;
+
+        case ASC_TYPE_SBR:
+            profilelevel = 0x58;
+            break;
+
+        case ASC_TYPE_ER_LD:
+            return 0x38;
+
+        case ASC_TYPE_PS:
+            profilelevel = 0x60;
+            break;
+
+        default:
+            return 0xf;
+    }
+
+    if (rate > 48000)
+        return profilelevel + 3;
+    if (channels > 2)
+        return profilelevel + 2;
+    if (rate > 24000)
+        return profilelevel + 1;
+    return profilelevel;
+}
 
 /*****************************************************************************
  * AAC syntactic elements
