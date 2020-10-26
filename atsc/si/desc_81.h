@@ -80,7 +80,8 @@ static inline uint8_t desc81_bit_rate_code_from_octetrate(uint64_t octetrate)
         256, 320, 384, 448, 512, 576,
         640,
     };
-    for (unsigned i = 0; i < 19; i++) {
+    unsigned i;
+    for (i = 0; i < 19; i++) {
         if (octetrate * 8 == table[i] * 1000)
             return i;
         else if (octetrate * 8 < table[i] * 1000)
