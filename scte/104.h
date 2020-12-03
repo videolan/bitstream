@@ -528,6 +528,8 @@ static inline void scte104srd_set_auto_return(uint8_t *p, uint8_t i_auto_return)
 /*****************************************************************************
  * SCTE-104 : time_signal_request_data
  *****************************************************************************/
+#define SCTE104TSRD_HEADER_SIZE     2
+
 static inline uint16_t scte104tsrd_get_pre_roll_time(const uint8_t *p)
 {
     return ((uint16_t)p[0] << 8) | ((uint16_t)p[1]);
@@ -536,6 +538,8 @@ static inline uint16_t scte104tsrd_get_pre_roll_time(const uint8_t *p)
 /*****************************************************************************
  * SCTE-104 : insert_descriptor_request_data
  *****************************************************************************/
+#define SCTE104IDRD_HEADER_SIZE     1
+
 static inline uint8_t scte104idrd_get_count(const uint8_t *p)
 {
     return p[0];
@@ -549,6 +553,8 @@ static inline uint8_t *scte104idrd_get_image(const uint8_t *p)
 /*****************************************************************************
  * SCTE-104 : insert_segmentation_descriptor_request_data
  *****************************************************************************/
+#define SCTE104ISDRD_HEADER_SIZE    18
+
 static inline uint32_t scte104isdrd_get_event_id(const uint8_t *p)
 {
     return ((uint32_t)p[0] << 24) | ((uint32_t)p[1] << 16) |
