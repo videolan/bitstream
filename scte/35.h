@@ -1258,7 +1258,8 @@ static inline bool scte35_seg_desc_has_sub_num(const uint8_t *p_desc)
         p += 5;
     p += 2;
     p += scte35_seg_desc_get_upid_length(p_desc);
-    if (p + 3 < p_desc + scte35_splice_desc_get_length(p_desc))
+    if (p + 3 <
+        p_desc + scte35_splice_desc_get_length(p_desc) + DESC_HEADER_SIZE)
         return true;
     return false;
 }
@@ -1279,7 +1280,8 @@ static inline uint8_t scte35_seg_desc_get_sub_num(const uint8_t *p_desc)
         p += 5;
     p += 2;
     p += scte35_seg_desc_get_upid_length(p_desc);
-    if (p + 3 < p_desc + scte35_splice_desc_get_length(p_desc))
+    if (p + 3 <
+        p_desc + scte35_splice_desc_get_length(p_desc) + DESC_HEADER_SIZE)
         return p[3];
     return 0;
 }
@@ -1300,7 +1302,8 @@ static inline void scte35_seg_desc_set_sub_num(uint8_t *p_desc, uint8_t value)
         p += 5;
     p += 2;
     p += scte35_seg_desc_get_upid_length(p_desc);
-    if (p + 3 < p_desc + scte35_splice_desc_get_length(p_desc))
+    if (p + 3 <
+        p_desc + scte35_splice_desc_get_length(p_desc) + DESC_HEADER_SIZE)
         p[3] = value;
 }
 
@@ -1320,7 +1323,8 @@ static inline bool scte35_seg_desc_has_sub_expected(const uint8_t *p_desc)
         p += 5;
     p += 2;
     p += scte35_seg_desc_get_upid_length(p_desc);
-    if (p + 4 < p_desc + scte35_splice_desc_get_length(p_desc))
+    if (p + 4 <
+        p_desc + scte35_splice_desc_get_length(p_desc) + DESC_HEADER_SIZE)
         return true;
     return false;
 }
@@ -1341,7 +1345,8 @@ static inline uint8_t scte35_seg_desc_get_sub_expected(const uint8_t *p_desc)
         p += 5;
     p += 2;
     p += scte35_seg_desc_get_upid_length(p_desc);
-    if (p + 4 < p_desc + scte35_splice_desc_get_length(p_desc))
+    if (p + 4 <
+        p_desc + scte35_splice_desc_get_length(p_desc) + DESC_HEADER_SIZE)
         return p[4];
     return 0;
 }
@@ -1363,7 +1368,8 @@ static inline void scte35_seg_desc_set_sub_expected(uint8_t *p_desc,
         p += 5;
     p += 2;
     p += scte35_seg_desc_get_upid_length(p_desc);
-    if (p + 4 < p_desc + scte35_splice_desc_get_length(p_desc))
+    if (p + 4 <
+        p_desc + scte35_splice_desc_get_length(p_desc) + DESC_HEADER_SIZE)
         p[4] = value;
 }
 
