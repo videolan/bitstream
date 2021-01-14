@@ -260,7 +260,7 @@ static inline uint8_t psi_get_lastsection(const uint8_t *p_section)
 static inline void psi_set_crc(uint8_t *p_section)
 {
     uint32_t i_crc = 0xffffffff;
-    uint16_t i_end = (((p_section[1] & 0xf) << 8) | p_section[2])
+    uint16_t i_end = psi_get_length(p_section)
                       + PSI_HEADER_SIZE - PSI_CRC_SIZE;
     uint16_t i;
 
@@ -276,7 +276,7 @@ static inline void psi_set_crc(uint8_t *p_section)
 static inline bool psi_check_crc(const uint8_t *p_section)
 {
     uint32_t i_crc = 0xffffffff;
-    uint16_t i_end = (((p_section[1] & 0xf) << 8) | p_section[2])
+    uint16_t i_end = psi_get_length(p_section)
                       + PSI_HEADER_SIZE - PSI_CRC_SIZE;
     uint16_t i;
 
