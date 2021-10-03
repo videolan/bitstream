@@ -275,9 +275,11 @@ static inline uint8_t *scte104s_get_data(const uint8_t *p, uint16_t *pi_size)
     return (uint8_t *)&p[13];
 }
 
-static inline bool scte104s_validate(const uint8_t *p)
+static inline bool scte104s_validate(const uint8_t *p, const int buf_size)
 {
     uint16_t i_size = scte104_get_size(p);
+    if (buf_size < i_size)
+        return false;
     if (i_size < SCTE104S_HEADER_SIZE)
         return false;
 
@@ -405,9 +407,11 @@ static inline uint8_t *scte104m_get_op(const uint8_t *p, uint8_t i_op)
     return (uint8_t *)p;
 }
 
-static inline bool scte104m_validate(const uint8_t *p)
+static inline bool scte104m_validate(const uint8_t *p, const int buf_size)
 {
     uint16_t i_size = scte104_get_size(p);
+    if (buf_size < i_size)
+        return false;
     if (i_size < SCTE104M_HEADER_SIZE + SCTE104T_HEADER_SIZE)
         return false;
 
