@@ -35,6 +35,7 @@
 #ifndef __BITSTREAM_IEEE_ETHERNET_H__
 #define __BITSTREAM_IEEE_ETHERNET_H__
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h> /* memcpy */
 
@@ -101,7 +102,57 @@ static inline void ethernet_set_lentype(uint8_t *p_ethernet, uint16_t lentype)
 
 static inline uint8_t *ethernet_payload(uint8_t *p_ethernet)
 {
-    return p_ethernet + ETHERNET_HEADER_LEN;
+    if (ethernet_get_lentype(p_ethernet) != ETHERNET_TYPE_VLAN)
+        return p_ethernet + ETHERNET_HEADER_LEN;
+    else
+        return p_ethernet + ETHERNET_HEADER_LEN + ETHERNET_VLAN_LEN;
+}
+
+static inline uint8_t ethernet_vlan_get_priority(uint8_t *p_ethernet)
+{
+    return (p_ethernet[ETHERNET_HEADER_LEN] & 0xe0) >> 5;
+}
+
+static inline void ethernet_vlan_set_priority(uint8_t *p_ethernet, uint8_t priority)
+{
+    p_ethernet[ETHERNET_HEADER_LEN] &= ~0xe0;
+    p_ethernet[ETHERNET_HEADER_LEN] |= (priority & 0x7) << 5;
+}
+
+static inline bool ethernet_vlan_get_cfi(uint8_t *p_ethernet)
+{
+    return (p_ethernet[ETHERNET_HEADER_LEN] & 0x10) == 0x10;
+}
+
+static inline void ethernet_vlan_set_cfi(uint8_t *p_ethernet, bool cfi)
+{
+    p_ethernet[ETHERNET_HEADER_LEN] &= ~0x10;
+    p_ethernet[ETHERNET_HEADER_LEN] |= cfi << 4;
+}
+
+static inline uint16_t ethernet_vlan_get_id(uint8_t *p_ethernet)
+{
+    return (p_ethernet[ETHERNET_HEADER_LEN+0] & 0xf) << 8
+        | p_ethernet[ETHERNET_HEADER_LEN+1];
+}
+
+static inline void ethernet_vlan_set_id(uint8_t *p_ethernet, uint16_t id)
+{
+    p_ethernet[ETHERNET_HEADER_LEN+0] &= ~0xf;
+    p_ethernet[ETHERNET_HEADER_LEN+0] |= (id & 0xf00) >> 8;
+    p_ethernet[ETHERNET_HEADER_LEN+1]  = (id & 0x0ff);
+}
+
+static inline uint16_t ethernet_vlan_get_lentype(uint8_t *p_ethernet)
+{
+    return (p_ethernet[ETHERNET_HEADER_LEN+2] << 8)
+        | p_ethernet[ETHERNET_HEADER_LEN+3];
+}
+
+static inline void ethernet_vlan_set_lentype(uint8_t *p_ethernet, uint16_t lentype)
+{
+    p_ethernet[ETHERNET_HEADER_LEN+2] = (lentype & 0xff00) >> 8;
+    p_ethernet[ETHERNET_HEADER_LEN+3] = (lentype & 0xff);
 }
 
 #ifdef __cplusplus
