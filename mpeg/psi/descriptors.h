@@ -203,6 +203,18 @@ static inline bool descs_validate(const uint8_t *p_descs)
                           descs_get_length(p_descs));
 }
 
+static inline uint8_t *descs_add_desc(uint8_t *p_descs, uint16_t i_desc_length)
+{
+    if (!descs_validate(p_descs) || i_desc_length < DESC_HEADER_SIZE)
+        return NULL;
+    uint16_t i_length = descs_get_length(p_descs);
+    descs_set_length(p_descs, i_length + i_desc_length);
+    uint8_t *p_desc = p_descs + DESCS_HEADER_SIZE + i_length;
+    desc_set_tag(p_desc, 0);
+    desc_set_length(p_desc, i_length - DESC_HEADER_SIZE);
+    return p_descs + DESCS_HEADER_SIZE + i_length;
+}
+
 #ifdef __cplusplus
 }
 #endif
