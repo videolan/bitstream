@@ -120,7 +120,7 @@ static inline bool rtp_check_marker(const uint8_t *p_rtp)
 
 static inline void rtp_set_type(uint8_t *p_rtp, uint8_t i_type)
 {
-    p_rtp[1] = i_type & 0x7f;
+    p_rtp[1] = (p_rtp[1] & 0x80) | (i_type & 0x7f);
 }
 
 static inline uint8_t rtp_get_type(const uint8_t *p_rtp)
