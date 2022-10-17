@@ -547,18 +547,18 @@ static inline bool scte35_insert_validate(const uint8_t *p_scte35)
 
         if (i_length < SCTE35_INSERT_HEADER_SIZE + SCTE35_INSERT_HEADER2_SIZE +
                        SCTE35_SPLICE_TIME_HEADER_SIZE ||
-            i_length < SCTE35_INSERT_HEADER_SIZE + SCTE35_INSERT_HEADER2_SIZE +
+            i_length < (size_t)SCTE35_INSERT_HEADER_SIZE + SCTE35_INSERT_HEADER2_SIZE +
                        scte35_splice_time_size(
                            scte35_insert_get_splice_time(p_scte35)))
             return false;
 
         if (scte35_insert_has_duration(p_scte35))
-            return i_length >= SCTE35_INSERT_HEADER_SIZE +
+            return i_length >= (size_t)SCTE35_INSERT_HEADER_SIZE +
                 SCTE35_INSERT_HEADER2_SIZE +
                 scte35_splice_time_size(scte35_insert_get_splice_time(p_scte35))
                 + SCTE35_BREAK_DURATION_HEADER_SIZE +
                 SCTE35_INSERT_FOOTER_SIZE;
-        return i_length >= SCTE35_INSERT_HEADER_SIZE +
+        return i_length >= (size_t)SCTE35_INSERT_HEADER_SIZE +
             SCTE35_INSERT_HEADER2_SIZE +
             scte35_splice_time_size(scte35_insert_get_splice_time(p_scte35))
             + SCTE35_INSERT_FOOTER_SIZE;
@@ -575,9 +575,9 @@ static inline bool scte35_insert_validate(const uint8_t *p_scte35)
         return false;
 
     if (scte35_insert_has_duration(p_scte35))
-        return i_length >= p_end + SCTE35_BREAK_DURATION_HEADER_SIZE +
-                                   SCTE35_INSERT_FOOTER_SIZE - p_command;
-    return i_length >= p_end + SCTE35_INSERT_FOOTER_SIZE - p_command;
+        return i_length >= (size_t)(p_end + SCTE35_BREAK_DURATION_HEADER_SIZE +
+                                            SCTE35_INSERT_FOOTER_SIZE - p_command);
+    return i_length >= (size_t)(p_end + SCTE35_INSERT_FOOTER_SIZE - p_command);
 }
 
 /*****************************************************************************
