@@ -93,23 +93,22 @@ static inline void desc5dn_set_service_name(uint8_t *p_desc_n, const uint8_t *p_
         p_network_name, i_length);
 }
 
-static inline uint8_t *desc5d_get_data(const uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc5d_next_data(const uint8_t *p_desc,
+                                        const uint8_t *p_desc_n)
 {
-    const uint8_t *p_desc_n = p_desc + DESC5D_HEADER_SIZE;
-    uint8_t i_desc_size = desc_get_length(p_desc);
-
-    while (n) {
-        if (p_desc_n + DESC5D_DATA_SIZE - p_desc > i_desc_size)
-            return NULL;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC5D_HEADER_SIZE;
+    else
         p_desc_n += DESC5D_DATA_SIZE
             + desc5dn_get_provider_name_length(p_desc_n)
             + desc5dn_get_service_name_length(p_desc_n);
-        n--;
-    }
-    if (p_desc_n - p_desc > i_desc_size)
-        return NULL;
-    return (uint8_t *)p_desc_n;
+    return desc_check(p_desc, p_desc_n, DESC5D_DATA_SIZE);
 }
+
+#define desc5d_each_data(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc5d_next_data)
+#define desc5d_get_data(DESC, DESC_N) \
+    desc_get_at(DESC, DESC_N, desc5d_next_data)
 
 static inline bool desc5d_validate(const uint8_t *p_desc)
 {
@@ -131,10 +130,7 @@ static inline void desc5d_print(const uint8_t *p_desc,
                                 f_iconv pf_iconv, void *iconv_opaque,
                                 print_type_t i_print_type)
 {
-    const uint8_t *p_desc_n;
-    uint8_t j = 0;
-
-    while ((p_desc_n = desc5d_get_data(p_desc, j++)) != NULL) {
+    desc5d_each_data(p_desc, p_desc_n) {
         uint8_t i_provider_name_length, i_service_name_length;
         const uint8_t *p_provider_name = desc5dn_get_provider_name(p_desc_n, &i_provider_name_length);
         const uint8_t *p_service_name  = desc5dn_get_service_name(p_desc_n, &i_service_name_length);

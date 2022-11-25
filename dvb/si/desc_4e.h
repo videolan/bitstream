@@ -46,6 +46,7 @@ extern "C"
  * Descriptor 0x4e: Extended event descriptor
  *****************************************************************************/
 #define DESC4E_HEADER_SIZE      (DESC_HEADER_SIZE + 4)
+#define DESC4E_ITEM_SIZE        2
 
 static inline void desc4e_init(uint8_t *p_desc)
 {
@@ -94,30 +95,45 @@ static inline void desc4e_set_items_length(uint8_t *p_desc, uint8_t i_length)
     p_desc[6] = i_length;
 }
 
-static inline uint8_t *desc4e_get_item(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc4e_get_items(const uint8_t *p_desc)
 {
-    uint8_t *p = p_desc + DESC4E_HEADER_SIZE;
-    uint8_t *p_item, *p_items, *p_items_end;
-
-    uint8_t i_items_len = *p;
-    if (!i_items_len)
-        return NULL;
-
-    p_items = p_item = p + 1;
-    p_items_end = p_items + i_items_len;
-
-    if (n == 0)
-        return p_item;
-
-    while ( p_item < p_items_end ) {
-        p_item += 1 + p_item[0]; /* Skip item description */
-        p_item += 1 + p_item[0]; /* Skip item text */
-        if ( --n == 0 && p_item < p_items_end )
-            return p_item;
-    }
-
-    return NULL;
+    return (uint8_t *)p_desc + DESC4E_HEADER_SIZE + 1;
 }
+
+static inline uint8_t desc4en_get_item_length(const uint8_t *p_desc_n)
+{
+    uint8_t length = p_desc_n[0] + 1;
+    length += p_desc_n[length] + 1;
+    return length;
+}
+
+static inline uint8_t *desc4e_check_item(const uint8_t *p_desc,
+                                         const uint8_t *p_desc_n,
+                                         uint8_t items_length)
+{
+    if (!desc_check(p_desc, p_desc_n, DESC4E_ITEM_SIZE))
+        return NULL;
+    uint8_t *items = desc4e_get_items(p_desc);
+    if (p_desc_n + DESC4E_ITEM_SIZE > items + items_length)
+        return NULL;
+    return (uint8_t *)p_desc_n;
+}
+
+static inline uint8_t *desc4e_next_item(const uint8_t *p_desc,
+                                        const uint8_t *p_desc_n)
+{
+    uint8_t items_length = desc4e_get_items_length(p_desc);
+    if (!p_desc_n)
+        p_desc_n = desc4e_get_items(p_desc);
+    else
+        p_desc_n += desc4en_get_item_length(p_desc_n);
+    return desc4e_check_item(p_desc, p_desc_n, items_length);
+}
+
+#define desc4e_each_item(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc4e_next_item)
+#define desc4e_get_item(DESC, N) \
+    desc_get_at(DESC, N, desc4e_next_item)
 
 static inline const uint8_t *desc4en_get_item_description(const uint8_t *p_desc_n, uint8_t *i_length)
 {
@@ -237,9 +253,7 @@ static inline void desc4e_print(uint8_t *p_desc,
     }
     free( psz_text );
 
-    uint8_t j = 0;
-    const uint8_t *p_desc_n;
-    while ((p_desc_n = desc4e_get_item(p_desc, j++)) != NULL) {
+    desc4e_each_item(p_desc, p_desc_n) {
         uint8_t i_desc_length, i_item_length;
         const uint8_t *p_desc = desc4en_get_item_description(p_desc_n, &i_desc_length);
         const uint8_t *p_item = desc4en_get_item_text(p_desc_n, &i_item_length);

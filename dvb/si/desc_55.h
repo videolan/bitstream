@@ -56,14 +56,20 @@ static inline void desc55_init(uint8_t *p_desc)
 #define desc55n_get_country_code desc0an_get_code
 #define desc55n_set_country_code desc0an_set_code
 
-static inline uint8_t *desc55_get_rating(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc55_next_rating(const uint8_t *p_desc,
+                                          const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC55_HEADER_SIZE + n * DESC55_RATING_SIZE;
-    if (p_desc_n + DESC55_RATING_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC55_HEADER_SIZE)
-        return NULL;
-    return p_desc_n;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC55_HEADER_SIZE;
+    else
+        p_desc_n += DESC55_RATING_SIZE;
+    return desc_check(p_desc, p_desc_n, DESC55_RATING_SIZE);
 }
+
+#define desc55_each_rating(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc55_next_rating)
+#define desc55_get_rating(DESC, N) \
+    desc_get_at(DESC, N, desc55_next_rating)
 
 static inline uint8_t desc55n_get_rating(uint8_t *p_desc_n)
 {
@@ -83,10 +89,7 @@ static inline bool desc55_validate(const uint8_t *p_desc)
 static inline void desc55_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
-    while ((p_desc_n = desc55_get_rating(p_desc, j++)) != NULL) {
+    desc55_each_rating(p_desc, p_desc_n) {
         char rating_txt[16];
         uint8_t rating = desc55n_get_rating(p_desc_n);
         if (rating == 0)

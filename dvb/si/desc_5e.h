@@ -86,21 +86,20 @@ static inline void desc5en_set_text(uint8_t *p_desc_n, const uint8_t *p_text, ui
     memcpy(p_desc_n + 4, p_text, i_length);
 }
 
-static inline uint8_t *desc5e_get_data(const uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc5e_next_data(const uint8_t *p_desc,
+                                        const uint8_t *p_desc_n)
 {
-    const uint8_t *p_desc_n = p_desc + DESC5E_HEADER_SIZE;
-    uint8_t i_desc_size = desc_get_length(p_desc);
-
-    while (n) {
-        if (p_desc_n + DESC5E_DATA_SIZE - p_desc > i_desc_size)
-            return NULL;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC5E_HEADER_SIZE;
+    else
         p_desc_n += DESC5E_DATA_SIZE + desc5en_get_text_length(p_desc_n);
-        n--;
-    }
-    if (p_desc_n - p_desc > i_desc_size)
-        return NULL;
-    return (uint8_t *)p_desc_n;
+    return desc_check(p_desc, p_desc_n, DESC5E_DATA_SIZE);
 }
+
+#define desc5e_each_data(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc5e_next_data)
+#define desc5e_get_data(DESC, N) \
+    desc_get_at(DESC, N, desc5e_next_data)
 
 static inline bool desc5e_validate(const uint8_t *p_desc)
 {
@@ -120,10 +119,7 @@ static inline void desc5e_print(const uint8_t *p_desc,
                                 f_iconv pf_iconv, void *iconv_opaque,
                                 print_type_t i_print_type)
 {
-    const uint8_t *p_desc_n;
-    uint8_t j = 0;
-
-    while ((p_desc_n = desc5e_get_data(p_desc, j++)) != NULL) {
+    desc5e_each_data(p_desc, p_desc_n) {
         uint8_t i_text_length;
         const uint8_t *p_text = desc5en_get_text(p_desc_n, &i_text_length);
         char *psz_text = dvb_string_get(p_text, i_text_length, pf_iconv, iconv_opaque);

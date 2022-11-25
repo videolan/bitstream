@@ -132,6 +132,9 @@ static inline uint8_t *pmt_get_descs(uint8_t *p_pmt)
     return &p_pmt[10];
 }
 
+#define pmt_each_desc(PMT, DESC) \
+    descs_each_desc(pmt_get_descs(PMT), DESC)
+
 static inline void pmtn_init(uint8_t *p_pmt_n)
 {
     p_pmt_n[1] = 0xe0;
@@ -219,20 +222,31 @@ static inline uint8_t *pmtn_get_descs(uint8_t *p_pmt_n)
     return &p_pmt_n[3];
 }
 
-static inline uint8_t *pmt_get_es(uint8_t *p_pmt, uint8_t n)
-{
-    uint16_t i_section_size = psi_get_length(p_pmt) + PSI_HEADER_SIZE
-                               - PSI_CRC_SIZE;
-    uint8_t *p_pmt_n = p_pmt + PMT_HEADER_SIZE + pmt_get_desclength(p_pmt);
-    if (p_pmt_n - p_pmt > i_section_size) return NULL;
+#define pmtn_each_desc(PMTN, DESC) \
+    descs_each_desc(pmtn_get_descs(PMTN), DESC)
 
-    while (n) {
+static inline uint8_t *pmt_next_es(uint8_t *p_pmt, uint8_t *p_pmt_n)
+{
+    uint16_t i_section_size =
+        psi_get_length(p_pmt) + PSI_HEADER_SIZE - PSI_CRC_SIZE;
+    if (!p_pmt_n)
+        p_pmt_n = p_pmt + PMT_HEADER_SIZE + pmt_get_desclength(p_pmt);
+    else {
         if (p_pmt_n + PMT_ES_SIZE - p_pmt > i_section_size) return NULL;
         p_pmt_n += PMT_ES_SIZE + pmtn_get_desclength(p_pmt_n);
-        n--;
     }
-    if (p_pmt_n - p_pmt >= i_section_size) return NULL;
-    return p_pmt_n;
+    return (p_pmt_n - p_pmt < i_section_size) ? p_pmt_n : NULL;
+}
+
+#define pmt_each_es(PMT, ES)                                         \
+    for (uint8_t *ES = pmt_next_es(PMT, NULL); ES; ES = pmt_next_es(PMT, ES))
+
+static inline uint8_t *pmt_get_es(uint8_t *p_pmt, uint8_t n)
+{
+    pmt_each_es(p_pmt, es)
+        if (!n--)
+            return es;
+    return NULL;
 }
 
 static inline bool pmt_validate_es(const uint8_t *p_pmt, const uint8_t *p_pmt_n,
@@ -281,15 +295,9 @@ static inline bool pmt_validate(const uint8_t *p_pmt)
 
 static inline uint8_t *pmt_find_es(uint8_t *p_pmt, uint16_t i_pid)
 {
-    uint8_t *p_es;
-    uint8_t j = 0;
-
-    while ((p_es = pmt_get_es(p_pmt, j)) != NULL) {
-        j++;
+    pmt_each_es(p_pmt, p_es)
         if (pmtn_get_pid(p_es) == i_pid)
             return p_es;
-    }
-
     return NULL;
 }
 
