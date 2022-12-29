@@ -100,6 +100,63 @@ static inline char *bitstream_xml_escape(const char *str)
     return out;
 }
 
+#define BITSTREAM_GET_TYPE(Type)                                            \
+static inline Type##_t bitstream_get_##Type(const uint8_t *p,               \
+                                            unsigned position,              \
+                                            unsigned nb_bits)               \
+{                                                                           \
+    Type##_t v = 0;                                                         \
+    int bits = nb_bits;                                                     \
+    uint8_t nbits = 8 - (position % 8);                                     \
+    for (p += position / 8; bits > 0; p++, bits -= nbits, nbits = 8) {      \
+        uint8_t size = nbits > bits ? bits : nbits;                         \
+        uint8_t mask = ~(0xff << size) << (nbits - size);                   \
+        v = (v << size) | ((*p & mask) >> (nbits - size));                  \
+    }                                                                       \
+    return v;                                                               \
+}
+
+BITSTREAM_GET_TYPE(uint8);
+BITSTREAM_GET_TYPE(uint16);
+BITSTREAM_GET_TYPE(uint32);
+BITSTREAM_GET_TYPE(uint64);
+
+#define BITSTREAM_SET_TYPE(Type)                                            \
+static inline void bitstream_set_##Type(uint8_t *p,                         \
+                                        unsigned position,                  \
+                                        unsigned nb_bits,                   \
+                                        Type##_t v)                         \
+{                                                                           \
+    int bits = nb_bits;                                                     \
+    uint8_t vbits, mask, nbits = 8 - (position % 8);                        \
+    for (p += position / 8; bits > 0; p++, bits -= nbits, nbits = 8) {      \
+        mask = (uint8_t)(0xff << (bits >= 8 ? 0 : 8 - bits)) >> (8 - nbits);\
+        vbits = bits >= nbits ? v >> (bits - nbits) : v << (nbits - bits);  \
+        *p = (*p & ~mask) | (vbits & mask);                                 \
+    }                                                                       \
+}
+
+BITSTREAM_SET_TYPE(uint8);
+BITSTREAM_SET_TYPE(uint16);
+BITSTREAM_SET_TYPE(uint32);
+BITSTREAM_SET_TYPE(uint64);
+
+#define BITSTREAM_GET(Name, Field, Type, Position, Bits)                    \
+static inline Type##_t Name##_get_##Field(const uint8_t *p)                 \
+{                                                                           \
+    return bitstream_get_##Type(p, Position, Bits);                         \
+}
+
+#define BITSTREAM_SET(Name, Field, Type, Position, Bits)                    \
+static inline void Name##_set_##Field(uint8_t *p, Type##_t v)               \
+{                                                                           \
+    bitstream_set_##Type(p, Position, Bits, v);                             \
+}
+
+#define BITSTREAM_GET_SET(Name, Field, Type, Position, Bits)                \
+    BITSTREAM_GET(Name, Field, Type, Position, Bits)                        \
+    BITSTREAM_SET(Name, Field, Type, Position, Bits)
+
 #ifdef __cplusplus
 }
 #endif

@@ -184,6 +184,23 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
         CASE_DESC(81)
         CASE_DESC(cc)
 
+        case 0x7f: {
+            if (desc7f_validate(p_desc)) {
+                uint16_t i_tag_ext = 0x7f00 + desc7f_get_tag_extension(p_desc);
+                switch (i_tag_ext) {
+                    CASE_DESC(7f00)
+                    CASE_DESC(7f06)
+                    CASE_DESC(7f15)
+                    CASE_DESC(7f19)
+                    default:
+                        desc7f_print(p_desc, pf_print, print_opaque,
+                                     i_print_type);
+                }
+            } else
+                desc_print_error(p_desc, pf_print, print_opaque, i_print_type);
+            break;
+        }
+
 #undef CASE_DESC
 #undef CASE_DESC_ICONV
 
