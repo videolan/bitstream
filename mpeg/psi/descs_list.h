@@ -69,5 +69,7 @@
 #include <bitstream/mpeg/psi/desc_2b.h>
 #include <bitstream/mpeg/psi/desc_2c.h>
 #include <bitstream/mpeg/psi/desc_38.h>
+#include <bitstream/mpeg/psi/desc_3f.h>
+#include <bitstream/mpeg/psi/desc_3f03.h>
 
 #endif

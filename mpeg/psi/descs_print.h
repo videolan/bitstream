@@ -133,6 +133,20 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
         CASE_DESC(2b)
         CASE_DESC(2c)
         CASE_DESC(38)
+        case 0x3f: {
+            if (desc3f_validate(p_desc)) {
+                uint16_t i_tag_ext = 0x3f00 + desc3f_get_tag_extension(p_desc);
+                switch (i_tag_ext) {
+                    CASE_DESC(3f03)
+                    default:
+                        desc3f_print(p_desc, pf_print, print_opaque,
+                                     i_print_type);
+                }
+            } else
+                desc_print_error(p_desc, pf_print, print_opaque, i_print_type);
+            break;
+        }
+
         CASE_DESC_ICONV(40)
         CASE_DESC(41)
         CASE_DESC(42)
