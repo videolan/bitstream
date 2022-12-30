@@ -233,7 +233,7 @@ static inline void desc81_print(const uint8_t *p_desc, f_print pf_print,
         break;
     default:
         pf_print(opaque,
-                 "    - desc 81 ac-3"
+                 "    - desc 81 ac3"
                  " sample_rate=\"0x%02x\""
                  " bsid=\"0x%02x\""
                  " bit_rate=\"0x%02x\""
