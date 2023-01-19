@@ -47,6 +47,8 @@ install: bitstream.pc
 	@install -m 644 smpte/*.h $(INCLUDE)/smpte
 	@install -d $(INCLUDE)/id3
 	@install -m 644 id3/*.h $(INCLUDE)/id3
+	@install -d $(INCLUDE)/haivision
+	@install -m 644 haivision/*.h $(INCLUDE)/haivision
 	@echo "INSTALL  $(PKGCONFIG)/bitstream.pc"
 	@install -d $(PKGCONFIG)
 	@install -m 644 bitstream.pc $(PKGCONFIG)
