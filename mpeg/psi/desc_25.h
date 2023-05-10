@@ -52,6 +52,8 @@ static inline void desc25_init(uint8_t *p_desc)
     desc_set_tag(p_desc, 0x25);
 }
 
+#define DESC25_METADATA_FORMAT_ID3  0x49443320
+
 #define desc25_get_metadata_application_format desc24_get_metadata_application_format
 #define desc25_set_metadata_application_format desc24_set_metadata_application_format
 #define desc25_get_metadata_application_format_identifier desc24_get_metadata_application_format_identifier
