@@ -75,6 +75,13 @@ static inline void dvb_time_decode_bcd(uint32_t bcd, int *seconds, int *hour, in
     if (seconds)
         *seconds = *hour * 3600 + *min * 60 + *sec;
 }
+
+static inline void dvb_time_decode_bcd16(uint16_t bcd, int *seconds, int *hour, int *min) {
+    *hour = bcd2dec( (bcd >>  8) & 0xff );
+    *min  = bcd2dec(  bcd        & 0xff );
+    if (seconds)
+        *seconds = *hour * 3600 + *min * 60;
+}
 #undef bcd2dec
 
 static inline time_t dvb_time_decode_UTC(uint64_t UTC_time) {
@@ -119,6 +126,18 @@ static inline uint32_t dvb_time_encode_duration(unsigned int duration_sec)
     ret  = dec2bcd(t_hour) << 16;
     ret |= dec2bcd(t_min ) << 8;
     ret |= dec2bcd(t_sec );
+
+    return ret;
+}
+
+static inline uint32_t dvb_time_encode_duration16(unsigned int duration_min)
+{
+    unsigned int t_min, t_hour, ret;
+    t_min  = duration_min % 60;
+    t_hour = duration_min / 60;
+
+    ret  = dec2bcd(t_hour) << 8;
+    ret |= dec2bcd(t_min );
 
     return ret;
 }
