@@ -81,7 +81,7 @@ static inline char *bitstream_xml_escape(const char *str)
 
     size_t len = strlen(str);
     size_t out_len = bitstream_xml_escape_len(str);
-    char *out = malloc(out_len + 1);
+    char *out = (char *)malloc(out_len + 1);
     if (!out)
         return NULL;
 
