@@ -199,60 +199,7 @@ static inline char *dvb_string_get_quirks(const uint8_t *p_string,
 
 static inline char *dvb_string_xml_escape(char *psz_input)
 {
-    char *psz_output, *psz2;
-    char *psz1 = psz_input;
-    size_t i_output_size = 0;
-
-    while (*psz1) {
-        switch (*psz1) {
-            case '<':
-            case '>':
-                i_output_size += strlen("&lt;");
-                break;
-            case '&':
-                i_output_size += strlen("&amp;");
-                break;
-            case '"':
-            case '\'':
-                i_output_size += strlen("&quot;");
-                break;
-            default:
-                i_output_size++;
-        }
-        psz1++;
-    }
-
-    psz2 = psz_output = (char *)malloc(i_output_size + 1);
-    psz1 = psz_input;
-    while (*psz1) {
-        switch (*psz1) {
-            case '<':
-                memcpy(psz2, "&lt;", strlen("&lt;"));
-                psz2 += strlen("&lt;");
-                break;
-            case '>':
-                memcpy(psz2, "&gt;", strlen("&gt;"));
-                psz2 += strlen("&gt;");
-                break;
-            case '&':
-                memcpy(psz2, "&amp;", strlen("&amp;"));
-                psz2 += strlen("&amp;");
-                break;
-            case '"':
-                memcpy(psz2, "&quot;", strlen("&quot;"));
-                psz2 += strlen("&quot;");
-                break;
-            case '\'':
-                memcpy(psz2, "&apos;", strlen("&apos;"));
-                psz2 += strlen("&apos;");
-                break;
-            default:
-                *psz2++ = *psz1;
-        }
-        psz1++;
-    }
-    *psz2 = '\0';
-
+    char *psz_output = bitstream_xml_escape(psz_input);
     free(psz_input);
     return psz_output;
 }
