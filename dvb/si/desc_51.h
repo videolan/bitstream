@@ -238,42 +238,40 @@ static inline void desc51n_set_event_id(uint8_t *p_desc_n, uint16_t i_event_id)
 
 #undef init_link_n
 
-
-static inline uint8_t *desc51_get_logical_cell(uint8_t *p_desc, uint8_t n)
+static inline uint8_t desc51n_get_data_size(const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC51_HEADER_SIZE;
-    uint8_t i_desc_size = desc_get_length(p_desc);
-
-    while (n) {
-        uint8_t i_desc51_data_size = DESC51_DATA_SIZE + desc51n_get_elementary_cell_field_length(p_desc_n);
-        switch (desc51n_get_cell_linkage_info(p_desc_n)) {
-            case 1: i_desc51_data_size += 2; break;
-            case 2: i_desc51_data_size += 6; break;
-            case 3: i_desc51_data_size += 6; break;
-            case 4: i_desc51_data_size += 8; break;
-        }
-        if (p_desc_n + i_desc51_data_size - p_desc > i_desc_size)
-            return NULL;
-        p_desc_n += i_desc51_data_size;
-        n--;
+    uint8_t size =
+        DESC51_DATA_SIZE + desc51n_get_elementary_cell_field_length(p_desc_n);
+    switch (desc51n_get_cell_linkage_info(p_desc_n)) {
+        case 1: size += 2; break;
+        case 2: size += 6; break;
+        case 3: size += 6; break;
+        case 4: size += 8; break;
     }
-    if (p_desc_n - p_desc > i_desc_size)
-        return NULL;
-    return p_desc_n;
+    return size;
 }
+
+static inline uint8_t *desc51_next_logical_cell(const uint8_t *p_desc,
+                                                const uint8_t *p_desc_n)
+{
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC51_HEADER_SIZE;
+    else
+        p_desc_n += desc51n_get_data_size(p_desc_n);
+    return desc_check(p_desc, p_desc_n, DESC51_DATA_SIZE);
+}
+
+#define desc51_each_logical_cell(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc51_next_logical_cell)
+#define desc51_get_logical_cell(DESC, N) \
+    desc_get_at(DESC, N, desc51_next_logical_cell)
 
 static inline bool desc51_validate(const uint8_t *p_desc)
 {
     const uint8_t *p_desc_n = p_desc + DESC51_HEADER_SIZE;
     int i_desc_size = desc_get_length(p_desc);
     while (i_desc_size > (DESC51_HEADER_SIZE - DESC_HEADER_SIZE)) {
-        uint8_t i_desc51_data_size = DESC51_DATA_SIZE + desc51n_get_elementary_cell_field_length(p_desc_n);
-        switch (desc51n_get_cell_linkage_info(p_desc_n)) {
-            case 1: i_desc51_data_size += 2; break;
-            case 2: i_desc51_data_size += 6; break;
-            case 3: i_desc51_data_size += 6; break;
-            case 4: i_desc51_data_size += 8; break;
-        }
+        uint8_t i_desc51_data_size = desc51n_get_data_size(p_desc_n);
         i_desc_size -= i_desc51_data_size;
         p_desc_n    += i_desc51_data_size;
     }
@@ -283,9 +281,6 @@ static inline bool desc51_validate(const uint8_t *p_desc)
 static inline void desc51_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
     if (i_print_type == PRINT_XML)
         pf_print(opaque,
                  "<MOSAIC_DESC entry_point=\"%u\" horizontal_elementary_cells=\"%u\" vertical_elementary_cells=\"%u\">",
@@ -301,7 +296,7 @@ static inline void desc51_print(uint8_t *p_desc, f_print pf_print,
                  desc51_get_vertical_cells(p_desc)
                 );
 
-    while ((p_desc_n = desc51_get_logical_cell(p_desc, j++)) != NULL) {
+    desc51_each_logical_cell(p_desc, p_desc_n) {
         uint8_t k;
         uint8_t i_present_info = desc51n_get_logical_cell_presentation_info(p_desc_n);
         uint8_t i_el_cell_len  = desc51n_get_elementary_cell_field_length(p_desc_n);

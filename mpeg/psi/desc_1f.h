@@ -52,14 +52,20 @@ static inline void desc1f_init(uint8_t *p_desc)
     desc_set_tag(p_desc, 0x1f);
 }
 
-static inline uint8_t *desc1f_get_entry(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc1f_next_entry(const uint8_t *p_desc,
+                                         const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC1F_HEADER_SIZE + n * DESC1F_ENTRY_SIZE;
-    if (p_desc_n + DESC1F_ENTRY_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC1F_HEADER_SIZE)
-        return NULL;
-    return p_desc_n;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC1F_HEADER_SIZE;
+    else
+        p_desc_n += DESC1F_ENTRY_SIZE;
+    return desc_check(p_desc, p_desc_n, DESC1F_ENTRY_SIZE);
 }
+
+#define desc1f_each_entry(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc1f_next_entry)
+#define desc1f_get_entry(DESC, N) \
+    desc_get_at(DESC, N, desc1f_next_entry)
 
 static inline uint16_t desc1fn_get_es_id(const uint8_t *p_desc)
 {
@@ -90,11 +96,7 @@ static inline bool desc1f_validate(const uint8_t *p_desc)
 static inline void desc1f_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
-    while ((p_desc_n = desc1f_get_entry(p_desc, j)) != NULL) {
-        j++;
+    desc1f_each_entry(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque, "<FMC_DESC es_id=\"0x%04x\" flexmux_channel=\"0x%02x\"/>",

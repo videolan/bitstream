@@ -66,14 +66,20 @@ static inline void desc22_set_default_buffer_size(uint8_t *p_desc, uint32_t i_de
     p_desc[4] =  i_default_buffer_size        & 0xff;
 }
 
-static inline uint8_t *desc22_get_entry(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc22_next_entry(const uint8_t *p_desc,
+                                         const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC22_HEADER_SIZE + n * DESC22_ENTRY_SIZE;
-    if (p_desc_n + DESC22_ENTRY_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC22_HEADER_SIZE)
-        return NULL;
-    return p_desc_n;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC22_HEADER_SIZE;
+    else
+        p_desc_n += DESC22_ENTRY_SIZE;
+    return desc_check(p_desc, p_desc_n, DESC22_ENTRY_SIZE);
 }
+
+#define desc22_each_entry(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc22_next_entry)
+#define desc22_get_entry(DESC, N) \
+    desc_get_at(DESC, N, desc22_next_entry)
 
 static inline uint8_t desc22n_get_flexmux_channel(const uint8_t *p_desc_n)
 {
@@ -107,9 +113,6 @@ static inline bool desc22_validate(const uint8_t *p_desc)
 static inline void desc22_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t n = 0;
-    uint8_t *p_desc_n;
-
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque, "<FMX_BUFFER_SIZE_DESC default_buffer_size=\"%u\">",
@@ -120,7 +123,7 @@ static inline void desc22_print(uint8_t *p_desc, f_print pf_print,
                  desc22_get_default_buffer_size(p_desc));
     }
 
-    while ((p_desc_n = desc22_get_entry(p_desc, n++)) != NULL) {
+    desc22_each_entry(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque, "<FLEXMUX_BUFFER_DESC flexmux_channel=\"0x%02x\" buffer_size=\"%u\"/>",

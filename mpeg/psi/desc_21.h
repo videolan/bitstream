@@ -94,21 +94,20 @@ static inline void desc21n_set_substruct_count(uint8_t *p_desc_n, uint8_t i_subs
     p_desc_n[2] = i_substruct_count;
 }
 
-static inline uint8_t *desc21_get_entry(const uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc21_next_entry(const uint8_t *p_desc,
+                                         const uint8_t *p_desc_n)
 {
-    const uint8_t *p_desc_n = p_desc + DESC21_HEADER_SIZE;
-    uint8_t i_desc_size = desc_get_length(p_desc);
-
-    while (n) {
-        if (p_desc_n + desc21n_get_length(p_desc_n) - p_desc > i_desc_size)
-            return NULL;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC21_HEADER_SIZE;
+    else
         p_desc_n += 1 + desc21n_get_length(p_desc_n);
-        n--;
-    }
-    if (p_desc_n - p_desc > i_desc_size)
-        return NULL;
-    return (uint8_t *)p_desc_n;
+    return desc_check(p_desc, p_desc_n, 1);
 }
+
+#define desc21_each_entry(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc21_next_entry)
+#define desc21_get_entry(DESC, N) \
+    desc_get_at(DESC, N, desc21_next_entry)
 
 static inline uint8_t desc21k_get_slot_count(const uint8_t *p_desc_k)
 {
@@ -150,53 +149,53 @@ static inline void desc21k_set_number_of_bytes(uint8_t *p_desc_k, uint8_t i_inde
     p_desc_k[DESC21_SUBSTRUCT_HEADER_SIZE + i_index * 2 + 1] = i_number_of_bytes;
 }
 
-static inline uint8_t *desc21n_get_substruct(const uint8_t *p_desc_n, uint8_t k)
+static inline uint8_t *desc21n_check_substruct(const uint8_t *p_desc_n,
+                                               const uint8_t *p_desc_k)
 {
-    const uint8_t *p_desc_k = p_desc_n + DESC21_ENTRY_HEADER_SIZE;
-    uint8_t i_entry_size = desc21n_get_length(p_desc_n);
-
-    if (desc21n_get_substruct_count(p_desc_n) == 0)
-        return NULL;
-
-    if (k > desc21n_get_substruct_count(p_desc_n) - 1)
-        return NULL;
-
-    while (k) {
-        if (p_desc_k - p_desc_n > i_entry_size)
-            return NULL;
-        p_desc_k += DESC21_SUBSTRUCT_HEADER_SIZE + (2 * desc21k_get_slot_count(p_desc_k));
-        k--;
-    }
-    if (p_desc_n - p_desc_k > i_entry_size)
-        return NULL;
-    return (uint8_t *)p_desc_k;
+    uint8_t length = desc21n_get_length(p_desc_n);
+    return p_desc_k < p_desc_n + DESC21_ENTRY_HEADER_SIZE ||
+        p_desc_k + DESC21_SUBSTRUCT_HEADER_SIZE > p_desc_n + 1 + length ?
+        NULL : (uint8_t *)p_desc_k;
 }
+
+static inline uint8_t *desc21n_next_substruct(const uint8_t *p_desc_n,
+                                              const uint8_t *p_desc_k)
+{
+    if (!p_desc_k)
+        p_desc_k = p_desc_n + DESC21_ENTRY_HEADER_SIZE;
+    else
+        p_desc_k += DESC21_SUBSTRUCT_HEADER_SIZE +
+            2 * desc21k_get_slot_count(p_desc_k);
+    return desc21n_check_substruct(p_desc_n, p_desc_k);
+}
+
+#define desc21n_each_substruct(DESC_N, DESC_K) \
+    desc_each(DESC_N, DESC_K, desc21n_next_substruct)
+#define desc21n_get_substruct(DESC_N, N) \
+    desc_get_at(DESC_N, N, desc21n_next_substruct)
 
 static inline bool desc21_validate(const uint8_t *p_desc)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
     int i_desc_length = desc_get_length(p_desc);
-    while ((p_desc_n = desc21_get_entry(p_desc, j++)) != NULL) {
+    desc21_each_entry(p_desc, p_desc_n) {
+        uint8_t length = desc21n_get_length(p_desc_n);
+        int count = desc21n_get_substruct_count(p_desc_n);
         int i_calc_entry_length = DESC21_ENTRY_HEADER_SIZE - 1;
-        uint8_t *p_desc_k;
-        uint8_t k = 0;
-        while ((p_desc_k = desc21n_get_substruct(p_desc_n, k++)) != NULL) {
-            i_calc_entry_length += DESC21_SUBSTRUCT_HEADER_SIZE + (2 * desc21k_get_slot_count(p_desc_k));
+        desc21n_each_substruct(p_desc_n, p_desc_k) {
+            i_calc_entry_length += DESC21_SUBSTRUCT_HEADER_SIZE +
+                2 * desc21k_get_slot_count(p_desc_k);
+            count--;
         }
-        if (i_calc_entry_length != desc21n_get_length(p_desc_n))
+        if (i_calc_entry_length != length || count != 0)
             return false;
-        i_desc_length -= desc21n_get_length(p_desc_n);
+        i_desc_length -= length + 1;
     }
-    return i_desc_length >= 0;
+    return i_desc_length == 0;
 }
 
 static inline void desc21_print(const uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    const uint8_t *p_desc_n;
-    uint8_t n = 0;
-
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque, "<MUXCODE_DESC>");
@@ -205,10 +204,7 @@ static inline void desc21_print(const uint8_t *p_desc, f_print pf_print,
         pf_print(opaque, "    - desc 21 muxcode");
     }
 
-    while ((p_desc_n = desc21_get_entry(p_desc, n++)) != NULL) {
-        const uint8_t *p_desc_k;
-        uint8_t k = 0;
-
+    desc21_each_entry(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,
@@ -231,7 +227,7 @@ static inline void desc21_print(const uint8_t *p_desc, f_print pf_print,
                     );
         }
 
-        while ((p_desc_k = desc21n_get_substruct(p_desc_n, k++)) != NULL) {
+        desc21n_each_substruct(p_desc_n, p_desc_k) {
             uint8_t i_slot_count = desc21k_get_slot_count(p_desc_k);
             uint8_t i_repetition_count = desc21k_get_repetition_count(p_desc_k);
             uint8_t r;

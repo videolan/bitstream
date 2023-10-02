@@ -75,21 +75,20 @@ static inline void desc5bn_set_networkname(uint8_t *p_desc_n, const uint8_t *p_n
     memcpy(p_desc_n + 4, p_network_name, i_length);
 }
 
-static inline uint8_t *desc5b_get_data(const uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc5b_next_data(const uint8_t *p_desc,
+                                        const uint8_t *p_desc_n)
 {
-    const uint8_t *p_desc_n = p_desc + DESC5B_HEADER_SIZE;
-    uint8_t i_desc_size = desc_get_length(p_desc);
-
-    while (n) {
-        if (p_desc_n + DESC5B_DATA_SIZE - p_desc > i_desc_size)
-            return NULL;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC5B_HEADER_SIZE;
+    else
         p_desc_n += DESC5B_DATA_SIZE + desc5bn_get_networkname_length(p_desc_n);
-        n--;
-    }
-    if (p_desc_n - p_desc > i_desc_size)
-        return NULL;
-    return (uint8_t *)p_desc_n;
+    return desc_check(p_desc, p_desc_n, DESC5B_DATA_SIZE);
 }
+
+#define desc5b_each_data(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc5b_next_data)
+#define desc5b_get_data(DESC, N) \
+    desc_get_at(DESC, N, desc5b_next_data)
 
 static inline bool desc5b_validate(const uint8_t *p_desc)
 {
@@ -109,11 +108,9 @@ static inline void desc5b_print(const uint8_t *p_desc,
                                 f_iconv pf_iconv, void *iconv_opaque,
                                 print_type_t i_print_type)
 {
-    const uint8_t *p_desc_n;
     bool b_bouquet = desc_get_tag(p_desc) == 0x5c;
-    uint8_t j = 0;
 
-    while ((p_desc_n = desc5b_get_data(p_desc, j++)) != NULL) {
+    desc5b_each_data(p_desc, p_desc_n) {
         uint8_t i_network_name_length;
         const uint8_t *p_network_name = desc5bn_get_networkname(p_desc_n, &i_network_name_length);
         char *psz_network_name = dvb_string_get(p_network_name, i_network_name_length, pf_iconv, iconv_opaque);

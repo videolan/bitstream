@@ -46,6 +46,7 @@ extern "C"
  * Descriptor 0x4a: Linkage descriptor
  *****************************************************************************/
 #define DESC4A_HEADER_SIZE      (DESC_HEADER_SIZE + 7)
+#define DESC4A_EXT_EVENT_SIZE   3
 
 #define DESC4A_LINKAGE_MOBILE       0x08
 #define DESC4A_LINKAGE_EVENT        0x0d
@@ -424,7 +425,7 @@ static inline void desc4an_set_ext_event_service_id(uint8_t *p_desc_n, uint16_t 
 
 static inline uint8_t desc4an_get_ext_event_length(const uint8_t *p_desc_n)
 {
-    uint8_t i_len = 3;
+    uint8_t i_len = DESC4A_EXT_EVENT_SIZE;
     if (desc4an_ext_event_have_user_defined_id(p_desc_n))
         return i_len + 2;
     if (desc4an_ext_event_have_target_tsid(p_desc_n))
@@ -436,25 +437,20 @@ static inline uint8_t desc4an_get_ext_event_length(const uint8_t *p_desc_n)
     return i_len;
 }
 
-static inline uint8_t *desc4a_get_ext_event(const uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc4a_next_ext_event(const uint8_t *p_desc,
+                                             const uint8_t *p_desc_n)
 {
-    uint8_t *p     = (uint8_t *)p_desc + DESC4A_HEADER_SIZE;
-    uint8_t *p_end = (uint8_t *)p_desc + DESC_HEADER_SIZE + desc_get_length(p_desc);
-
-    if (p == p_end)
-        return NULL;
-
-    if (n == 0)
-        return p;
-
-    while (p < p_end && n) {
-        p += desc4an_get_ext_event_length(p);
-        if (--n == 0 && p < p_end )
-            return p;
-    }
-
-    return NULL;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC4A_HEADER_SIZE;
+    else
+        p_desc_n += desc4an_get_ext_event_length(p_desc_n);
+    return desc_check(p_desc, p_desc_n, DESC4A_EXT_EVENT_SIZE);
 }
+
+#define desc4a_each_ext_event(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc4a_next_ext_event)
+#define desc4a_get_ext_event(DESC, N) \
+    desc_get_at(DESC, N, desc4a_next_ext_event)
 
 /* Generic desc4a continued... */
 
@@ -477,8 +473,6 @@ static inline bool desc4a_validate(const uint8_t *p_desc)
 static inline void desc4a_print(const uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j;
-    uint8_t *p_desc_n;
     uint8_t i_linkage = desc4a_get_linkage(p_desc);
 
     switch (i_print_type) {
@@ -507,8 +501,7 @@ static inline void desc4a_print(const uint8_t *p_desc, f_print pf_print,
                  );
         }
         if (i_linkage == DESC4A_LINKAGE_EXT_EVENT) {
-            j = 0;
-            while ((p_desc_n = desc4a_get_ext_event(p_desc, j++)) != NULL) {
+            desc4a_each_ext_event(p_desc, p_desc_n) {
                 pf_print(opaque,
                      "<EXTENDED_EVENT_LINKAGE target_event_id=\"%u\" target_listed=\"%u\" event_simulcast=\"%u\""
                      " link_type=\"%u\" link_type_txt=\"%s\""
@@ -559,8 +552,7 @@ static inline void desc4a_print(const uint8_t *p_desc, f_print pf_print,
                  );
         }
         if (i_linkage == DESC4A_LINKAGE_EXT_EVENT) {
-            j = 0;
-            while ((p_desc_n = desc4a_get_ext_event(p_desc, j++)) != NULL) {
+            desc4a_each_ext_event(p_desc, p_desc_n) {
                 pf_print(opaque,
                      "        - extended_event_linkage target_event_id=%u target_listed=%u event_simulcast=%u"
                      " link_type=%u link_type_txt=\"%s\""

@@ -60,14 +60,20 @@ static inline void desc46_init(uint8_t *p_desc)
     desc_set_tag(p_desc, 0x46);
 }
 
-static inline uint8_t *desc46_get_language(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc46_next_language(const uint8_t *p_desc,
+                                            const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC46_HEADER_SIZE + n * DESC46_LANGUAGE_SIZE;
-    if (p_desc_n + DESC46_LANGUAGE_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC46_HEADER_SIZE)
-        return NULL;
-    return p_desc_n;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC46_HEADER_SIZE;
+    else
+        p_desc_n += DESC46_LANGUAGE_SIZE;
+    return desc_check(p_desc, p_desc_n, DESC46_LANGUAGE_SIZE);
 }
+
+#define desc46_each_language(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc46_next_language)
+#define desc46_get_language(DESC, N) \
+    desc_get_at(DESC, N, desc46_next_language)
 
 #define desc46n_set_code desc0an_set_code
 #define desc46n_get_code desc0an_get_code
@@ -123,11 +129,7 @@ static inline bool desc46_validate(const uint8_t *p_desc)
 static inline void desc46_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
-    while ((p_desc_n = desc46_get_language(p_desc, j)) != NULL) {
-        j++;
+    desc46_each_language(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,

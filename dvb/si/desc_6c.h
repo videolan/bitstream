@@ -178,31 +178,39 @@ static inline void desc6ck_set_subcell_extend_of_longtitude(uint8_t *p_desc_k, u
 
 /* ----- */
 
-static inline uint8_t *desc6c_get_cell(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc6c_next_cell(const uint8_t *p_desc,
+                                        const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC6C_HEADER_SIZE;
-    uint8_t i_desc_size = desc_get_length(p_desc);
-
-    while (n) {
-        uint8_t i_desc6c_data_size = DESC6C_DATA_SIZE + desc6cn_get_subcell_info_loop_length(p_desc_n);
-        if (p_desc_n + i_desc6c_data_size - p_desc > i_desc_size)
-            return NULL;
-        p_desc_n += i_desc6c_data_size;
-        n--;
-    }
-    if (p_desc_n - p_desc > i_desc_size)
-        return NULL;
-    return p_desc_n;
-}
-
-static inline uint8_t *desc6cn_get_subcell(uint8_t *p_desc_n, uint8_t k)
-{
-    int ofs = k * DESC6C_SUBCELL_SIZE;
-    if (ofs < desc6cn_get_subcell_info_loop_length(p_desc_n))
-        return p_desc_n + DESC6C_DATA_SIZE + ofs;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC6C_HEADER_SIZE;
     else
-        return NULL;
+        p_desc_n += DESC6C_DATA_SIZE
+            + desc6cn_get_subcell_info_loop_length(p_desc_n);
+    return desc_check(p_desc, p_desc_n, DESC6C_DATA_SIZE);
 }
+
+#define desc6c_each_cell(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc6c_next_cell)
+#define desc6c_get_cell(DESC, N) \
+    desc_get_at(DESC, N, desc6c_next_cell)
+
+static inline uint8_t *desc6cn_next_subcell(const uint8_t *p_desc,
+                                            const uint8_t *p_desc_n)
+{
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC6C_DATA_SIZE;
+    else
+        p_desc_n += DESC6C_SUBCELL_SIZE;
+    if (p_desc_n >= p_desc + DESC6C_DATA_SIZE +
+        desc6cn_get_subcell_info_loop_length(p_desc))
+        return NULL;
+    return (uint8_t *)p_desc_n;
+}
+
+#define desc6cn_each_subcell(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc6cn_next_subcell)
+#define desc6cn_get_subcell(DESC, N) \
+    desc_get_at(DESC, N, desc6cn_next_subcell)
 
 static inline bool desc6c_validate(const uint8_t *p_desc)
 {
@@ -219,12 +227,7 @@ static inline bool desc6c_validate(const uint8_t *p_desc)
 static inline void desc6c_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t n = 0;
-    uint8_t *p_desc_n;
-
-    while ((p_desc_n = desc6c_get_cell(p_desc, n++)) != NULL) {
-        uint8_t k = 0;
-        uint8_t *p_desc_k;
+    desc6c_each_cell(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,
@@ -237,7 +240,7 @@ static inline void desc6c_print(uint8_t *p_desc, f_print pf_print,
                 desc6cn_get_cell_extend_of_latitude(p_desc_n),
                 desc6cn_get_cell_extend_of_longtitude(p_desc_n)
             );
-            while ((p_desc_k = desc6cn_get_subcell(p_desc_n, k++)) != NULL) {
+            desc6cn_each_subcell(p_desc_n, p_desc_k) {
                 pf_print(opaque,
                     "<CELL_LIST_SUBCELL_INFO cell_id_extension=\"%u\" subcell_latitude=\"%u\""
                     " subcell_longtitude=\"%u\" subcell_extend_of_latitude=\"%u\""
@@ -262,7 +265,7 @@ static inline void desc6c_print(uint8_t *p_desc, f_print pf_print,
                 desc6cn_get_cell_extend_of_latitude(p_desc_n),
                 desc6cn_get_cell_extend_of_longtitude(p_desc_n)
             );
-            while ((p_desc_k = desc6cn_get_subcell(p_desc_n, k++)) != NULL) {
+            desc6cn_each_subcell(p_desc_n, p_desc_k) {
                 pf_print(opaque,
                     "        - cell_list_subcell_info cell_id_extension=%u subcell_latitude=%u"
                     " subcell_longtitude=%u subcell_extend_of_latitude=%u"

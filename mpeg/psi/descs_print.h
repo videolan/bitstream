@@ -47,13 +47,10 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
                                f_iconv pf_iconv, void *iconv_opaque,
                                print_type_t i_print_type)
 {
-    uint16_t j = 0;
-    uint8_t *p_desc;
     uint32_t i_private_data_specifier = 0;
 
-    while ((p_desc = descl_get_desc(p_descl, i_length, j)) != NULL) {
+    descl_each_desc(p_descl, i_length, p_desc) {
         uint8_t i_tag = desc_get_tag(p_desc);
-        j++;
 
         desc_print_begin(p_desc, pf_print, print_opaque, i_print_type);
         if (i_private_data_specifier == 0x28 ||

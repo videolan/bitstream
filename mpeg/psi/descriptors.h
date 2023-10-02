@@ -139,20 +139,58 @@ static inline void desc_print(const uint8_t *p_desc, f_print pf_print,
 }
 
 /*****************************************************************************
+ * Descriptor helpers
+ *****************************************************************************/
+static inline uint8_t *desc_check(const uint8_t *p_desc,
+                                  const uint8_t *p_desc_n,
+                                  uint8_t size)
+{
+    if (!p_desc || !p_desc_n ||
+        p_desc_n < p_desc + DESC_HEADER_SIZE ||
+        p_desc_n + size > p_desc + DESC_HEADER_SIZE + desc_get_length(p_desc))
+        return NULL;
+    return (uint8_t *)p_desc_n;
+}
+
+static inline uint8_t *desc_get_at(const uint8_t *p_desc, uint8_t n,
+                                   uint8_t *(next)(const uint8_t *p_desc,
+                                                   const uint8_t *p_desc_n))
+{
+    for (uint8_t *p = next(p_desc, NULL); p; p = next(p_desc, p))
+        if (!n--)
+            return p;
+    return NULL;
+}
+
+#define desc_each(DESC, ENT, NEXT) \
+    for (uint8_t *ENT = NEXT(DESC, NULL); ENT; ENT = NEXT(DESC, ENT))
+
+/*****************************************************************************
  * Descriptors list
  *****************************************************************************/
+static inline uint8_t *descl_next_desc(const uint8_t *p_descl,
+                                       uint16_t i_length,
+                                       const uint8_t *p_desc)
+{
+    if (p_desc == NULL)
+        p_desc = p_descl;
+    else
+        p_desc += DESC_HEADER_SIZE + desc_get_length(p_desc);
+    return p_desc + DESC_HEADER_SIZE > p_descl + i_length ?
+        NULL : (uint8_t *)p_desc;
+}
+
+#define descl_each_desc(DESCL, LENGTH, DESC)                 \
+    for (uint8_t *DESC = descl_next_desc(DESCL, LENGTH, NULL);  \
+         DESC; DESC = descl_next_desc(DESCL, LENGTH, DESC))
+
 static inline uint8_t *descl_get_desc(uint8_t *p_descl, uint16_t i_length,
                                       uint16_t n)
 {
-    uint8_t *p_desc = p_descl;
-
-    while (n) {
-        if (p_desc + DESC_HEADER_SIZE - p_descl > i_length) return NULL;
-        p_desc += DESC_HEADER_SIZE + desc_get_length(p_desc);
-        n--;
-    }
-    if (p_desc - p_descl >= i_length) return NULL;
-    return p_desc;
+    descl_each_desc(p_descl, i_length, p_desc)
+        if (!n--)
+            return p_desc;
+    return NULL;
 }
 
 static inline bool descl_validate(const uint8_t *p_descl, uint16_t i_length)
@@ -183,11 +221,15 @@ static inline uint16_t descs_get_length(const uint8_t *p_descs)
     return ((p_descs[0] & 0xf) << 8) | p_descs[1];
 }
 
-static inline uint8_t *descs_get_desc(uint8_t *p_descs, uint16_t n)
+static inline uint8_t *descs_next_desc(const uint8_t *p_descs,
+                                       const uint8_t *p_desc)
 {
-    return descl_get_desc(p_descs + DESCS_HEADER_SIZE,
-                          descs_get_length(p_descs), n);
+    return descl_next_desc(p_descs + DESCS_HEADER_SIZE,
+                           descs_get_length(p_descs), p_desc);
 }
+
+#define descs_each_desc(DESCS, DESC) desc_each(DESCS, DESC, descs_next_desc)
+#define descs_get_desc(DESCS, N) desc_get_at(DESCS, N, descs_next_desc)
 
 static inline bool descs_validate_desc(const uint8_t *p_descs,
                                        const uint8_t *p_desc,

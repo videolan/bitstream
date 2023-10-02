@@ -86,14 +86,21 @@ static inline void desc4bn_set_sid(uint8_t *p_desc_n, uint16_t i_sid)
     p_desc_n[5] =  i_sid       & 0xff;
 }
 
-static inline uint8_t *desc4b_get_reference(uint8_t *p_desc, uint8_t n)
+
+static inline uint8_t *desc4b_next_reference(const uint8_t *p_desc,
+                                             const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC4B_HEADER_SIZE + n * DESC4B_REFERENCE_SIZE;
-    if (p_desc_n + DESC4B_REFERENCE_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC4B_HEADER_SIZE)
-        return NULL;
-    return p_desc_n;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC4B_HEADER_SIZE;
+    else
+        p_desc_n += DESC4B_REFERENCE_SIZE;
+    return desc_check(p_desc, p_desc_n, DESC4B_REFERENCE_SIZE);
 }
+
+#define desc4b_each_reference(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc4b_next_reference)
+#define desc4b_get_reference(DESC, N) \
+    desc_get_at(DESC, N, desc4b_next_reference)
 
 static inline bool desc4b_validate(const uint8_t *p_desc)
 {
@@ -103,11 +110,7 @@ static inline bool desc4b_validate(const uint8_t *p_desc)
 static inline void desc4b_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
-    while ((p_desc_n = desc4b_get_reference(p_desc, j)) != NULL) {
-        j++;
+    desc4b_each_reference(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,

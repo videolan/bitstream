@@ -86,14 +86,20 @@ static inline void desc62n_set_freq(uint8_t *p_desc_n, uint32_t i_freq)
     p_desc_n[3] =  i_freq        & 0xff;
 }
 
-static inline uint8_t *desc62_get_frequency(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc62_next_frequency(const uint8_t *p_desc,
+                                             const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC62_HEADER_SIZE + n * DESC62_FREQ_SIZE;
-    if (p_desc_n + DESC62_FREQ_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC62_HEADER_SIZE)
-        return NULL;
-    return p_desc_n;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC62_HEADER_SIZE;
+    else
+        p_desc_n += DESC62_FREQ_SIZE;
+    return desc_check(p_desc, p_desc_n, DESC62_FREQ_SIZE);
 }
+
+#define desc62_each_frequency(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc62_next_frequency)
+#define desc62_get_frequency(DESC, N) \
+    desc_get_at(DESC, N, desc62_next_frequency)
 
 static inline bool desc62_validate(const uint8_t *p_desc)
 {
@@ -103,11 +109,7 @@ static inline bool desc62_validate(const uint8_t *p_desc)
 static inline void desc62_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
-    while ((p_desc_n = desc62_get_frequency(p_desc, j)) != NULL) {
-        j++;
+    desc62_each_frequency(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,

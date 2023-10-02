@@ -54,15 +54,20 @@ static inline void desc83p28_init(uint8_t *p_desc)
     desc_set_tag(p_desc, 0x83);
 }
 
-static inline uint8_t *desc83p28_get_service(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc83p28_next_service(const uint8_t *p_desc,
+                                              const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC83P28_HEADER_SIZE
-                         + n * DESC83P28_SERVICE_SIZE;
-    if (p_desc_n + DESC83P28_SERVICE_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC83P28_HEADER_SIZE)
-        return NULL;
-    return p_desc_n;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC83P28_HEADER_SIZE;
+    else
+        p_desc_n += DESC83P28_SERVICE_SIZE;
+    return desc_check(p_desc, p_desc_n, DESC83P28_SERVICE_SIZE);
 }
+
+#define desc83p28_each_service(DESC, DESC_N)             \
+    desc_each(DESC, DESC_N, desc83p28_next_service)
+#define desc83p28_get_service(DESC, N) \
+    desc_get_at(DESC, N, desc83p28_next_service)
 
 static inline uint16_t desc83p28n_get_sid(const uint8_t *p_desc_n)
 {
@@ -87,11 +92,7 @@ static inline bool desc83p28_validate(const uint8_t *p_desc)
 static inline void desc83p28_print(uint8_t *p_desc, f_print pf_print,
                                    void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
-    while ((p_desc_n = desc83p28_get_service(p_desc, j)) != NULL) {
-        j++;
+    desc83p28_each_service(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque,
