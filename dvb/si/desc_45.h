@@ -114,21 +114,20 @@ static inline void desc45n_set_line_offset(uint8_t *p_desc_n, uint8_t idx, uint8
     p_desc_n[idx + 2] = 0xc0 | (p_desc_n[idx + 2] & 0x20) | (i_line_offset & 0x1f);
 }
 
-static inline uint8_t *desc45_get_data(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc45_next_data(const uint8_t *p_desc,
+                                        const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC45_HEADER_SIZE;
-    uint8_t i_desc_size = desc_get_length(p_desc);
-
-    while (n) {
-        if (p_desc_n + DESC45_DATA_SIZE - p_desc > i_desc_size)
-            return NULL;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC45_HEADER_SIZE;
+    else
         p_desc_n += DESC45_DATA_SIZE + desc45n_get_data_length(p_desc_n);
-        n--;
-    }
-    if (p_desc_n - p_desc > i_desc_size)
-        return NULL;
-    return p_desc_n;
+    return desc_check(p_desc, p_desc_n, DESC45_DATA_SIZE);
 }
+
+#define desc45_each_data(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc45_next_data)
+#define desc45_get_data(DESC, N) \
+    desc_get_at(DESC, N, desc45_next_data)
 
 static inline bool desc45_validate(const uint8_t *p_desc)
 {
@@ -146,13 +145,10 @@ static inline bool desc45_validate(const uint8_t *p_desc)
 static inline void desc45_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
     if (i_print_type == PRINT_XML)
         pf_print(opaque, "<VBI_DATA_DESC>");
 
-    while ((p_desc_n = desc45_get_data(p_desc, j++)) != NULL) {
+    desc45_each_data(p_desc, p_desc_n) {
         uint8_t k;
         uint8_t i_service_id  = desc45n_get_service_id(p_desc_n);
         uint8_t i_service_len = desc45n_get_data_length(p_desc_n);

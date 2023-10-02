@@ -64,14 +64,20 @@ static inline uint16_t desc53n_get_ca_sysid(const uint8_t *p_desc_n)
     return (p_desc_n[0] << 8) | p_desc_n[1];
 }
 
-static inline uint8_t *desc53_get_ca(uint8_t *p_desc, uint8_t n)
+static inline uint8_t *desc53_next_ca(const uint8_t *p_desc,
+                                      const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC53_HEADER_SIZE + n * DESC53_CA_SIZE;
-    if (p_desc_n + DESC53_CA_SIZE - p_desc
-         > desc_get_length(p_desc) + DESC53_HEADER_SIZE)
-        return NULL;
-    return p_desc_n;
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC53_HEADER_SIZE;
+    else
+        p_desc_n += DESC53_CA_SIZE;
+    return desc_check(p_desc, p_desc_n, DESC53_CA_SIZE);
 }
+
+#define desc53_each_ca(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc53_next_ca)
+#define desc53_get_ca(DESC, N) \
+    desc_get_at(DESC, N, desc53_next_ca)
 
 static inline bool desc53_validate(const uint8_t *p_desc)
 {
@@ -81,11 +87,7 @@ static inline bool desc53_validate(const uint8_t *p_desc)
 static inline void desc53_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t j = 0;
-    uint8_t *p_desc_n;
-
-    while ((p_desc_n = desc53_get_ca(p_desc, j)) != NULL) {
-        j++;
+    desc53_each_ca(p_desc, p_desc_n) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(opaque, "<CA_IDENTIFIER_DESC ca_sysid=\"0x%04x\"/>",

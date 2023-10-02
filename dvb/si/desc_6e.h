@@ -187,40 +187,36 @@ static inline void desc6en_set_component_tag(uint8_t *p_desc_n, uint8_t i_compon
     p_desc_n[7] = i_component_tag;
 }
 
-static inline uint8_t *desc6e_get_announcement(uint8_t *p_desc, uint8_t n)
+static inline uint8_t desc6en_get_data_size(const uint8_t *p_desc_n)
 {
-    uint8_t *p_desc_n = p_desc + DESC6E_HEADER_SIZE;
-    int i_loop_len = desc_get_length(p_desc) - (DESC6E_HEADER_SIZE - DESC_HEADER_SIZE);
-
-    if (i_loop_len <= 0)
-        return NULL;
-
-    while (n) {
-        uint8_t i_desc6e_data_size = DESC6E_DATA_SIZE;
-
-        uint8_t i_ref_type = desc6en_get_reference_type(p_desc_n);
-        if (i_ref_type == 0x01 || i_ref_type == 0x02 || i_ref_type == 0x03)
-            i_desc6e_data_size += DESC6E_EXT_DATA_SIZE;
-
-        p_desc_n   += i_desc6e_data_size;
-        i_loop_len -= i_desc6e_data_size;
-        if (i_loop_len <= 0)
-            return NULL;
-        n--;
-    }
-
-    return p_desc_n;
+    uint8_t size = DESC6E_DATA_SIZE;
+    uint8_t i_ref_type = desc6en_get_reference_type(p_desc_n);
+    if (i_ref_type == 0x01 || i_ref_type == 0x02 || i_ref_type == 0x03)
+        size += DESC6E_EXT_DATA_SIZE;
+    return size;
 }
+
+static inline uint8_t *desc6e_next_announcement(const uint8_t *p_desc,
+                                                const uint8_t *p_desc_n)
+{
+    if (!p_desc_n)
+        p_desc_n = p_desc + DESC6E_HEADER_SIZE;
+    else
+        p_desc_n += desc6en_get_data_size(p_desc_n);
+    return desc_check(p_desc, p_desc_n, DESC6E_DATA_SIZE);
+}
+
+#define desc6e_each_announcement(DESC, DESC_N) \
+    desc_each(DESC, DESC_N, desc6e_next_announcement)
+#define desc6e_get_announcement(DESC, N) \
+    desc_get_at(DESC, N, desc6e_next_announcement)
 
 static inline bool desc6e_validate(const uint8_t *p_desc)
 {
     const uint8_t *p_desc_n = p_desc + DESC6E_HEADER_SIZE;
     int i_desc_size = desc_get_length(p_desc);
     while (i_desc_size > (DESC6E_HEADER_SIZE - DESC_HEADER_SIZE)) {
-        uint8_t i_desc6e_data_size = DESC6E_DATA_SIZE;
-        uint8_t i_ref_type = desc6en_get_reference_type(p_desc_n);
-        if (i_ref_type == 0x01 || i_ref_type == 0x02 || i_ref_type == 0x03)
-            i_desc6e_data_size += DESC6E_EXT_DATA_SIZE;
+        uint8_t i_desc6e_data_size = desc6en_get_data_size(p_desc_n);
         i_desc_size -= i_desc6e_data_size;
         p_desc_n    += i_desc6e_data_size;
     }
@@ -230,9 +226,6 @@ static inline bool desc6e_validate(const uint8_t *p_desc)
 static inline void desc6e_print(uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
-    uint8_t n = 0;
-    uint8_t *p_desc_n;
-
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(opaque,
@@ -279,7 +272,7 @@ static inline void desc6e_print(uint8_t *p_desc, f_print pf_print,
         );
     }
 
-    while ((p_desc_n = desc6e_get_announcement(p_desc, n++)) != NULL) {
+    desc6e_each_announcement(p_desc, p_desc_n) {
         uint8_t i_announcement_type = desc6en_get_announcement_type(p_desc_n);
         uint8_t i_reference_type = desc6en_get_reference_type(p_desc_n);
         bool b_extra_data = (i_reference_type == 0x01 || i_reference_type == 0x02 || i_reference_type == 0x03);

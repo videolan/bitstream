@@ -43,9 +43,6 @@ static inline void pmt_print(uint8_t *p_pmt,
                              f_iconv pf_iconv, void *iconv_opaque,
                              print_type_t i_print_type)
 {
-    uint8_t *p_es;
-    uint8_t j = 0;
-
     switch (i_print_type) {
     case PRINT_XML:
         pf_print(print_opaque, "<PMT program=\"%hu\" version=\"%hhu\" current_next=\"%d\" pcrpid=\"%hu\">",
@@ -63,8 +60,7 @@ static inline void pmt_print(uint8_t *p_pmt,
     descs_print(pmt_get_descs(p_pmt), pf_print, print_opaque,
                 pf_iconv, iconv_opaque, i_print_type);
 
-    while ((p_es = pmt_get_es(p_pmt, j)) != NULL) {
-        j++;
+    pmt_each_es(p_pmt, p_es) {
         switch (i_print_type) {
         case PRINT_XML:
             pf_print(print_opaque, "<ES pid=\"%hu\" streamtype=\"0x%02x\" streamtype_txt=\"%s\">",
