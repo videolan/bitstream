@@ -51,6 +51,7 @@
 #include <bitstream/mpeg/psi/desc_10.h>
 #include <bitstream/mpeg/psi/desc_11.h>
 #include <bitstream/mpeg/psi/desc_12.h>
+#include <bitstream/mpeg/psi/desc_13.h>
 #include <bitstream/mpeg/psi/desc_1b.h>
 #include <bitstream/mpeg/psi/desc_1c.h>
 #include <bitstream/mpeg/psi/desc_1d.h>
@@ -68,5 +69,8 @@
 #include <bitstream/mpeg/psi/desc_2a.h>
 #include <bitstream/mpeg/psi/desc_2b.h>
 #include <bitstream/mpeg/psi/desc_2c.h>
+#include <bitstream/mpeg/psi/desc_38.h>
+#include <bitstream/mpeg/psi/desc_3f.h>
+#include <bitstream/mpeg/psi/desc_3f03.h>
 
 #endif

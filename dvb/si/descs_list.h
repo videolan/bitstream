@@ -81,9 +81,15 @@
 #include <bitstream/dvb/si/desc_6c.h>
 #include <bitstream/dvb/si/desc_6d.h>
 #include <bitstream/dvb/si/desc_6e.h>
+#include <bitstream/dvb/si/desc_6f.h>
 #include <bitstream/dvb/si/desc_7a.h>
 #include <bitstream/dvb/si/desc_7b.h>
 #include <bitstream/dvb/si/desc_7c.h>
+#include <bitstream/dvb/si/desc_7f.h>
+#include <bitstream/dvb/si/desc_7f00.h>
+#include <bitstream/dvb/si/desc_7f06.h>
+#include <bitstream/dvb/si/desc_7f15.h>
+#include <bitstream/dvb/si/desc_7f19.h>
 #include <bitstream/dvb/si/desc_83p28.h>
 #include <bitstream/dvb/si/desc_88p28.h>
 

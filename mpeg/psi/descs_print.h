@@ -115,6 +115,7 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
         CASE_DESC(10)
         CASE_DESC(11)
         CASE_DESC(12)
+        CASE_DESC(13)
         CASE_DESC(1b)
         CASE_DESC(1c)
         CASE_DESC(1d)
@@ -132,6 +133,21 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
         CASE_DESC(2a)
         CASE_DESC(2b)
         CASE_DESC(2c)
+        CASE_DESC(38)
+        case 0x3f: {
+            if (desc3f_validate(p_desc)) {
+                uint16_t i_tag_ext = 0x3f00 + desc3f_get_tag_extension(p_desc);
+                switch (i_tag_ext) {
+                    CASE_DESC(3f03)
+                    default:
+                        desc3f_print(p_desc, pf_print, print_opaque,
+                                     i_print_type);
+                }
+            } else
+                desc_print_error(p_desc, pf_print, print_opaque, i_print_type);
+            break;
+        }
+
         CASE_DESC_ICONV(40)
         CASE_DESC(41)
         CASE_DESC(42)
@@ -178,11 +194,29 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
         CASE_DESC(6c)
         CASE_DESC(6d)
         CASE_DESC(6e)
+        CASE_DESC(6f)
         CASE_DESC(7a)
         CASE_DESC(7b)
         CASE_DESC(7c)
         CASE_DESC(81)
         CASE_DESC(cc)
+
+        case 0x7f: {
+            if (desc7f_validate(p_desc)) {
+                uint16_t i_tag_ext = 0x7f00 + desc7f_get_tag_extension(p_desc);
+                switch (i_tag_ext) {
+                    CASE_DESC(7f00)
+                    CASE_DESC(7f06)
+                    CASE_DESC(7f15)
+                    CASE_DESC(7f19)
+                    default:
+                        desc7f_print(p_desc, pf_print, print_opaque,
+                                     i_print_type);
+                }
+            } else
+                desc_print_error(p_desc, pf_print, print_opaque, i_print_type);
+            break;
+        }
 
 #undef CASE_DESC
 #undef CASE_DESC_ICONV
