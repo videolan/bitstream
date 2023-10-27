@@ -93,7 +93,7 @@ static inline void desc6f_print(const uint8_t *p_desc, f_print pf_print,
         switch (i_print_type) {
             case PRINT_XML:
                 pf_print(opaque, "<APPLICATION type=\"%u\""
-                         "AIT_version_number=\"%u\"/>",
+                         " AIT_version_number=\"%u\"/>",
                          desc6f_app_get_type(p_desc_n),
                          desc6f_app_get_AIT_version_number(p_desc_n));
                 break;
