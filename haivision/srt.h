@@ -533,7 +533,7 @@ static inline bool srt_check_handshake(const uint8_t *cif, size_t n)
     uint16_t ext = srt_get_handshake_extension(cif);
 
     if (v == SRT_HANDSHAKE_VERSION && ext && ext != SRT_MAGIC_CODE) {
-        const uint8_t *ext = srt_get_handshake_extension_buf(cif);
+        const uint8_t *ext = srt_get_handshake_extension_buf((uint8_t*)cif);
         while (n) {
             if (n < SRT_HANDSHAKE_CIF_EXTENSION_MIN_SIZE)
                 return false;
@@ -664,7 +664,7 @@ static inline void srt_km_set_klen(uint8_t *km, const uint8_t klen)
     km[15] = klen;
 }
 
-static inline uint8_t *srt_km_get_salt(const uint8_t *km)
+static inline const uint8_t *srt_km_get_salt(const uint8_t *km)
 {
     return &km[16];
 }
