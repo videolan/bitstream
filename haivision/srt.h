@@ -457,7 +457,7 @@ static inline void srt_set_handshake_ip(uint8_t *cif, const struct sockaddr *add
         case AF_INET6: {
             const struct sockaddr_in6 *in6 = (const struct sockaddr_in6 *)addr;
             for (int i = 0; i < 4; i++) {
-                memcpy(&ip, &in6->sin6_addr.s6_addr32[i], 4);
+                memcpy(&ip, &in6->sin6_addr.s6_addr[4*i], sizeof(ip));
                 cif[32+4*i] = (ip >> 24) & 0xff;
                 cif[33+4*i] = (ip >> 16) & 0xff;
                 cif[34+4*i] = (ip >>  8) & 0xff;
@@ -482,10 +482,11 @@ static inline void srt_get_handshake_ip(const uint8_t *cif, struct sockaddr *add
     } else {
         struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)addr;
         in6->sin6_family = AF_INET6;
-        memcpy(&in6->sin6_addr.s6_addr32[0], &ip0, 4); /* why ? */
-        memcpy(&in6->sin6_addr.s6_addr32[1], &ip1, 4); /* why ? */
-        memcpy(&in6->sin6_addr.s6_addr32[2], &ip2, 4); /* why ? */
-        memcpy(&in6->sin6_addr.s6_addr32[3], &ip3, 4); /* why ? */
+        memcpy(&in6->sin6_addr.s6_addr[4*0], &ip0, 4); /* why ? */
+        memcpy(&in6->sin6_addr.s6_addr[4*1], &ip1, 4); /* why ? */
+        memcpy(&in6->sin6_addr.s6_addr[4*2], &ip2, 4); /* why ? */
+        memcpy(&in6->sin6_addr.s6_addr[4*3], &ip3, 4); /* why ? */
+
     }
 }
 
