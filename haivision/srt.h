@@ -34,6 +34,7 @@
 #define __BITSTREAM_HAIVISION_SRT__
 
 #include <stdint.h>   /* uint8_t, uint16_t, etc... */
+#include <string.h>   /* memcpy */
 #include <stdbool.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
