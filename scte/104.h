@@ -41,6 +41,14 @@ extern "C"
 #endif
 
 /*****************************************************************************
+ * SCTE 104 - result codes
+ *****************************************************************************/
+
+#define SCTE104_RESULT_SUCCESSFUL                     100
+#define SCTE104_RESULT_INVALID_MESSAGE_SIZE           114
+#define SCTE104_RESULT_INVALID_MESSAGE_SYNTAX         115
+
+/*****************************************************************************
  * SCTE 104 - timestamp structure
  *****************************************************************************/
 #define SCTE104T_HEADER_SIZE        1
