@@ -41,6 +41,14 @@ extern "C"
 #endif
 
 /*****************************************************************************
+ * SCTE 104 - result codes
+ *****************************************************************************/
+
+#define SCTE104_RESULT_SUCCESSFUL                     100
+#define SCTE104_RESULT_INVALID_MESSAGE_SIZE           114
+#define SCTE104_RESULT_INVALID_MESSAGE_SYNTAX         115
+
+/*****************************************************************************
  * SCTE 104 - timestamp structure
  *****************************************************************************/
 #define SCTE104T_HEADER_SIZE        1
@@ -175,6 +183,8 @@ static inline void scte104t_set_gpi_edge(uint8_t *p, uint8_t i_gpi_edge)
 #define SCTE104_OPID_INIT_RESPONSE_DATA             0x0002
 #define SCTE104_OPID_ALIVE_REQUEST_DATA             0x0003
 #define SCTE104_OPID_ALIVE_RESPONSE_DATA            0x0004
+#define SCTE104_OPID_INJECT_RESPONSE                0x0007
+#define SCTE104_OPID_INJECT_COMPLETE_RESPONSE       0x0008
 #define SCTE104_OPID_INJECT_SECTION                 0x0100
 #define SCTE104_OPID_SPLICE                         0x0101
 #define SCTE104_OPID_SPLICE_NULL                    0x0102
@@ -428,6 +438,48 @@ static inline bool scte104m_validate(const uint8_t *p, const int buf_size)
         return false;
 
     return true;
+}
+
+/*****************************************************************************
+ * SCTE-104 : inject_response_data
+ *****************************************************************************/
+
+#define SCTE104IRD_HEADER_SIZE          1
+
+static inline uint8_t scte104ird_get_message_number(const uint8_t *p)
+{
+    return p[0];
+}
+
+static inline void scte104ird_set_message_number(uint8_t *p, uint8_t i_message_number)
+{
+    p[0] = i_message_number;
+}
+
+/*****************************************************************************
+ * SCTE-104 : inject_complete_response_data
+ *****************************************************************************/
+
+#define SCTE104ICRD_HEADER_SIZE          2
+
+static inline uint8_t scte104icrd_get_message_number(const uint8_t *p)
+{
+    return p[0];
+}
+
+static inline void scte104icrd_set_message_number(uint8_t *p, uint8_t i_message_number)
+{
+    p[0] = i_message_number;
+}
+
+static inline uint8_t scte104icrd_get_cue_message_count(const uint8_t *p)
+{
+    return p[1];
+}
+
+static inline void scte104icrd_set_cue_message_count(uint8_t *p, uint8_t i_cue_message_count)
+{
+    p[1] = i_cue_message_count;
 }
 
 /*****************************************************************************
