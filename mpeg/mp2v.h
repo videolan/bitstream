@@ -570,7 +570,7 @@ static inline void mp2vseqdx_set_vertical(uint8_t *p_mp2vseqdx,
     p_mp2vseqdx[base + 3] = i_vertical << 3;
 }
 
-static inline uint8_t mp2vseqdx_get_vertical(const uint8_t *p_mp2vseqdx)
+static inline uint16_t mp2vseqdx_get_vertical(const uint8_t *p_mp2vseqdx)
 {
     unsigned int base = mp2vseqdx_get_color(p_mp2vseqdx) ? 8 : 5;
     return ((p_mp2vseqdx[base + 1] & 0x1) << 13) |
