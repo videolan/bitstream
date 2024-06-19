@@ -156,26 +156,26 @@ static inline void desc58_print(uint8_t *p_desc, f_print pf_print,
         case PRINT_XML:
             pf_print(opaque,
               "<LOCAL_TIME_OFFSET_DESC country_code=\"%3.3s\" country_region_id=\"%u\""
-              " lto_polarity=\"%u\" lt_offset=\"%04x\" time_of_change=\"%ld\""
+              " lto_polarity=\"%u\" lt_offset=\"%04x\" time_of_change=\"%.f\""
               " time_of_change_dec=\"%s\" next_time_offset=\"%04x\"/>",
               (const char *)desc58n_get_country_code(p_desc_n),
               desc58n_get_country_region_id(p_desc_n),
               desc58n_get_lto_polarity(p_desc_n),
               desc58n_get_lt_offset(p_desc_n),
-              ts_time_of_change, txt_time_of_change,
+              difftime(ts_time_of_change, 0), txt_time_of_change,
               desc58n_get_next_offset(p_desc_n)
             );
             break;
         default:
             pf_print(opaque,
               "    - desc 58 local_time_offset country_code=%3.3s country_region_id=%u"
-              " lto_polarity=%u lto_offset=%04x time_of_change=%ld"
+              " lto_polarity=%u lto_offset=%04x time_of_change=%.f"
               " time_of_change_dec=\"%s\" next_time_offset=%04x",
               (const char *)desc58n_get_country_code(p_desc_n),
               desc58n_get_country_region_id(p_desc_n),
               desc58n_get_lto_polarity(p_desc_n),
               desc58n_get_lt_offset(p_desc_n),
-              ts_time_of_change, txt_time_of_change,
+              difftime(ts_time_of_change, 0), txt_time_of_change,
               desc58n_get_next_offset(p_desc_n)
              );
         }
