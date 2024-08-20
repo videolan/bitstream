@@ -1,5 +1,5 @@
 /*****************************************************************************
- * desc_6f.h: ETSI EN 300 468 Descriptor 0x7f: Application signalling
+ * desc_6f.h: ETSI EN 300 468 Descriptor 0x6f: Application signalling
  * descriptor
  *****************************************************************************
  * Copyright (C) 2022 EasyTools
