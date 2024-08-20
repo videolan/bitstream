@@ -38,5 +38,6 @@
 #include <bitstream/dvb/si/rst_print.h>
 #include <bitstream/dvb/si/dit_print.h>
 #include <bitstream/dvb/si/sit_print.h>
+#include <bitstream/dvb/si/ait_print.h>
 
 #endif
