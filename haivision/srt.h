@@ -633,8 +633,16 @@ static inline uint16_t srt_get_handshake_extension_sender_tsbpd_delay(const uint
 
 #define SRT_KMREQ_COMMON_SIZE   32
 
-#define SRT_KMREQ_CIPHER_NONE   0
-#define SRT_KMREQ_CIPHER_AES    2
+#define SRT_KMREQ_CIPHER_NONE       0
+#define SRT_KMREQ_CIPHER_AES_ECB    1
+#define SRT_KMREQ_CIPHER_AES_CTR    2
+#define SRT_KMREQ_CIPHER_AES_CBC    3
+#define SRT_KMREQ_CIPHER_AES_GCM    4
+
+#define SRT_KMREQ_CIPHER_AES SRT_KMREQ_CIPHER_AES_CTR
+
+#define SRT_KMREQ_AUTH_NONE 0
+#define SRT_KMREQ_AUTH_AES_GCM 1
 
 static inline uint8_t srt_km_get_kk(const uint8_t *km)
 {
@@ -654,6 +662,16 @@ static inline uint8_t srt_km_get_cipher(const uint8_t *km)
 static inline void srt_km_set_cipher(uint8_t *km, const uint8_t cipher)
 {
     km[8] = cipher;
+}
+
+static inline uint8_t srt_km_get_auth(const uint8_t *km)
+{
+    return km[9];
+}
+
+static inline void srt_km_set_auth(uint8_t *km, const uint8_t auth)
+{
+    km[9] = auth;
 }
 
 static inline uint8_t srt_km_get_klen(const uint8_t *km)
@@ -709,10 +727,14 @@ static inline bool srt_check_km(const uint8_t *km, size_t n)
         return false;
 
     uint8_t cipher = srt_km_get_cipher(km);
-    if (cipher != SRT_KMREQ_CIPHER_NONE && cipher != SRT_KMREQ_CIPHER_AES)
+    if (cipher != SRT_KMREQ_CIPHER_NONE && cipher != SRT_KMREQ_CIPHER_AES_CTR && cipher != SRT_KMREQ_CIPHER_AES_GCM)
         return false;
 
-    if (km[9]) // Auth == 0
+    uint8_t auth = srt_km_get_auth(km);
+    if (auth != SRT_KMREQ_AUTH_NONE && auth != SRT_KMREQ_AUTH_AES_GCM)
+        return false;
+
+    if (cipher == SRT_KMREQ_CIPHER_AES_GCM && auth != SRT_KMREQ_AUTH_AES_GCM)
         return false;
 
     if (km[10] != 2) // SE
