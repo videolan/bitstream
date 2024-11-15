@@ -535,16 +535,16 @@ static inline bool srt_check_handshake(const uint8_t *cif, size_t n)
     uint16_t ext = srt_get_handshake_extension(cif);
 
     if (v == SRT_HANDSHAKE_VERSION && ext && ext != SRT_MAGIC_CODE) {
-        const uint8_t *ext = srt_get_handshake_extension_buf((uint8_t*)cif);
+        const uint8_t *ext_buf = srt_get_handshake_extension_buf((uint8_t*)cif);
         while (n) {
             if (n < SRT_HANDSHAKE_CIF_EXTENSION_MIN_SIZE)
                 return false;
             n -= SRT_HANDSHAKE_CIF_EXTENSION_MIN_SIZE;
-            uint16_t extension_len = 4 * srt_get_handshake_extension_len(ext);
+            uint16_t extension_len = 4 * srt_get_handshake_extension_len(ext_buf);
             if (n < extension_len)
                 return false;
             n -= extension_len;
-            ext += SRT_HANDSHAKE_CIF_EXTENSION_MIN_SIZE + extension_len;
+            ext_buf += SRT_HANDSHAKE_CIF_EXTENSION_MIN_SIZE + extension_len;
         }
     }
 
