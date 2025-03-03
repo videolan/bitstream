@@ -697,6 +697,38 @@ static inline void scte35_splice_desc_set_identifier(uint8_t *p_desc,
 }
 
 /*****************************************************************************
+ * Splice Information Table - avail descriptor
+ *****************************************************************************/
+#define SCTE35_AVAIL_DESC_HEADER_SIZE       4
+
+static inline void scte35_avail_desc_init(uint8_t *p_desc)
+{
+    scte35_splice_desc_set_tag(p_desc, SCTE35_SPLICE_DESC_TAG_AVAIL);
+    scte35_splice_desc_set_length(p_desc,
+                                  SCTE35_SPLICE_DESC_HEADER_SIZE -
+                                  DESC_HEADER_SIZE +
+                                  SCTE35_AVAIL_DESC_HEADER_SIZE);
+    scte35_splice_desc_set_identifier(p_desc, SCTE35_SPLICE_DESC_IDENTIFIER);
+    p_desc[10] = 0x7f;
+}
+
+static inline uint32_t
+scte35_avail_desc_get_provider_avail_id(const uint8_t *p_desc)
+{
+    return ((uint32_t)p_desc[6] << 24) | (p_desc[7] << 16) |
+        (p_desc[8] << 8) | p_desc[9];
+}
+
+static inline void scte35_avail_desc_set_provider_avail_id(uint8_t *p_desc,
+                                                           uint32_t id)
+{
+    p_desc[6] = (id >> 24) & 0xff;
+    p_desc[7] = (id >> 16) & 0xff;
+    p_desc[8] = (id >> 8) & 0xff;
+    p_desc[9] = id & 0xff;
+}
+
+/*****************************************************************************
  * Splice Information Table - segmentation descriptor
  *****************************************************************************/
 #define SCTE35_SEG_DESC_HEADER_SIZE         5
