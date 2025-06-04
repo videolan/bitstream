@@ -51,52 +51,86 @@ typedef enum print_type_t {
 typedef void (*f_print)(void *, const char *, ...) __attribute__ ((format(printf, 2, 3)));
 typedef char * (*f_iconv)(void *, const char *, char *, size_t);
 
-static inline const char *bitstream_xml_escape_char(char c)
+static inline size_t bitstream_xml_escape_chars(const char *str, char *out)
 {
-    switch (c) {
-        case '<': return "&lt;";
-        case '>': return "&gt;";
-        case '"': return "&quot;";
-        case '\'': return "&apos;";
-        case '&': return "&amp;";
-    }
-    return NULL;
-}
+    size_t len = 1;
 
-static inline size_t bitstream_xml_escape_len(const char *str)
-{
-    size_t len = str ? strlen(str) : 0;
-    size_t out_len = 0;
-    for (unsigned i = 0; i < len; i++) {
-        const char *esc = bitstream_xml_escape_char(str[i]);
-        out_len += esc ? strlen(esc) : 1;
+    while (*str) {
+        uint32_t codepoint = 0xFFFD;
+        const char *p = str;
+        int size = 1;
+
+        unsigned char c = *str++;
+        if (c < 0x80) {
+            codepoint = c;
+            switch (c) {
+                case '<': p = "&lt;"; size = 4; break;
+                case '>': p = "&gt;"; size = 4; break;
+                case '"': p = "&quot;"; size = 6; break;
+                case '\'': p = "&apos;"; size = 6; break;
+                case '&': p = "&amp;"; size = 5; break;
+            }
+        } else if ((c & 0xE0) == 0xC0) {
+            if ((str[0] & 0xC0) == 0x80) {
+                codepoint = ((c & 0x1F) << 6) |
+                    (str[0] & 0x3F);
+                size = 2;
+                str += 1;
+            }
+        } else if ((c & 0xF0) == 0xE0) {
+            if ((str[0] & 0xC0) == 0x80 &&
+                (str[1] & 0xC0) == 0x80) {
+                codepoint = ((c & 0x0F) << 12) |
+                    ((str[0] & 0x3F) << 6) |
+                    (str[1] & 0x3F);
+                size = 3;
+                str += 2;
+            }
+        } else if ((c & 0xF8) == 0xF0) {
+            if ((str[0] & 0xC0) == 0x80 &&
+                (str[1] & 0xC0) == 0x80 &&
+                (str[2] & 0xC0) == 0x80) {
+                codepoint = ((c & 0x07) << 18) |
+                    ((str[0] & 0x3F) << 12) |
+                    ((str[1] & 0x3F) << 6) |
+                    (str[2] & 0x3F);
+                size = 4;
+                str += 3;
+            }
+        }
+
+        // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+        if (codepoint == 0xFFFD ||
+            !(codepoint == 0x9 ||
+              codepoint == 0xA ||
+              codepoint == 0xD ||
+              (codepoint >= 0x20 && codepoint <= 0xD7FF) ||
+              (codepoint >= 0xE000 && codepoint <= 0xFFFD) ||
+              (codepoint >= 0x10000 && codepoint <= 0x10FFFF))) {
+            p = "\uFFFD";
+            size = 3;
+        }
+
+        if (out) {
+            memcpy(out, p, size);
+            out += size;
+        }
+        len += size;
     }
-    return out_len;
+
+    if (out)
+        *out = '\0';
+    return len;
 }
 
 static inline char *bitstream_xml_escape(const char *str)
 {
     if (!str)
         return NULL;
-
-    size_t len = strlen(str);
-    size_t out_len = bitstream_xml_escape_len(str);
-    char *out = (char *)malloc(out_len + 1);
+    char *out = (char *)malloc(bitstream_xml_escape_chars(str, NULL));
     if (!out)
         return NULL;
-
-    char *tmp = out;
-    for (unsigned i = 0; i < len; i++) {
-        const char *esc = bitstream_xml_escape_char(str[i]);
-        if (esc) {
-            size_t esc_len = strlen(esc);
-            memcpy(tmp, esc, esc_len);
-            tmp += esc_len;
-        }
-        else
-            *tmp++ = str[i];
-    }
-    *tmp = '\0';
+    bitstream_xml_escape_chars(str, out);
     return out;
 }
 
