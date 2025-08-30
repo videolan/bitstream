@@ -1,4 +1,4 @@
-image: registry.videolan.org/videolan-base-xenial
+image: registry.videolan.org/vlc-debian-unstable:20250528090433
 
 test:
     stage: test
