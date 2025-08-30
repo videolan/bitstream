@@ -212,7 +212,7 @@ static inline uint8_t scte35_splice_time_size(const uint8_t *p_splice_time)
 /*****************************************************************************
  * Splice Information Table - break_duration structure
  *****************************************************************************/
-#define SCTE35_BREAK_DURATION_HEADER_SIZE              5
+#define SCTE35_BREAK_DURATION_HEADER_SIZE              5u
 
 static inline void scte35_break_duration_init(uint8_t *p_break_duration)
 {
@@ -282,11 +282,11 @@ static inline bool scte35_null_validate(const uint8_t *p_scte35)
  * Splice Information Table - insert command
  *****************************************************************************/
 #define SCTE35_INSERT_COMMAND                       5
-#define SCTE35_INSERT_HEADER_SIZE                   5
-#define SCTE35_INSERT_HEADER2_SIZE                  1
+#define SCTE35_INSERT_HEADER_SIZE                   5u
+#define SCTE35_INSERT_HEADER2_SIZE                  1u
 #define SCTE35_INSERT_COMPONENT_COUNT_SIZE          1
 #define SCTE35_INSERT_COMPONENT_HEADER_SIZE         1
-#define SCTE35_INSERT_FOOTER_SIZE                   4
+#define SCTE35_INSERT_FOOTER_SIZE                   4u
 
 static inline void scte35_insert_init(uint8_t *p_scte35, uint16_t i_length)
 {
@@ -575,9 +575,9 @@ static inline bool scte35_insert_validate(const uint8_t *p_scte35)
         return false;
 
     if (scte35_insert_has_duration(p_scte35))
-        return i_length >= p_end + SCTE35_BREAK_DURATION_HEADER_SIZE +
-                                   SCTE35_INSERT_FOOTER_SIZE - p_command;
-    return i_length >= p_end + SCTE35_INSERT_FOOTER_SIZE - p_command;
+        return i_length >= (size_t)(p_end + SCTE35_BREAK_DURATION_HEADER_SIZE +
+                                   SCTE35_INSERT_FOOTER_SIZE - p_command);
+    return i_length >= (size_t)(p_end + SCTE35_INSERT_FOOTER_SIZE - p_command);
 }
 
 /*****************************************************************************
