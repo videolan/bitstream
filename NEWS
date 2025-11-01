@@ -1,6 +1,10 @@
 1.6 (TODO)
 =================
- - Add EBU BISS-CA
+ - Add support for EBU BISS-CA
+ - Add support for Haivision SRT
+ - Add support for AIT
+ - Add support for DVB-S2 BBFrames
+ - Fix invalid XML characters
 
 1.5 (6 November 2018)
 =================

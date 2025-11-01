@@ -50,6 +50,7 @@ extern "C"
 #define TS_HEADER_SIZE      4
 #define TS_HEADER_SIZE_AF   6
 #define TS_HEADER_SIZE_PCR  12
+#define TS_SYNC             0x47
 
 #define TS_DECLARE(p_ts)    \
     uint8_t p_ts[TS_SIZE]
@@ -61,7 +62,7 @@ static inline uint8_t *ts_allocate(void)
 
 static inline void ts_init(uint8_t *p_ts)
 {
-    p_ts[0] = 0x47;
+    p_ts[0] = TS_SYNC;
     p_ts[1] = 0x0;
     p_ts[2] = 0x0;
     p_ts[3] = 0x0;
@@ -168,7 +169,7 @@ static inline uint8_t ts_get_scrambling(const uint8_t *p_ts)
 
 static inline bool ts_validate(const uint8_t *p_ts)
 {
-    return p_ts[0] == 0x47;
+    return p_ts[0] == TS_SYNC;
 }
 
 /*****************************************************************************
