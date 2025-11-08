@@ -50,6 +50,15 @@ extern "C"
 #define RFC_8331_F_FIELD_1 2
 #define RFC_8331_F_FIELD_2 3
 
+#define RFC_8331_LINE_WITHOUT_SPECIFIC 0x7ff
+#define RFC_8331_LINE_AFTER_SWITCHING 0x7fe
+#define RFC_8331_LINE_TOO_LARGE 0x7fd
+
+#define RFC_8331_HORIZONTAL_WITHOUT_SPECIFIC 0xfff
+#define RFC_8331_HORIZONTAL_HANC 0xffe
+#define RFC_8331_HORIZONTAL_VANC 0xffd
+#define RFC_8331_HORIZONTAL_TOO_LARGE 0xffc
+
 /*  
  * 0                   1                   2                   3
  * 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
