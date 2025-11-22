@@ -1,5 +1,5 @@
-1.6 (TODO)
-=================
+1.6 (22 November 2025)
+======================
  - Add support for EBU BISS-CA
  - Add support for Haivision SRT
  - Add support for AIT
@@ -7,7 +7,7 @@
  - Fix invalid XML characters
 
 1.5 (6 November 2018)
-=================
+=====================
  - Add SDES
  - Fix hvcc header size
  - Add more ATSC A/52 support
