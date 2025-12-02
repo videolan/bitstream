@@ -412,6 +412,22 @@ static inline uint32_t h265hvcc_get_profile_compatibility(const uint8_t *p)
     return (p[2] << 24) | (p[3] << 16) | (p[4] << 8) | p[5];
 }
 
+static inline const char *h265_get_profile_txt(uint8_t i_profile)
+{
+    return i_profile == 0 ? "None" :
+           i_profile == 1 ? "Main" :
+           i_profile == 2 ? "Main 10" :
+           i_profile == 3 ? "Main Still Picture" :
+           i_profile == 4 ? "Range Extension" :
+           i_profile == 5 ? "High Throughput" :
+           i_profile == 6 ? "Multiview Main" :
+           i_profile == 7 ? "Scalable Main" :
+           i_profile == 8 ? "3D Main" :
+           i_profile == 9 ? "Screen-Extended" :
+           i_profile == 10 ? "Scalable Range Extension" :
+           i_profile == 11 ? "Screen-Extended High Throughput" : "Reserved";
+}
+
 static inline void h265hvcc_set_constraint_indicator(uint8_t *p, uint64_t val)
 {
     p[6] = val >> 40;
