@@ -176,7 +176,7 @@ static inline uint8_t *descl_next_desc(const uint8_t *p_descl,
         p_desc = p_descl;
     else
         p_desc += DESC_HEADER_SIZE + desc_get_length(p_desc);
-    return p_desc + DESC_HEADER_SIZE > p_descl + i_length ?
+    return !p_desc || (p_desc + DESC_HEADER_SIZE > p_descl + i_length) ?
         NULL : (uint8_t *)p_desc;
 }
 
