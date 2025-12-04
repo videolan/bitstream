@@ -412,6 +412,73 @@ static inline uint32_t h265hvcc_get_profile_compatibility(const uint8_t *p)
     return (p[2] << 24) | (p[3] << 16) | (p[4] << 8) | p[5];
 }
 
+static inline const char *h265_get_range_ext_profile(bool max_12bit, bool max_10bit, bool max_8bit, bool max_422chroma, bool max_420chroma, bool max_monochrome, bool intra, bool one_picture_only, bool lower_bit_rate)
+{
+    /* ITU-T H.265 (V9) Table A.2 */
+
+    union constraint {
+        struct {
+            bool max_12bit: 1;
+            bool max_10bit: 1;
+            bool max_8bit: 1;
+            bool max_422chroma: 1;
+            bool max_420chroma: 1;
+            bool max_monochrome: 1;
+            bool intra: 1;
+            bool one_picture_only: 1;
+        };
+        unsigned int constraint;
+    };
+
+    static const struct {
+        const char name[32];
+        union constraint c;
+    } profile_name[] = {
+        { "Monochrome",                     { { 1, 1, 1, 1, 1, 1, 0, 0, } }, },
+        { "Monochrome 10",                  { { 1, 1, 0, 1, 1, 1, 0, 0, } }, },
+        { "Monochrome 12",                  { { 1, 0, 0, 1, 1, 1, 0, 0, } }, },
+        { "Monochrome 16",                  { { 0, 0, 0, 1, 1, 1, 0, 0, } }, },
+        { "Main 12",                        { { 1, 0, 0, 1, 1, 0, 0, 0, } }, },
+        { "Main 4:2:2 10",                  { { 1, 1, 0, 1, 0, 0, 0, 0, } }, },
+        { "Main 4:2:2 12",                  { { 1, 0, 0, 1, 0, 0, 0, 0, } }, },
+        { "Main 4:4:4",                     { { 1, 1, 1, 0, 0, 0, 0, 0, } }, },
+        { "Main 4:4:4 10",                  { { 1, 1, 0, 0, 0, 0, 0, 0, } }, },
+        { "Main 4:4:4 12",                  { { 1, 0, 0, 0, 0, 0, 0, 0, } }, },
+        { "Main Intra",                     { { 1, 1, 1, 1, 1, 0, 1, 0, } }, },
+        { "Main 10 Intra",                  { { 1, 1, 0, 1, 1, 0, 1, 0, } }, },
+        { "Main 12 Intra",                  { { 1, 0, 0, 1, 1, 0, 1, 0, } }, },
+        { "Main 4:2:2 10 Intra",            { { 1, 1, 0, 1, 0, 0, 1, 0, } }, },
+        { "Main 4:2:2 12 Intra",            { { 1, 0, 0, 1, 0, 0, 1, 0, } }, },
+        { "Main 4:4:4 Intra",               { { 1, 1, 1, 0, 0, 0, 1, 0, } }, },
+        { "Main 4:4:4 10 Intra",            { { 1, 1, 0, 0, 0, 0, 1, 0, } }, },
+        { "Main 4:4:4 12 Intra",            { { 1, 0, 0, 0, 0, 0, 1, 0, } }, },
+        { "Main 4:4:4 16 Intra",            { { 0, 0, 0, 0, 0, 0, 1, 0, } }, },
+        { "Main 4:4:4 Still Picture",       { { 1, 1, 1, 0, 0, 0, 1, 1, } }, },
+        { "Main 4:4:4 16 Still Picture",    { { 0, 0, 0, 0, 0, 0, 1, 1, } }, },
+    };
+
+    const union constraint c = {
+        .max_12bit = max_12bit,
+        .max_10bit = max_10bit,
+        .max_8bit = max_8bit,
+        .max_422chroma = max_422chroma,
+        .max_420chroma = max_420chroma,
+        .max_monochrome = max_monochrome,
+        .intra = intra,
+        .one_picture_only = one_picture_only,
+    };
+
+    if (!intra && !lower_bit_rate)
+        goto unknown;
+
+    for (int i = 0; i < sizeof(profile_name) / sizeof(*profile_name); i++)
+        if (profile_name[i].c.constraint == c.constraint)
+            return profile_name[i].name;
+
+unknown:
+    return "Range ext unknown profile";
+}
+
 static inline const char *h265_get_profile_txt(uint8_t i_profile)
 {
     return i_profile == 0 ? "None" :
