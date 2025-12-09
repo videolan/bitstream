@@ -77,13 +77,13 @@ static inline void desc0e_print(const uint8_t *p_desc, f_print pf_print,
         pf_print(opaque, "<MAXIMUM_BITRATE_DESC max_bitrate_raw=\"%u\" max_octetrate=\"%u\" max_bitrate=\"%u\"/>",
                  desc0e_get_max_bitrate(p_desc),
                  desc0e_get_max_bitrate(p_desc) * 50,
-                 desc0e_get_max_bitrate(p_desc) * 50000);
+                 desc0e_get_max_bitrate(p_desc) * 50 * 8);
         break;
     default:
         pf_print(opaque, "    - desc 0e maximum_bitrate max_bitrate_raw=%u max_octetrate=%u max_bitrate=%u",
                  desc0e_get_max_bitrate(p_desc),
                  desc0e_get_max_bitrate(p_desc) * 50,
-                 desc0e_get_max_bitrate(p_desc) * 50000);
+                 desc0e_get_max_bitrate(p_desc) * 50 * 8);
     }
 }
 
