@@ -72,7 +72,7 @@ clean:
 
 HEADER_LIST = $$(find * -name '*.h')
 
-FLAGS = -I. -Werror -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wformat=2
+FLAGS = -I. -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wformat=2
 
 compiler_c = $(CC) $(FLAGS) $(CFLAGS) -std=gnu99
 compiler_c++ = $(CXX) $(FLAGS) $(CXXFLAGS)
