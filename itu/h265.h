@@ -142,46 +142,46 @@ static inline uint8_t h265nalst_get_type(uint8_t start)
 /*****************************************************************************
  * H265 supplemental enhancement information
  *****************************************************************************/
-#define H265SEI_HEADER_SIZE         5
+#define H265SEI_HEADER_SIZE                             5
 
-#define H265SEI_BUFFERING_PERIOD    0
-#define H265SEI_PIC_TIMING          1
-#define H265SEI_PAN_SCAN_RECT       2
-#define H265SEI_FILLER_PAYLOAD      3
-#define H265SEI_USER_T_T35          4
-#define H265SEI_USER_UNREGISTERED   5
-#define H265SEI_RECOVERY_POINT      6
-#define H265SEI_SCENE_INFO          9
-#define H265SEI_FULL_FRAME_SNAP     15
-#define H265SEI_PROG_REF_SEGMENT_S  16
-#define H265SEI_PROG_REF_SEGMENT_E  17
-#define H265SEI_FILM_GRAIN_CHAR     19
-#define H265SEI_POST_FILTER_HINT    22
-#define H265SEI_TONE_MAPPING_INFO   23
-#define H265SEI_FRAME_PACK_ARRANG   45
-#define H265SEI_DISPLAY_ORIENTATION 47
-#define H265SEI_STRUCT_PICT_INFO    128
-#define H265SEI_ACTIVE_PS           129
-#define H265SEI_DEC_UNIT_INFO       130
-#define H265SEI_TEMP_SUBL_ZERO_IDX  131
-#define H265SEI_DEC_PICTURE_HASH    132
-#define H265SEI_SCALABLE_NESTING    133
-#define H265SEI_REGION_REFRESH_INFO 134
-#define H265SEI_ALTERNATIVE_TRANSFER_CHARACTERISTICS 147
+#define H265SEI_BUFFERING_PERIOD                        0
+#define H265SEI_PIC_TIMING                              1
+#define H265SEI_PAN_SCAN_RECT                           2
+#define H265SEI_FILLER_PAYLOAD                          3
+#define H265SEI_USER_T_T35                              4
+#define H265SEI_USER_UNREGISTERED                       5
+#define H265SEI_RECOVERY_POINT                          6
+#define H265SEI_SCENE_INFO                              9
+#define H265SEI_FULL_FRAME_SNAP                         15
+#define H265SEI_PROG_REF_SEGMENT_S                      16
+#define H265SEI_PROG_REF_SEGMENT_E                      17
+#define H265SEI_FILM_GRAIN_CHAR                         19
+#define H265SEI_POST_FILTER_HINT                        22
+#define H265SEI_TONE_MAPPING_INFO                       23
+#define H265SEI_FRAME_PACK_ARRANG                       45
+#define H265SEI_DISPLAY_ORIENTATION                     47
+#define H265SEI_STRUCT_PICT_INFO                        128
+#define H265SEI_ACTIVE_PS                               129
+#define H265SEI_DEC_UNIT_INFO                           130
+#define H265SEI_TEMP_SUBL_ZERO_IDX                      131
+#define H265SEI_DEC_PICTURE_HASH                        132
+#define H265SEI_SCALABLE_NESTING                        133
+#define H265SEI_REGION_REFRESH_INFO                     134
+#define H265SEI_ALTERNATIVE_TRANSFER_CHARACTERISTICS    147
 
-#define H265SEI_STRUCT_FRAME        0
-#define H265SEI_STRUCT_TOP          1
-#define H265SEI_STRUCT_BOT          2
-#define H265SEI_STRUCT_TOP_BOT      3
-#define H265SEI_STRUCT_BOT_TOP      4
-#define H265SEI_STRUCT_TOP_BOT_TOP  5
-#define H265SEI_STRUCT_BOT_TOP_BOT  6
-#define H265SEI_STRUCT_DOUBLE       7
-#define H265SEI_STRUCT_TRIPLE       8
-#define H265SEI_STRUCT_TOP_PREV_BOT 9
-#define H265SEI_STRUCT_BOT_PREV_TOP 10
-#define H265SEI_STRUCT_TOP_NEXT_BOT 11
-#define H265SEI_STRUCT_BOT_NEXT_TOP 12
+#define H265SEI_STRUCT_FRAME                            0
+#define H265SEI_STRUCT_TOP                              1
+#define H265SEI_STRUCT_BOT                              2
+#define H265SEI_STRUCT_TOP_BOT                          3
+#define H265SEI_STRUCT_BOT_TOP                          4
+#define H265SEI_STRUCT_TOP_BOT_TOP                      5
+#define H265SEI_STRUCT_BOT_TOP_BOT                      6
+#define H265SEI_STRUCT_DOUBLE                           7
+#define H265SEI_STRUCT_TRIPLE                           8
+#define H265SEI_STRUCT_TOP_PREV_BOT                     9
+#define H265SEI_STRUCT_BOT_PREV_TOP                     10
+#define H265SEI_STRUCT_TOP_NEXT_BOT                     11
+#define H265SEI_STRUCT_BOT_NEXT_TOP                     12
 
 static inline void h265sei_init(uint8_t *p_h265sei, bool b_prefix)
 {
