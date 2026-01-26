@@ -74,10 +74,16 @@ static inline void desc05_print(const uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)
 {
     switch (i_print_type) {
-    case PRINT_XML:
-        pf_print(opaque, "<REGISTRATION_DESC identifier=\"%4.4s\"/>",
-                 desc05_get_identifier(p_desc));
+    case PRINT_XML: {
+        char identifier[5];
+        memcpy(identifier, desc05_get_identifier(p_desc), 4);
+        identifier[4] = '\0';
+        char *identifier_xml = bitstream_xml_escape(identifier);
+        pf_print(opaque, "<REGISTRATION_DESC identifier=\"%s\"/>",
+                 identifier_xml ?: "");
+        free(identifier_xml);
         break;
+    }
     default:
         pf_print(opaque, "    - desc 05 registration identifier=%4.4s",
                  desc05_get_identifier(p_desc));
