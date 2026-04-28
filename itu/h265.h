@@ -235,6 +235,16 @@ static inline uint8_t h265vps_get_vps_id(const uint8_t *p_h265vps)
     return (p_h265vps[5] & 0xf0) >> 4;
 }
 
+static inline uint8_t h265vps_get_tier(const uint8_t *p_h265vps)
+{
+    return (p_h265vps[9] >> 5) & 1;
+}
+
+static inline uint8_t h265vps_get_level(const uint8_t *p_h265vps)
+{
+    return p_h265vps[23];
+}
+
 /*****************************************************************************
  * H265 sequence parameter set
  *****************************************************************************/
