@@ -62,6 +62,10 @@ extern "C"
 #define S291_SCTE104_DID            0x41
 #define S291_SCTE104_SDID           0x07
 
+/* SMPTE 2031 */
+#define S291_ST2031_DID             0x41
+#define S291_ST2031_SDID            0x08
+
 /* OP-47 / SMPTE RDD-8 */
 #define S291_OP47SDP_DID            0x43
 #define S291_OP47SDP_SDID           0x02
