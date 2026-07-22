@@ -629,6 +629,59 @@ static inline uint16_t srt_get_handshake_extension_sender_tsbpd_delay(const uint
     return (ext[10] << 8) | ext[11];
 }
 
+/* Group Membership Extension (SRT >= 1.5 connection bonding) */
+
+#define SRT_HANDSHAKE_EXT_GROUP_SIZE    8
+
+#define SRT_HANDSHAKE_GROUP_TYPE_UNDEFINED  0
+#define SRT_HANDSHAKE_GROUP_TYPE_BROADCAST  1
+#define SRT_HANDSHAKE_GROUP_TYPE_BACKUP     2
+#define SRT_HANDSHAKE_GROUP_TYPE_BALANCING  3
+
+static inline void srt_set_handshake_extension_group_id(uint8_t *ext, uint32_t group_id)
+{
+    ext[0] = (group_id >> 24) & 0xff;
+    ext[1] = (group_id >> 16) & 0xff;
+    ext[2] = (group_id >>  8) & 0xff;
+    ext[3] =  group_id & 0xff;
+}
+
+static inline uint32_t srt_get_handshake_extension_group_id(const uint8_t *ext)
+{
+    return (ext[0] << 24) | (ext[1] << 16) | (ext[2] << 8) | ext[3];
+}
+
+static inline void srt_set_handshake_extension_group_weight(uint8_t *ext, uint16_t weight)
+{
+    ext[4] = (weight >>  8) & 0xff;
+    ext[5] =  weight & 0xff;
+}
+
+static inline uint16_t srt_get_handshake_extension_group_weight(const uint8_t *ext)
+{
+    return (ext[4] << 8) | ext[5];
+}
+
+static inline void srt_set_handshake_extension_group_flags(uint8_t *ext, uint8_t flags)
+{
+    ext[6] = flags;
+}
+
+static inline uint8_t srt_get_handshake_extension_group_flags(const uint8_t *ext)
+{
+    return ext[6];
+}
+
+static inline void srt_set_handshake_extension_group_type(uint8_t *ext, uint8_t group_type)
+{
+    ext[7] = group_type;
+}
+
+static inline uint8_t srt_get_handshake_extension_group_type(const uint8_t *ext)
+{
+    return ext[7];
+}
+
 /* KMREQ */
 
 #define SRT_KMREQ_COMMON_SIZE   32
