@@ -697,6 +697,15 @@ static inline uint8_t srt_get_handshake_extension_group_type(const uint8_t *ext)
 #define SRT_KMREQ_AUTH_NONE 0
 #define SRT_KMREQ_AUTH_AES_GCM 1
 
+/* AES-GCM (SRT >= 1.5.0): a 128-bit authentication tag is appended to every
+ * encrypted data packet, and the 16-byte SRT packet header (with the
+ * Retransmitted Packet flag cleared) is used as additional authenticated data
+ * (AAD). Unlike AES-CTR (16-byte block, packet index at bytes 10..13), the GCM
+ * IV is 96 bits: packet index at bytes 8..11, salt XORed over 12 bytes.
+ * See libsrt haicrypt/hcrypt.h hcrypt_SetGcmIV(). */
+#define SRT_AES_GCM_TAG_SIZE 16
+#define SRT_AES_GCM_IV_SIZE  12
+
 static inline uint8_t srt_km_get_kk(const uint8_t *km)
 {
     return km[3] & 3;
