@@ -325,6 +325,8 @@ static inline const uint8_t *srt_get_control_packet_cif(const uint8_t *buf)
 #define SRT_HANDSHAKE_TYPE_REJ_CONGESTION 1013
 #define SRT_HANDSHAKE_TYPE_REJ_FILTER 1014
 #define SRT_HANDSHAKE_TYPE_REJ_GROUP 1015
+#define SRT_HANDSHAKE_TYPE_REJ_TIMEOUT 1016
+#define SRT_HANDSHAKE_TYPE_REJ_CRYPTO 1017
 
 static inline void srt_set_handshake_version(uint8_t *cif, uint32_t version)
 {
