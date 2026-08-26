@@ -90,6 +90,7 @@
 #include <bitstream/dvb/si/desc_7f06.h>
 #include <bitstream/dvb/si/desc_7f15.h>
 #include <bitstream/dvb/si/desc_7f19.h>
+#include <bitstream/dvb/si/desc_7f20.h>
 #include <bitstream/dvb/si/desc_83p28.h>
 #include <bitstream/dvb/si/desc_88p28.h>
 
