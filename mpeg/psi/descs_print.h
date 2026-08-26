@@ -209,6 +209,7 @@ static inline void descl_print(uint8_t *p_descl, uint16_t i_length,
                     CASE_DESC(7f06)
                     CASE_DESC(7f15)
                     CASE_DESC(7f19)
+                    CASE_DESC(7f20)
                     default:
                         desc7f_print(p_desc, pf_print, print_opaque,
                                      i_print_type);
