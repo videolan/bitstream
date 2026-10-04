@@ -224,7 +224,7 @@ static inline uint8_t *rtp_payload(uint8_t *p_rtp)
 
 static inline size_t rtp_payload_size(uint8_t *p_rtp, size_t i_rtp_size)
 {
-    size_t i_payload_size = i_rtp_size - (rtp_payload(p_rtp) - p_rtp);
+    size_t i_payload_size = i_rtp_size - rtp_get_payload_offset(p_rtp);
     uint8_t i_padding_size = 0;
     if (rtp_check_padding(p_rtp))
         i_padding_size = p_rtp[i_rtp_size - 1];
