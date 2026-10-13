@@ -61,7 +61,7 @@ static inline bool desc13_validate(const uint8_t *p_desc)
     return size <= desc_length;
 }
 
-BITSTREAM_GET_SET(desc13, id, uint8, 16, 32);
+BITSTREAM_GET_SET(desc13, id, uint8, 16, 32)
 
 static inline void desc13_print(const uint8_t *p_desc, f_print pf_print,
                                 void *opaque, print_type_t i_print_type)

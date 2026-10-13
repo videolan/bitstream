@@ -58,10 +58,10 @@ static inline void desc3f03_init(uint8_t *p_desc)
     desc3f_set_tag_extension(p_desc, DESC3F_TAG_HEVC_TIMING_HRD);
 }
 
-BITSTREAM_GET_SET(desc3f03, hrd_management_valid_flag, uint8, 24, 1);
-BITSTREAM_GET_SET(desc3f03, target_schedule_idx_not_present_flag, uint8, 25, 1);
-BITSTREAM_GET_SET(desc3f03, target_schedule_idx, uint8, 26, 5);
-BITSTREAM_GET_SET(desc3f03, picture_and_timing_info_present_flag, uint8, 31, 1);
+BITSTREAM_GET_SET(desc3f03, hrd_management_valid_flag, uint8, 24, 1)
+BITSTREAM_GET_SET(desc3f03, target_schedule_idx_not_present_flag, uint8, 25, 1)
+BITSTREAM_GET_SET(desc3f03, target_schedule_idx, uint8, 26, 5)
+BITSTREAM_GET_SET(desc3f03, picture_and_timing_info_present_flag, uint8, 31, 1)
 
 static inline uint8_t *
 desc3f03_get_picture_and_timing_info(const uint8_t *p_desc)
@@ -70,7 +70,7 @@ desc3f03_get_picture_and_timing_info(const uint8_t *p_desc)
         (uint8_t *)(p_desc + DESC3F03_HEADER_SIZE) : NULL;
 }
 
-BITSTREAM_GET_SET(desc3f03_pti, 90kHz_flag, uint8, 0, 1);
+BITSTREAM_GET_SET(desc3f03_pti, 90kHz_flag, uint8, 0, 1)
 
 static inline uint8_t *desc3f03_pti_get_scale(const uint8_t *p_desc_n)
 {
@@ -78,8 +78,8 @@ static inline uint8_t *desc3f03_pti_get_scale(const uint8_t *p_desc_n)
         (uint8_t *)(p_desc_n + 1) : NULL;
 }
 
-BITSTREAM_GET_SET(desc3f03_pti_scale, n, uint32, 0, 32);
-BITSTREAM_GET_SET(desc3f03_pti_scale, k, uint32, 32, 32);
+BITSTREAM_GET_SET(desc3f03_pti_scale, n, uint32, 0, 32)
+BITSTREAM_GET_SET(desc3f03_pti_scale, k, uint32, 32, 32)
 
 static inline uint8_t *desc3f03_pti_get_trailer(const uint8_t *p_desc_n)
 {
@@ -88,7 +88,7 @@ static inline uint8_t *desc3f03_pti_get_trailer(const uint8_t *p_desc_n)
         (uint8_t *)(p_desc_n + 1 + DESC3F03_PTI_SCALE_SIZE);
 }
 
-BITSTREAM_GET_SET(desc3f03_pti_trailer, num_units_in_tick, uint32, 0, 32);
+BITSTREAM_GET_SET(desc3f03_pti_trailer, num_units_in_tick, uint32, 0, 32)
 
 static inline uint32_t
 desc3f03_pti_get_num_units_in_tick(const uint8_t *p_desc_n)
