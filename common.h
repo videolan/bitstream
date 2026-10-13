@@ -150,10 +150,10 @@ static inline Type##_t bitstream_get_##Type(const uint8_t *p,               \
     return v;                                                               \
 }
 
-BITSTREAM_GET_TYPE(uint8);
-BITSTREAM_GET_TYPE(uint16);
-BITSTREAM_GET_TYPE(uint32);
-BITSTREAM_GET_TYPE(uint64);
+BITSTREAM_GET_TYPE(uint8)
+BITSTREAM_GET_TYPE(uint16)
+BITSTREAM_GET_TYPE(uint32)
+BITSTREAM_GET_TYPE(uint64)
 
 #define BITSTREAM_SET_TYPE(Type)                                            \
 static inline void bitstream_set_##Type(uint8_t *p,                         \
@@ -170,10 +170,10 @@ static inline void bitstream_set_##Type(uint8_t *p,                         \
     }                                                                       \
 }
 
-BITSTREAM_SET_TYPE(uint8);
-BITSTREAM_SET_TYPE(uint16);
-BITSTREAM_SET_TYPE(uint32);
-BITSTREAM_SET_TYPE(uint64);
+BITSTREAM_SET_TYPE(uint8)
+BITSTREAM_SET_TYPE(uint16)
+BITSTREAM_SET_TYPE(uint32)
+BITSTREAM_SET_TYPE(uint64)
 
 #define BITSTREAM_GET(Name, Field, Type, Position, Bits)                    \
 static inline Type##_t Name##_get_##Field(const uint8_t *p)                 \
