@@ -62,18 +62,18 @@ static inline void desc7f19_init(uint8_t *p_desc)
     desc7f_set_tag_extension(p_desc, DESC7F_TAG_AUDIO_PRESELECTION);
 }
 
-BITSTREAM_GET_SET(desc7f19, num_preselections, uint8, 24, 5);
+BITSTREAM_GET_SET(desc7f19, num_preselections, uint8, 24, 5)
 
-BITSTREAM_GET_SET(desc7f19_presel, preselection_id, uint8, 0, 5);
-BITSTREAM_GET_SET(desc7f19_presel, audio_rendering_indication, uint8, 5, 3);
-BITSTREAM_GET_SET(desc7f19_presel, audio_description, uint8, 8, 1);
-BITSTREAM_GET_SET(desc7f19_presel, spoken_subtitles, uint8, 9, 1);
-BITSTREAM_GET_SET(desc7f19_presel, dialogue_enhancement, uint8, 10, 1);
-BITSTREAM_GET_SET(desc7f19_presel, interactivity_enabled, uint8, 11, 1);
-BITSTREAM_GET_SET(desc7f19_presel, language_code_present, uint8, 12, 1);
-BITSTREAM_GET_SET(desc7f19_presel, text_label_present, uint8, 13, 1);
-BITSTREAM_GET_SET(desc7f19_presel, multi_stream_info_present, uint8, 14, 1);
-BITSTREAM_GET_SET(desc7f19_presel, future_extension, uint8, 15, 1);
+BITSTREAM_GET_SET(desc7f19_presel, preselection_id, uint8, 0, 5)
+BITSTREAM_GET_SET(desc7f19_presel, audio_rendering_indication, uint8, 5, 3)
+BITSTREAM_GET_SET(desc7f19_presel, audio_description, uint8, 8, 1)
+BITSTREAM_GET_SET(desc7f19_presel, spoken_subtitles, uint8, 9, 1)
+BITSTREAM_GET_SET(desc7f19_presel, dialogue_enhancement, uint8, 10, 1)
+BITSTREAM_GET_SET(desc7f19_presel, interactivity_enabled, uint8, 11, 1)
+BITSTREAM_GET_SET(desc7f19_presel, language_code_present, uint8, 12, 1)
+BITSTREAM_GET_SET(desc7f19_presel, text_label_present, uint8, 13, 1)
+BITSTREAM_GET_SET(desc7f19_presel, multi_stream_info_present, uint8, 14, 1)
+BITSTREAM_GET_SET(desc7f19_presel, future_extension, uint8, 15, 1)
 
 static inline uint8_t *
 desc7f19_presel_get_language_code_ptr(const uint8_t *p_desc_n)
@@ -94,7 +94,7 @@ desc7f19_presel_get_text_label_ptr(const uint8_t *p_desc_n)
     return (uint8_t *)(p_desc_n + DESC7F19_PRESEL_SIZE);
 }
 
-BITSTREAM_GET_SET(desc7f19_presel_text, message_id, uint8, 0, 8);
+BITSTREAM_GET_SET(desc7f19_presel_text, message_id, uint8, 0, 8)
 
 static inline uint8_t *
 desc7f19_presel_get_multi_stream_info_ptr(const uint8_t *p_desc_n)
@@ -110,7 +110,7 @@ desc7f19_presel_get_multi_stream_info_ptr(const uint8_t *p_desc_n)
     return (uint8_t *)(p_desc_n + DESC7F19_PRESEL_SIZE);
 }
 
-BITSTREAM_GET_SET(desc7f19_presel_msi, num_aux_components, uint8, 0, 3);
+BITSTREAM_GET_SET(desc7f19_presel_msi, num_aux_components, uint8, 0, 3)
 
 static inline uint8_t *
 desc7f19_presel_get_future_extension_ptr(const uint8_t *p_desc_n)
@@ -130,7 +130,7 @@ desc7f19_presel_get_future_extension_ptr(const uint8_t *p_desc_n)
     return (uint8_t *)(p_desc_n + DESC7F19_PRESEL_SIZE);
 }
 
-BITSTREAM_GET_SET(desc7f19_presel_ext, length, uint8, 3, 5);
+BITSTREAM_GET_SET(desc7f19_presel_ext, length, uint8, 3, 5)
 
 static inline uint8_t desc7f19_presel_get_header_length(const uint8_t *p_desc_n)
 {

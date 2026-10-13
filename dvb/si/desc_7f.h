@@ -138,7 +138,7 @@ static inline const char *desc7f_tag_extension_str(uint8_t tag)
     return "Unknown";
 }
 
-BITSTREAM_GET_SET(desc7f, tag_extension, uint8, 16, 8);
+BITSTREAM_GET_SET(desc7f, tag_extension, uint8, 16, 8)
 
 static inline bool desc7f_validate(const uint8_t *p_desc)
 {
