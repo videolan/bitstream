@@ -91,11 +91,11 @@ static inline void desc7f20_set_code(uint8_t *p_desc, const uint8_t p_code[3])
     memcpy(p_desc + DESC7F_HEADER_SIZE, p_code, 3);
 }
 
-BITSTREAM_GET_SET(desc7f20, subtitle_purpose, uint8, 48, 6);
-BITSTREAM_GET_SET(desc7f20, tts_suitability, uint8, 54, 2);
-BITSTREAM_GET_SET(desc7f20, essential_font_usage_flag, uint8, 56, 1);
-BITSTREAM_GET_SET(desc7f20, qualifier_present_flag, uint8, 57, 1);
-BITSTREAM_GET_SET(desc7f20, profile_count, uint8, 60, 4);
+BITSTREAM_GET_SET(desc7f20, subtitle_purpose, uint8, 48, 6)
+BITSTREAM_GET_SET(desc7f20, tts_suitability, uint8, 54, 2)
+BITSTREAM_GET_SET(desc7f20, essential_font_usage_flag, uint8, 56, 1)
+BITSTREAM_GET_SET(desc7f20, qualifier_present_flag, uint8, 57, 1)
+BITSTREAM_GET_SET(desc7f20, profile_count, uint8, 60, 4)
 
 /* Only the profile list is at a fixed offset; every field after it moves with
  * counts read out of the descriptor itself. */
@@ -114,12 +114,12 @@ static inline uint8_t *desc7f20_get_qualifier(const uint8_t *p_desc)
         desc7f20_get_profile_count(p_desc) * DESC7F20_PROFILE_SIZE;
 }
 
-BITSTREAM_GET_SET(desc7f20_qualifier, size, uint8, 0, 4);
-BITSTREAM_GET_SET(desc7f20_qualifier, cadence, uint8, 4, 4);
-BITSTREAM_GET_SET(desc7f20_qualifier, monochrome_flag, uint8, 8, 1);
+BITSTREAM_GET_SET(desc7f20_qualifier, size, uint8, 0, 4)
+BITSTREAM_GET_SET(desc7f20_qualifier, cadence, uint8, 4, 4)
+BITSTREAM_GET_SET(desc7f20_qualifier, monochrome_flag, uint8, 8, 1)
 BITSTREAM_GET_SET(desc7f20_qualifier, enhanced_accessibility_contrast_flag,
                   uint8, 9, 1);
-BITSTREAM_GET_SET(desc7f20_qualifier, position, uint8, 10, 4);
+BITSTREAM_GET_SET(desc7f20_qualifier, position, uint8, 10, 4)
 
 static inline uint8_t *desc7f20_get_font_count(const uint8_t *p_desc)
 {
@@ -139,7 +139,7 @@ static inline uint8_t *desc7f20_get_font(const uint8_t *p_desc, uint8_t n)
     return p_font_count + DESC7F20_FONT_COUNT_SIZE + n * DESC7F20_FONT_SIZE;
 }
 
-BITSTREAM_GET_SET(desc7f20_font, font_id, uint8, 1, 7);
+BITSTREAM_GET_SET(desc7f20_font, font_id, uint8, 1, 7)
 
 static inline uint8_t *desc7f20_get_text_length(const uint8_t *p_desc)
 {

@@ -55,9 +55,9 @@ static inline void desc7f00_init(uint8_t *p_desc)
     desc7f_set_tag_extension(p_desc, DESC7F_TAG_IMAGE_ICON);
 }
 
-BITSTREAM_GET_SET(desc7f00, number, uint8, 24, 4);
-BITSTREAM_GET_SET(desc7f00, last_descriptor_number, uint8, 28, 4);
-BITSTREAM_GET_SET(desc7f00, icon_id, uint8, 37, 3);
+BITSTREAM_GET_SET(desc7f00, number, uint8, 24, 4)
+BITSTREAM_GET_SET(desc7f00, last_descriptor_number, uint8, 28, 4)
+BITSTREAM_GET_SET(desc7f00, icon_id, uint8, 37, 3)
 
 static inline bool desc7f00_validate(const uint8_t *p_desc)
 {

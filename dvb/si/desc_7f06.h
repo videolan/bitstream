@@ -55,10 +55,10 @@ static inline void desc7f06_init(uint8_t *p_desc)
     desc7f_set_tag_extension(p_desc, DESC7F_TAG_SUPPLEMENTARY_AUDIO);
 }
 
-BITSTREAM_GET_SET(desc7f06, mix_type, uint8, 24, 1);
-BITSTREAM_GET_SET(desc7f06, editorial_classification, uint8, 25, 5);
-BITSTREAM_GET_SET(desc7f06, language_code_present, uint8, 31, 1);
-BITSTREAM_GET_SET(desc7f06_opt, language_code, uint32, 32, 24);
+BITSTREAM_GET_SET(desc7f06, mix_type, uint8, 24, 1)
+BITSTREAM_GET_SET(desc7f06, editorial_classification, uint8, 25, 5)
+BITSTREAM_GET_SET(desc7f06, language_code_present, uint8, 31, 1)
+BITSTREAM_GET_SET(desc7f06_opt, language_code, uint32, 32, 24)
 
 static inline uint32_t desc7f06_get_language_code(const uint8_t *p_desc)
 {

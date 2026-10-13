@@ -54,10 +54,10 @@ static inline void desc7f15_init(uint8_t *p_desc)
     desc7f_set_tag_extension(p_desc, DESC7F_TAG_AC4);
 }
 
-BITSTREAM_GET_SET(desc7f15, ac4_config_flag, uint8, 24, 1);
-BITSTREAM_GET_SET(desc7f15, ac4_toc_flag, uint8, 25, 1);
-BITSTREAM_GET_SET(desc7f15_opt, ac4_dialog_enhancement_enabled, uint8, 32, 1);
-BITSTREAM_GET_SET(desc7f15_opt, ac4_channel_mode, uint8, 33, 2);
+BITSTREAM_GET_SET(desc7f15, ac4_config_flag, uint8, 24, 1)
+BITSTREAM_GET_SET(desc7f15, ac4_toc_flag, uint8, 25, 1)
+BITSTREAM_GET_SET(desc7f15_opt, ac4_dialog_enhancement_enabled, uint8, 32, 1)
+BITSTREAM_GET_SET(desc7f15_opt, ac4_channel_mode, uint8, 33, 2)
 
 static inline uint8_t
 desc7f15_get_ac4_dialog_enhancement_enabled(const uint8_t *p_desc)
