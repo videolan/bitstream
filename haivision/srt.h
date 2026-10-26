@@ -325,6 +325,8 @@ static inline const uint8_t *srt_get_control_packet_cif(const uint8_t *buf)
 #define SRT_HANDSHAKE_TYPE_REJ_CONGESTION 1013
 #define SRT_HANDSHAKE_TYPE_REJ_FILTER 1014
 #define SRT_HANDSHAKE_TYPE_REJ_GROUP 1015
+#define SRT_HANDSHAKE_TYPE_REJ_TIMEOUT 1016
+#define SRT_HANDSHAKE_TYPE_REJ_CRYPTO 1017
 
 static inline void srt_set_handshake_version(uint8_t *cif, uint32_t version)
 {
@@ -629,6 +631,59 @@ static inline uint16_t srt_get_handshake_extension_sender_tsbpd_delay(const uint
     return (ext[10] << 8) | ext[11];
 }
 
+/* Group Membership Extension (SRT >= 1.5 connection bonding) */
+
+#define SRT_HANDSHAKE_EXT_GROUP_SIZE    8
+
+#define SRT_HANDSHAKE_GROUP_TYPE_UNDEFINED  0
+#define SRT_HANDSHAKE_GROUP_TYPE_BROADCAST  1
+#define SRT_HANDSHAKE_GROUP_TYPE_BACKUP     2
+#define SRT_HANDSHAKE_GROUP_TYPE_BALANCING  3
+
+static inline void srt_set_handshake_extension_group_id(uint8_t *ext, uint32_t group_id)
+{
+    ext[0] = (group_id >> 24) & 0xff;
+    ext[1] = (group_id >> 16) & 0xff;
+    ext[2] = (group_id >>  8) & 0xff;
+    ext[3] =  group_id & 0xff;
+}
+
+static inline uint32_t srt_get_handshake_extension_group_id(const uint8_t *ext)
+{
+    return (ext[0] << 24) | (ext[1] << 16) | (ext[2] << 8) | ext[3];
+}
+
+static inline void srt_set_handshake_extension_group_weight(uint8_t *ext, uint16_t weight)
+{
+    ext[4] = (weight >>  8) & 0xff;
+    ext[5] =  weight & 0xff;
+}
+
+static inline uint16_t srt_get_handshake_extension_group_weight(const uint8_t *ext)
+{
+    return (ext[4] << 8) | ext[5];
+}
+
+static inline void srt_set_handshake_extension_group_flags(uint8_t *ext, uint8_t flags)
+{
+    ext[6] = flags;
+}
+
+static inline uint8_t srt_get_handshake_extension_group_flags(const uint8_t *ext)
+{
+    return ext[6];
+}
+
+static inline void srt_set_handshake_extension_group_type(uint8_t *ext, uint8_t group_type)
+{
+    ext[7] = group_type;
+}
+
+static inline uint8_t srt_get_handshake_extension_group_type(const uint8_t *ext)
+{
+    return ext[7];
+}
+
 /* KMREQ */
 
 #define SRT_KMREQ_COMMON_SIZE   32
@@ -643,6 +698,15 @@ static inline uint16_t srt_get_handshake_extension_sender_tsbpd_delay(const uint
 
 #define SRT_KMREQ_AUTH_NONE 0
 #define SRT_KMREQ_AUTH_AES_GCM 1
+
+/* AES-GCM (SRT >= 1.5.0): a 128-bit authentication tag is appended to every
+ * encrypted data packet, and the 16-byte SRT packet header (with the
+ * Retransmitted Packet flag cleared) is used as additional authenticated data
+ * (AAD). Unlike AES-CTR (16-byte block, packet index at bytes 10..13), the GCM
+ * IV is 96 bits: packet index at bytes 8..11, salt XORed over 12 bytes.
+ * See libsrt haicrypt/hcrypt.h hcrypt_SetGcmIV(). */
+#define SRT_AES_GCM_TAG_SIZE 16
+#define SRT_AES_GCM_IV_SIZE  12
 
 static inline uint8_t srt_km_get_kk(const uint8_t *km)
 {

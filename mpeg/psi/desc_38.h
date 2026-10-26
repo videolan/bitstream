@@ -55,21 +55,21 @@ static inline void desc38_init(uint8_t *p_desc)
     desc_set_length(p_desc, (DESC38_HEADER_SIZE - DESC_HEADER_SIZE));
 }
 
-BITSTREAM_GET_SET(desc38, profile_space, uint8, 16, 2);
-BITSTREAM_GET_SET(desc38, tier_flag, uint8, 18, 1);
-BITSTREAM_GET_SET(desc38, profile_idc, uint8, 19, 5);
-BITSTREAM_GET_SET(desc38, profile_compatibility_indication, uint32, 24, 32);
-BITSTREAM_GET_SET(desc38, progressive_source_flag, uint8, 56, 1);
-BITSTREAM_GET_SET(desc38, interlaced_source_flag, uint8, 57, 1);
-BITSTREAM_GET_SET(desc38, non_packed_constraint_flag, uint8, 58, 1);
-BITSTREAM_GET_SET(desc38, frame_only_constraint_flag, uint8, 59, 1);
-BITSTREAM_GET_SET(desc38, copied_44bits, uint64, 60, 44);
-BITSTREAM_GET_SET(desc38, level_idc, uint8, 104, 8);
-BITSTREAM_GET_SET(desc38, temporal_layer_subset_flag, uint8, 112, 1);
-BITSTREAM_GET_SET(desc38, HEVC_still_present_flag, uint8, 113, 1);
-BITSTREAM_GET_SET(desc38, HEVC_24hr_picture_present_flag, uint8, 114, 1);
-BITSTREAM_GET_SET(desc38, sub_pic_hrd_params_not_present_flag, uint8, 115, 1);
-BITSTREAM_GET_SET(desc38, HDR_WCG_idc, uint8, 118, 2);
+BITSTREAM_GET_SET(desc38, profile_space, uint8, 16, 2)
+BITSTREAM_GET_SET(desc38, tier_flag, uint8, 18, 1)
+BITSTREAM_GET_SET(desc38, profile_idc, uint8, 19, 5)
+BITSTREAM_GET_SET(desc38, profile_compatibility_indication, uint32, 24, 32)
+BITSTREAM_GET_SET(desc38, progressive_source_flag, uint8, 56, 1)
+BITSTREAM_GET_SET(desc38, interlaced_source_flag, uint8, 57, 1)
+BITSTREAM_GET_SET(desc38, non_packed_constraint_flag, uint8, 58, 1)
+BITSTREAM_GET_SET(desc38, frame_only_constraint_flag, uint8, 59, 1)
+BITSTREAM_GET_SET(desc38, copied_44bits, uint64, 60, 44)
+BITSTREAM_GET_SET(desc38, level_idc, uint8, 104, 8)
+BITSTREAM_GET_SET(desc38, temporal_layer_subset_flag, uint8, 112, 1)
+BITSTREAM_GET_SET(desc38, HEVC_still_present_flag, uint8, 113, 1)
+BITSTREAM_GET_SET(desc38, HEVC_24hr_picture_present_flag, uint8, 114, 1)
+BITSTREAM_GET_SET(desc38, sub_pic_hrd_params_not_present_flag, uint8, 115, 1)
+BITSTREAM_GET_SET(desc38, HDR_WCG_idc, uint8, 118, 2)
 
 static inline uint8_t *desc38_get_temporal_layer_subset(const uint8_t *p_desc)
 {
@@ -77,8 +77,8 @@ static inline uint8_t *desc38_get_temporal_layer_subset(const uint8_t *p_desc)
         (uint8_t *)(p_desc + DESC38_HEADER_SIZE) : NULL;
 }
 
-BITSTREAM_GET_SET(desc38_temp_layer_subset, id_min, uint8, 0, 3);
-BITSTREAM_GET_SET(desc38_temp_layer_subset, id_max, uint8, 8, 3);
+BITSTREAM_GET_SET(desc38_temp_layer_subset, id_min, uint8, 0, 3)
+BITSTREAM_GET_SET(desc38_temp_layer_subset, id_max, uint8, 8, 3)
 
 static inline bool desc38_validate(const uint8_t *p_desc)
 {

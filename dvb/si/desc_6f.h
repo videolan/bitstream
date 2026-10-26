@@ -69,8 +69,8 @@ static inline uint8_t *desc6f_next_application(const uint8_t *p_desc,
 #define desc6f_get_application(DESC, N) \
     desc_get_at(DESC, N, desc6f_next_application)
 
-BITSTREAM_GET_SET(desc6f_app, type, uint16, 1, 15);
-BITSTREAM_GET_SET(desc6f_app, AIT_version_number, uint8, 19, 5);
+BITSTREAM_GET_SET(desc6f_app, type, uint16, 1, 15)
+BITSTREAM_GET_SET(desc6f_app, AIT_version_number, uint8, 19, 5)
 
 static inline bool desc6f_validate(const uint8_t *p_desc)
 {

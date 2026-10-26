@@ -34,6 +34,7 @@
 
 #include <stdint.h>   /* uint8_t, uint16_t, etc... */
 #include <stdbool.h>  /* bool */
+#include <stddef.h>   /* NULL */
 
 #ifdef __cplusplus
 extern "C"

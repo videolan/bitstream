@@ -208,18 +208,23 @@ static inline uint16_t rtpx_get_length(const uint8_t *p_rtpx)
     return (p_rtpx[2] << 8) | p_rtpx[3];
 }
 
-static inline uint8_t *rtp_payload(uint8_t *p_rtp)
+static inline uint32_t rtp_get_payload_offset(uint8_t *p_rtp)
 {
-    unsigned int i_size = RTP_HEADER_SIZE;
+    uint32_t i_size = RTP_HEADER_SIZE;
     i_size += 4 * rtp_get_cc(p_rtp);
     if (rtp_check_extension(p_rtp))
         i_size += 4 * (1 + rtpx_get_length(rtp_extension(p_rtp)));
-    return p_rtp + i_size;
+    return i_size;
+}
+
+static inline uint8_t *rtp_payload(uint8_t *p_rtp)
+{
+    return p_rtp + rtp_get_payload_offset(p_rtp);
 }
 
 static inline size_t rtp_payload_size(uint8_t *p_rtp, size_t i_rtp_size)
 {
-    size_t i_payload_size = i_rtp_size - (rtp_payload(p_rtp) - p_rtp);
+    size_t i_payload_size = i_rtp_size - rtp_get_payload_offset(p_rtp);
     uint8_t i_padding_size = 0;
     if (rtp_check_padding(p_rtp))
         i_padding_size = p_rtp[i_rtp_size - 1];
